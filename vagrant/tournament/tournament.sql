@@ -9,18 +9,38 @@
 
 DROP TABLE IF EXISTS players CASCADE;
 DROP TABLE IF EXISTS matches CASCADE;
+DROP TABLE IF EXISTS tournaments CASCADE;
+DROP TABLE IF EXISTS tournament_registration CASCADE;
 
 CREATE TABLE players (
     id serial PRIMARY KEY,
-    name text
+    name TEXT
 );
 
+CREATE TABLE tournaments (
+    tournament_id SERIAL PRIMARY KEY,
+    tournament_name TEXT
+);
+
+CREATE TABLE tournament_registration(
+    tournament_id INTEGER REFERENCES tournaments(tournament_id),
+    player_id INTEGER REFERENCES players(id),
+    -- A player can only be registered once for a given tournament at a given point in time.
+    UNIQUE(tournament_id,player_id)
+);
+-- As safety, I am declaring the table such that
+-- it won't allow matches among the same players
+-- to be registered for the same tournament.
 CREATE TABLE matches (
-    match_id serial PRIMARY KEY,
+    match_id SERIAL PRIMARY KEY,
+    tournament INTEGER,
     winner integer REFERENCES players(id),
-    loser integer REFERENCES players(id)
+    loser integer REFERENCES players(id),
+    -- The same two players cannot play more than once
+    -- during the same tournament.
+    UNIQUE(winner,loser,tournament),
+    UNIQUE(loser,winner,tournament)
 );
-
 
 CREATE VIEW standings AS
     SELECT players.id as id,players.name as name,COALESCE(counts.wins_count,0) as wins,COALESCE(counts.matches_count,0) as matches

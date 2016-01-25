@@ -69,7 +69,7 @@ def registerPlayer(name):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("""INSERT INTO players(name) VALUES(%(str)s);""", {'str': name})
+    db_cursor.execute("INSERT INTO players(name) VALUES(%s)", (name,))
     db_connection.commit()
     db_cursor.close()
     db_connection.close()
@@ -103,7 +103,7 @@ def playerStandings():
     return results
 
 
-def reportMatch(winner, loser):
+def reportMatch(tournament, winner, loser):
     """Records the outcome of a single match between two players.
 
     Args:
@@ -115,7 +115,7 @@ def reportMatch(winner, loser):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("""INSERT INTO matches( winner, loser) VALUES(%s,%s);""", (winner, loser))
+    db_cursor.execute("INSERT INTO matches(tournament, winner, loser) VALUES(%s,%s,%s)", (tournament,winner, loser))
     # Commit Query
     db_connection.commit()
     # Close cursor and connection
