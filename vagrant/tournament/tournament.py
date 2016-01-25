@@ -50,10 +50,10 @@ def countPlayers():
     db_cursor.execute("SELECT count(*) FROM players")
     # Close cursor and connection to db.
     result = db_cursor.fetchone()
-    print(result)
     db_cursor.close()
     db_connection.close()
     return result[0]
+
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -74,6 +74,7 @@ def registerPlayer(name):
     db_cursor.close()
     db_connection.close()
 
+
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
 
@@ -93,10 +94,14 @@ def playerStandings():
     db_cursor = db_connection.cursor()
     # Execute query
     db_cursor.execute("SELECT * FROM standings;")
+    # Get results
     results = db_cursor.fetchall()
+    # Close cursor and connection
     db_cursor.close()
     db_connection.close()
+    # Return results.
     return results
+
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -110,12 +115,14 @@ def reportMatch(winner, loser):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("""INSERT INTO matches(name) VALUES(%(str)s);""", {'str': name})
+    db_cursor.execute("""INSERT INTO matches( winner, loser) VALUES(%s,%s);""", (winner, loser))
+    # Commit Query
     db_connection.commit()
+    # Close cursor and connection
     db_cursor.close()
     db_connection.close()
- 
- 
+
+
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
   
@@ -131,5 +138,16 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
-
-
+    # Connect to database
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Execute query
+    db_cursor.execute("SELECT * FROM pairings;")
+    # Get results
+    db_result = db_cursor.fetchall()
+    # Close cursor and connection
+    db_cursor.close()
+    db_connection.close()
+    # Return results.
+    return db_result

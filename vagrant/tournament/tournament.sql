@@ -23,7 +23,7 @@ CREATE TABLE matches (
 
 
 CREATE VIEW standings AS
-    SELECT players.id,players.name,COALESCE(counts.matches_count,0) as matches_count,COALESCE(counts.wins_count,0) as wins_count
+    SELECT players.id as id,players.name as name,COALESCE(counts.wins_count,0) as wins,COALESCE(counts.matches_count,0) as matches
     FROM
         players
         LEFT OUTER JOIN
@@ -37,8 +37,18 @@ CREATE VIEW standings AS
          WHERE winner = id
          GROUP BY id) AS total_wins
          ON total_matches.id = total_wins.uid) AS counts
-        ON players.id = counts.id;
+        ON players.id = counts.id
+    ORDER BY wins DESC;
 
-INSERT INTO players(name) VALUES('WILBERT');
-INSERT INTO players(name) VALUES('RAFAEL');
-INSERT INTO players(name) VALUES('MICHAEL');
+
+CREATE VIEW pairings AS
+    SELECT id1,name1,id2,name2 FROM
+    ( SELECT
+        ROW_NUMBER() OVER () AS row_number,id as id1, name as name1
+      FROM standings
+    ) standings_1,
+    ( SELECT
+        ROW_NUMBER() OVER () AS row_number,id as id2,name as name2
+      FROM standings
+    ) standings_2
+    WHERE standings_1.row_number % 2 = 1 AND standings_1.row_number+1=standings_2.row_number;
