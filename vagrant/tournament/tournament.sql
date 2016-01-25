@@ -28,18 +28,20 @@ CREATE TABLE tournament_registration(
     -- A player can only be registered once for a given tournament at a given point in time.
     UNIQUE(tournament_id,player_id)
 );
+
 -- As safety, I am declaring the table such that
 -- it won't allow matches among the same players
 -- to be registered for the same tournament.
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
-    tournament INTEGER,
+    tournament_id INTEGER REFERENCES tournaments(tournament_id),
     winner integer REFERENCES players(id),
     loser integer REFERENCES players(id),
+    draw integer DEFAULT 0,
     -- The same two players cannot play more than once
     -- during the same tournament.
-    UNIQUE(winner,loser,tournament),
-    UNIQUE(loser,winner,tournament)
+    UNIQUE(winner,loser,tournament_id),
+    UNIQUE(loser,winner,tournament_id)
 );
 
 CREATE VIEW standings AS

@@ -103,19 +103,20 @@ def playerStandings():
     return results
 
 
-def reportMatch(tournament, winner, loser):
+def reportMatch(tournament, winner, loser, draw=0):
     """Records the outcome of a single match between two players.
 
     Args:
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
+      draw: whether the game is a draw(1) or not(0)
     """
     # Connect to database
     db_connection = connect()
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("INSERT INTO matches(tournament, winner, loser) VALUES(%s,%s,%s)", (tournament,winner, loser))
+    db_cursor.execute("INSERT INTO matches(tournament_id, winner, loser) VALUES(%s,%s,%s)", (tournament,winner, loser))
     # Commit Query
     db_connection.commit()
     # Close cursor and connection
