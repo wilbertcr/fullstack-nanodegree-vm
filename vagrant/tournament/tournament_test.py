@@ -124,9 +124,14 @@ def testPairings():
     registerPlayerInTournament(tournament_id, player_id)
     standings = playerStandings()
     [id1, id2, id3, id4] = [row[0] for row in standings]
+    # player_name, wins,
     reportMatch(tournament_id, id1, id2)
     reportMatch(tournament_id, id3, id4)
-    pairings = swissPairings()
+    reportMatch(tournament_id, id1, id3)
+    reportMatch(tournament_id, id2, id4)
+    reportMatch(tournament_id, id2, id1)
+    reportMatch(tournament_id, id4, id3,1)
+    pairings = swissPairings(tournament_id)
     if len(pairings) != 2:
         raise ValueError(
             "For four players, swissPairings should return two pairs.")

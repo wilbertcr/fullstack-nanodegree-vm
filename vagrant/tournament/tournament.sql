@@ -56,7 +56,7 @@ CREATE VIEW standings AS
          LEFT OUTER JOIN
          (SELECT id AS uid,COALESCE(count(*),0) as wins_count
          FROM players, matches
-         WHERE winner = id
+         WHERE winner = id AND draw
          GROUP BY id) AS total_wins
          ON total_matches.id = total_wins.uid) AS counts
         ON players.id = counts.id
@@ -66,7 +66,7 @@ CREATE VIEW standings AS
 CREATE VIEW omw_table_raw AS
     SELECT *
     FROM
-        (SELECT winner as player_id, loser as opponent, wins as opponent_wins
+        (SELECT tournament_id, winner as player_id, loser as opponent, wins as opponent_wins
         FROM standings,matches
         WHERE
             -- Make sure we get the wins from the opponent(loser in this case).
@@ -74,7 +74,7 @@ CREATE VIEW omw_table_raw AS
             -- Make sure the match wasn't a draw.
             draw = 0) AS opponents_count
         UNION
-        (SELECT loser as player_id, winner as opponent, wins as opponent_wins
+        (SELECT tournament_id, loser as player_id, winner as opponent, wins as opponent_wins
         FROM standings,matches
         WHERE
             -- Make sure we get the wins from the opponent(winner in this case)
@@ -84,21 +84,21 @@ CREATE VIEW omw_table_raw AS
 
 
 CREATE VIEW omw_table AS
-    SELECT player_id, wins,  SUM(opponent_wins) AS opponents_wins
+    SELECT tournament_id, player_id, name, wins,  SUM(opponent_wins) AS opponents_wins
     FROM omw_table_raw,standings
     WHERE player_id = id
-    GROUP BY player_id,wins
-    ORDER BY opponents_wins DESC;
+    GROUP BY tournament_id, player_id, name, wins
+    ORDER BY wins DESC,opponents_wins DESC;
 
 
 CREATE VIEW pairings AS
-    SELECT id1,name1,id2,name2 FROM
+    SELECT omw_table1.row_number, tournament_id1, id1,name1,id2,name2 FROM
     ( SELECT
-        ROW_NUMBER() OVER () AS row_number,id as id1, name as name1
-      FROM standings
-    ) standings_1,
+        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, player_id as id1, name as name1
+      FROM omw_table
+    ) omw_table1,
     ( SELECT
-        ROW_NUMBER() OVER () AS row_number,id as id2,name as name2
-      FROM standings
-    ) standings_2
-    WHERE standings_1.row_number % 2 = 1 AND standings_1.row_number+1=standings_2.row_number;
+        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, player_id as id2,name as name2
+      FROM omw_table
+    ) omw_table2
+    WHERE omw_table1.row_number % 2 = 1 AND omw_table1.row_number+1=omw_table2.row_number;

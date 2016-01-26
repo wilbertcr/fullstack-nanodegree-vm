@@ -184,7 +184,7 @@ def reportMatch(tournament, winner, loser, draw=0):
     db_connection.close()
 
 
-def swissPairings():
+def swissPairings(tournament_id):
     """Returns a list of pairs of players for the next round of a match.
   
     Assuming that there are an even number of players registered, each player
@@ -204,9 +204,20 @@ def swissPairings():
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("SELECT * FROM pairings;")
-    # Get results
-    db_result = db_cursor.fetchall()
+    db_cursor.execute("SELECT count(*) FROM pairings WHERE tournament_id1=%s", (tournament_id,))
+    count = db_cursor.fetchone()[0]
+    # If the number of players in the tournament is even.
+    if count%2 == 0:
+        # We just need to fetch all the pairings.
+        db_cursor.execute("SELECT id1,name1,id2,name2 FROM pairings WHERE tournament_id1=%s;", (tournament_id,))
+        # Get results
+        db_result = db_cursor.fetchall()
+    else:
+        db_cursor.execute("SELECT id1,name1,id2,name2 FROM pairings WHERE tournament_id1=%s;", (tournament_id,))
+        # Get results
+        db_result = db_cursor.fetchall()
+        db_result
+
     # Close cursor and connection
     db_cursor.close()
     db_connection.close()
