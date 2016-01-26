@@ -82,15 +82,21 @@ def testStandingsBeforeMatches():
 def testReportMatches():
     deleteMatches()
     deletePlayers()
-    registerPlayer("Bruno Walton")
-    registerPlayer("Boots O'Neal")
-    registerPlayer("Cathy Burton")
-    registerPlayer("Diane Grant")
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+    player_id = registerPlayer("Bruno Walton")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Boots O'Neal")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Cathy Burton")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Diane Grant")
+    registerPlayerInTournament(tournament_id, player_id)
     standings = playerStandings()
     [id1, id2, id3, id4] = [row[0] for row in standings]
-    print(id1)
-    reportMatch(0,id1, id2)
-    reportMatch(0,id3, id4)
+    reportMatch(tournament_id, id1, id2)
+    reportMatch(tournament_id, id3, id4)
     standings = playerStandings()
     for (i, n, w, m) in standings:
         if m != 1:
@@ -105,14 +111,21 @@ def testReportMatches():
 def testPairings():
     deleteMatches()
     deletePlayers()
-    registerPlayer("Twilight Sparkle")
-    registerPlayer("Fluttershy")
-    registerPlayer("Applejack")
-    registerPlayer("Pinkie Pie")
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+    player_id = registerPlayer("Twilight Sparkle")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Fluttershy")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Applejack")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Pinkie Pie")
+    registerPlayerInTournament(tournament_id, player_id)
     standings = playerStandings()
     [id1, id2, id3, id4] = [row[0] for row in standings]
-    reportMatch(0,id1, id2)
-    reportMatch(0,id3, id4)
+    reportMatch(tournament_id, id1, id2)
+    reportMatch(tournament_id, id3, id4)
     pairings = swissPairings()
     if len(pairings) != 2:
         raise ValueError(

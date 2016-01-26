@@ -69,11 +69,69 @@ def registerPlayer(name):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("INSERT INTO players(name) VALUES(%s)", (name,))
+    db_cursor.execute("INSERT INTO players(name) VALUES(%s) RETURNING id", (name,))
+    player_id = db_cursor.fetchone()[0]
+    db_connection.commit()
+    db_cursor.close()
+    db_connection.close()
+    return player_id
+
+
+def deleteTournaments():
+    """Remove all the tournament records from the database."""
+    # Connect to database
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Execute query
+    db_cursor.execute("DELETE FROM tournaments")
     db_connection.commit()
     db_cursor.close()
     db_connection.close()
 
+
+def registerTournament(name):
+    """Adds a tournament to the database.
+
+    The database assigns a unique serial id number for the tournament,
+    which is returned by this function.
+    Args:
+      :type name: str
+      name: the tournament's name (need not be unique).
+    Returns:
+      :type tournament_id: int
+      tournament_id: The tournament's id(unique)
+    """
+    # Connect to database
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Execute query
+    db_cursor.execute("INSERT INTO tournaments(name) VALUES(%s) RETURNING tournament_id", (name,))
+    db_connection.commit()
+    tournament_id = db_cursor.fetchone()[0]
+    db_cursor.close()
+    db_connection.close()
+    return tournament_id
+
+
+def registerPlayerInTournament(tournament_id, player_id):
+    # Connect to database
+    """Registers player into a particular tournament.
+
+    Args:
+        tournament_id:
+        player_id:
+    """
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Execute query
+    db_cursor.execute("INSERT INTO tournament_registration(tournament_id,player_id) VALUES(%s,%s);",
+                      (tournament_id, player_id))
+    db_connection.commit()
+    db_cursor.close()
+    db_connection.close()
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -107,6 +165,7 @@ def reportMatch(tournament, winner, loser, draw=0):
     """Records the outcome of a single match between two players.
 
     Args:
+      tournament: the id of the tournament this match belongs to.
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
       draw: whether the game is a draw(1) or not(0)
@@ -116,7 +175,8 @@ def reportMatch(tournament, winner, loser, draw=0):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("INSERT INTO matches(tournament_id, winner, loser) VALUES(%s,%s,%s)", (tournament,winner, loser))
+    db_cursor.execute("INSERT INTO matches(tournament_id, winner, loser,draw) VALUES(%s,%s,%s,%s)",
+                      (tournament, winner, loser, draw))
     # Commit Query
     db_connection.commit()
     # Close cursor and connection

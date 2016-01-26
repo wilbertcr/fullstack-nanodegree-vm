@@ -19,12 +19,12 @@ CREATE TABLE players (
 
 CREATE TABLE tournaments (
     tournament_id SERIAL PRIMARY KEY,
-    tournament_name TEXT
+    name TEXT
 );
 
 CREATE TABLE tournament_registration(
     tournament_id INTEGER REFERENCES tournaments(tournament_id),
-    player_id INTEGER REFERENCES players(id),
+    player_id INTEGER REFERENCES players(id) ON DELETE CASCADE,
     -- A player can only be registered once for a given tournament at a given point in time.
     UNIQUE(tournament_id,player_id)
 );
@@ -34,9 +34,9 @@ CREATE TABLE tournament_registration(
 -- to be registered for the same tournament.
 CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
-    tournament_id INTEGER REFERENCES tournaments(tournament_id),
-    winner integer REFERENCES players(id),
-    loser integer REFERENCES players(id),
+    tournament_id INTEGER REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
+    winner integer REFERENCES players(id) ON DELETE CASCADE,
+    loser integer REFERENCES players(id) ON DELETE CASCADE,
     draw integer DEFAULT 0,
     -- The same two players cannot play more than once
     -- during the same tournament.
@@ -61,6 +61,34 @@ CREATE VIEW standings AS
          ON total_matches.id = total_wins.uid) AS counts
         ON players.id = counts.id
     ORDER BY wins DESC;
+
+
+CREATE VIEW omw_table_raw AS
+    SELECT *
+    FROM
+        (SELECT winner as player_id, loser as opponent, wins as opponent_wins
+        FROM standings,matches
+        WHERE
+            -- Make sure we get the wins from the opponent(loser in this case).
+            loser = standings.id AND
+            -- Make sure the match wasn't a draw.
+            draw = 0) AS opponents_count
+        UNION
+        (SELECT loser as player_id, winner as opponent, wins as opponent_wins
+        FROM standings,matches
+        WHERE
+            -- Make sure we get the wins from the opponent(winner in this case)
+            winner = standings.id AND
+            -- Make sure the match wasn't a draw.
+            draw = 0);
+
+
+CREATE VIEW omw_table AS
+    SELECT player_id, wins,  SUM(opponent_wins) AS opponents_wins
+    FROM omw_table_raw,standings
+    WHERE player_id = id
+    GROUP BY player_id,wins
+    ORDER BY opponents_wins DESC;
 
 
 CREATE VIEW pairings AS
