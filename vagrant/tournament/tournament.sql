@@ -36,7 +36,7 @@ CREATE TABLE matches (
     match_id SERIAL PRIMARY KEY,
     tournament_id INTEGER REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
     winner integer REFERENCES players(id) ON DELETE CASCADE,
-    loser integer REFERENCES players(id) ON DELETE CASCADE,
+    loser integer,
     draw integer DEFAULT 0,
     -- The same two players cannot play more than once
     -- during the same tournament.
@@ -55,6 +55,7 @@ CREATE VIEW standings AS
     GROUP BY tournament_registration.player_id, tournament_registration.tournament_id, name
     ORDER BY wins DESC;
 
+-- This could be a subquery also, but did it this way for clarity.
 
 CREATE VIEW omw_table_raw AS
     SELECT *

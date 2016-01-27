@@ -135,7 +135,6 @@ def testPairings():
     registerPlayerInTournament(tournament_id, player_id)
     player_id = registerPlayer("Princess Luna")
     registerPlayerInTournament(tournament_id, player_id)
-
     standings = playerStandings(tournament_id)
     [id1, id2, id3, id4, id5, id6, id7, id8] = [row[0] for row in standings]
     pairings = swissPairings(tournament_id)
@@ -165,6 +164,27 @@ def testPairings():
                 "After one match, players with one win should be paired.")
     print('10. After one match, players with one win are properly paired.')
 
+def testPairingsOdd():
+    deleteMatches()
+    deletePlayers()
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+    player_id = registerPlayer("Twilight Sparkle")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Fluttershy")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Applejack")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Pinkie Pie")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Rarity")
+    registerPlayerInTournament(tournament_id, player_id)
+    standings = playerStandings(tournament_id)
+    [id1, id2, id3, id4,id5] = [row[0] for row in standings]
+    pairings = swissPairings(tournament_id)
+    print(pairings)
+
 
 
 if __name__ == '__main__':
@@ -176,6 +196,7 @@ if __name__ == '__main__':
     testStandingsBeforeMatches()
     testReportMatches()
     testPairings()
+    testPairingsOdd()
     print("Success!  All tests pass!")
 
 

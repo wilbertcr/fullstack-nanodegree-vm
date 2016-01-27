@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5ef51bab-4c8e-46c5-91e4-0de9266bac78" name="Default" comment="">
+    <list default="true" id="5ef51bab-4c8e-46c5-91e4-0de9266bac78" name="Default" comment="Erasing from git.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tournament.py" afterPath="$PROJECT_DIR$/tournament.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tournament.sql" afterPath="$PROJECT_DIR$/tournament.sql" />
@@ -26,23 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="tournament.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tournament.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="35" column="42" selection-start-line="35" selection-start-column="42" selection-end-line="35" selection-end-column="42" />
-              <folding>
-                <element signature="e#91#106#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="tournament.sql" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tournament.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.07630058">
-              <caret line="51" column="2" selection-start-line="51" selection-start-column="2" selection-end-line="51" selection-end-column="2" />
+            <state vertical-scroll-proportion="0.9404553">
+              <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -51,9 +39,21 @@
       <file leaf-file-name="tournament_test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tournament_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-10.655172">
-              <caret line="124" column="33" selection-start-line="124" selection-start-column="33" selection-end-line="124" selection-end-column="33" />
+            <state vertical-scroll-proportion="-14.586206">
+              <caret line="184" column="43" selection-start-line="184" selection-start-column="43" selection-end-line="184" selection-end-column="43" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tournament.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tournament.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="267" column="20" selection-start-line="267" selection-start-column="20" selection-end-line="267" selection-end-column="20" />
+              <folding>
+                <element signature="e#91#106#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -61,15 +61,16 @@
     </leaf>
   </component>
   <component name="Git.Settings">
+    <option name="UPDATE_TYPE" value="MERGE" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/test.sql" />
-        <option value="$PROJECT_DIR$/tournament_test.py" />
         <option value="$PROJECT_DIR$/tournament.py" />
         <option value="$PROJECT_DIR$/tournament.sql" />
+        <option value="$PROJECT_DIR$/tournament_test.py" />
       </list>
     </option>
   </component>
@@ -132,6 +133,116 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../forum/forum.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
+  </component>
+  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
+    <UpdatedFiles>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Updated from server" />
+        <option name="myStatusName" value="Changed on server" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="CHANGED_ON_SERVER" />
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated" />
+          <option name="myStatusName" value="Changed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UPDATED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Created" />
+          <option name="myStatusName" value="Created" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CREATED" />
+          <PATH vcs="Git" revision="">$PROJECT_DIR$/pycharm.gitignore</PATH>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Deleted" />
+          <option name="myStatusName" value="Deleted" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="true" />
+          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Restored" />
+          <option name="myStatusName" value="Will be restored" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="RESTORED" />
+        </FILE-GROUP>
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Modified" />
+        <option name="myStatusName" value="Modified" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MODIFIED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Skipped" />
+        <option name="myStatusName" value="Skipped" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SKIPPED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with conflicts" />
+        <option name="myStatusName" value="Will be merged with conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_CONFLICTS" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with tree conflicts" />
+        <option name="myStatusName" value="Merged with tree conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged with property conflicts" />
+        <option name="myStatusName" value="Will be merged with property conflicts" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Merged" />
+        <option name="myStatusName" value="Will be merged" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="MERGED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Not in repository" />
+        <option name="myStatusName" value="Not in repository" />
+        <option name="mySupportsDeletion" value="true" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="UNKNOWN" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally added" />
+        <option name="myStatusName" value="Locally added" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_ADDED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Locally removed" />
+        <option name="myStatusName" value="Locally removed" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="LOCALLY_REMOVED" />
+      </FILE-GROUP>
+      <FILE-GROUP>
+        <option name="myUpdateName" value="Switched" />
+        <option name="myStatusName" value="Switched" />
+        <option name="mySupportsDeletion" value="false" />
+        <option name="myCanBeAbsent" value="false" />
+        <option name="myId" value="SWITCHED" />
+      </FILE-GROUP>
+    </UpdatedFiles>
   </component>
   <component name="RunManager" selected="Python.tournament_test">
     <configuration default="false" name="tournament_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -311,7 +422,25 @@
       <option name="project" value="LOCAL" />
       <updated>1453757032398</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="tournament.py:&#10;- Changed registerPlayer(name) so that it returns the id of the player it just registered.&#10;- Added deleteTournaments() which delete all the tournaments in the database.&#10;- Added registerTournament(name) to add a new tournament to the database.&#10;- Added registerPlayerInTournament(tournament_id, player_id)&#10;- Changed reportMatch(winner,loser) to reportMatch(tournament, winner, loser, draw=0) to support different tournaments and draws.&#10;tournament.sql:&#10;- Changed  field on tournaments table from tournament_name to name&#10;- Changed tournament_registration table.  Added &quot;ON DELETE CASCADE&quot; where appropriate so as to allow operations like deleting tournaments and players.  &#10;- Changed matches table. Added &quot;ON DELETE CASCADE&quot; where appropriate so as to allow operations like deleting tournaments and players.  &#10;- Created omw_table_raw which contains the OMW(Opponent match win) values for each player_id twice. Once for the players it played against&#10;and it won, and once for the players it played against and it lost. &#10;- Created omw_table which aggregates the above per player resulting in the actual OMW values for each player_id.&#10;tournament_test.py&#10;- Fixed testReportMatches() and testPairings so that they work with the new functionalities added in tournament.py and tournament.sql">
+      <created>1453828458282</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1453828458282</updated>
+    </task>
+    <task id="LOCAL-00005" summary="tournament.sql:&#10;- Fixed &quot;standings&quot; view so that count of wins ignores matches that were draws.&#10;- added 'tournament_id' field to omw_table_raw View.&#10;- added 'tournament_id' and 'name' fields to &quot;omw_table&quot; View&#10;- added 'row_number' and 'tournament_id1' to &quot;pairings&quot; table. To be used in debugging.&#10;tournament.py:&#10;- Started work on swissPairings(), which is now swissPairings(tournament_id). It doesn't work right now. &#10;tournament_test.py:&#10;- Added matches and fixed swissPairings.">
+      <created>1453843917066</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1453843917066</updated>
+    </task>
+    <task id="LOCAL-00006" summary="tournament.py:&#10;- Changed signature of function from playerStandings() to playerStandings(tournament_id)&#10;- Narrowed return of query in playerStandings(tournament_id) so it passes the test.&#10;- Started work on swissPairings(tournament_id). It is working for tournaments with an even number of players. Still needs more work.&#10;tournament.sql:&#10;- Fixed &quot;standings&quot; View. It was returning nothing when there were no matches.&#10;- Cascaded fixes in &quot;standings&quot; to &quot;omw_table_raw&quot; and omw_table&#10;tournament_test.py&#10;- Fixed testStandingsBeforeMatches() to support more than one tournament.&#10;- Fixed testPairings to support multiple tournaments.">
+      <created>1453877235998</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1453877235998</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -323,9 +452,9 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32922733" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32922733" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32922733" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24969843" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -373,7 +502,10 @@
     <MESSAGE value="First Commit. A little late into the project since already a few functions have been implemented." />
     <MESSAGE value="Finished implementing functions using the database. Time to start thinking about the extra-credit." />
     <MESSAGE value="Updating Schema to support some of the Extra Credit features. &#10;&#10;Created tournaments table to hold tournament ids and tournament names.&#10;Created tournament_registration to hold players registered on particular tournaments. &#10;Changed matches table such that:&#10;- It allows registration of draws&#10;- It doesn't allow rematches between players.&#10;Improved referencial integrity.&#10;Adapted python functions to use this new features." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updating Schema to support some of the Extra Credit features. &#10;&#10;Created tournaments table to hold tournament ids and tournament names.&#10;Created tournament_registration to hold players registered on particular tournaments. &#10;Changed matches table such that:&#10;- It allows registration of draws&#10;- It doesn't allow rematches between players.&#10;Improved referencial integrity.&#10;Adapted python functions to use this new features." />
+    <MESSAGE value="tournament.py:&#10;- Changed registerPlayer(name) so that it returns the id of the player it just registered.&#10;- Added deleteTournaments() which delete all the tournaments in the database.&#10;- Added registerTournament(name) to add a new tournament to the database.&#10;- Added registerPlayerInTournament(tournament_id, player_id)&#10;- Changed reportMatch(winner,loser) to reportMatch(tournament, winner, loser, draw=0) to support different tournaments and draws.&#10;tournament.sql:&#10;- Changed  field on tournaments table from tournament_name to name&#10;- Changed tournament_registration table.  Added &quot;ON DELETE CASCADE&quot; where appropriate so as to allow operations like deleting tournaments and players.  &#10;- Changed matches table. Added &quot;ON DELETE CASCADE&quot; where appropriate so as to allow operations like deleting tournaments and players.  &#10;- Created omw_table_raw which contains the OMW(Opponent match win) values for each player_id twice. Once for the players it played against&#10;and it won, and once for the players it played against and it lost. &#10;- Created omw_table which aggregates the above per player resulting in the actual OMW values for each player_id.&#10;tournament_test.py&#10;- Fixed testReportMatches() and testPairings so that they work with the new functionalities added in tournament.py and tournament.sql" />
+    <MESSAGE value="tournament.sql:&#10;- Fixed &quot;standings&quot; view so that count of wins ignores matches that were draws.&#10;- added 'tournament_id' field to omw_table_raw View.&#10;- added 'tournament_id' and 'name' fields to &quot;omw_table&quot; View&#10;- added 'row_number' and 'tournament_id1' to &quot;pairings&quot; table. To be used in debugging.&#10;tournament.py:&#10;- Started work on swissPairings(), which is now swissPairings(tournament_id). It doesn't work right now. &#10;tournament_test.py:&#10;- Added matches and fixed swissPairings." />
+    <MESSAGE value="tournament.py:&#10;- Changed signature of function from playerStandings() to playerStandings(tournament_id)&#10;- Narrowed return of query in playerStandings(tournament_id) so it passes the test.&#10;- Started work on swissPairings(tournament_id). It is working for tournaments with an even number of players. Still needs more work.&#10;tournament.sql:&#10;- Fixed &quot;standings&quot; View. It was returning nothing when there were no matches.&#10;- Cascaded fixes in &quot;standings&quot; to &quot;omw_table_raw&quot; and omw_table&#10;tournament_test.py&#10;- Fixed testStandingsBeforeMatches() to support more than one tournament.&#10;- Fixed testPairings to support multiple tournaments." />
+    <option name="LAST_COMMIT_MESSAGE" value="tournament.py:&#10;- Changed signature of function from playerStandings() to playerStandings(tournament_id)&#10;- Narrowed return of query in playerStandings(tournament_id) so it passes the test.&#10;- Started work on swissPairings(tournament_id). It is working for tournaments with an even number of players. Still needs more work.&#10;tournament.sql:&#10;- Fixed &quot;standings&quot; View. It was returning nothing when there were no matches.&#10;- Cascaded fixes in &quot;standings&quot; to &quot;omw_table_raw&quot; and omw_table&#10;tournament_test.py&#10;- Fixed testStandingsBeforeMatches() to support more than one tournament.&#10;- Fixed testPairings to support multiple tournaments." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -497,10 +629,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.sql">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23817864">
+          <caret line="8" column="19" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/tournament_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-10.655172">
-          <caret line="124" column="33" selection-start-line="124" selection-start-column="33" selection-end-line="124" selection-end-column="33" />
+        <state vertical-scroll-proportion="-14.586206">
+          <caret line="184" column="43" selection-start-line="184" selection-start-column="43" selection-end-line="184" selection-end-column="43" />
           <folding />
         </state>
       </provider>
@@ -508,7 +656,7 @@
     <entry file="file://$PROJECT_DIR$/tournament.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="42" selection-start-line="35" selection-start-column="42" selection-end-line="35" selection-end-column="42" />
+          <caret line="267" column="20" selection-start-line="267" selection-start-column="20" selection-end-line="267" selection-end-column="20" />
           <folding>
             <element signature="e#91#106#0" expanded="true" />
           </folding>
@@ -517,8 +665,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tournament.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.07630058">
-          <caret line="51" column="2" selection-start-line="51" selection-start-column="2" selection-end-line="51" selection-end-column="2" />
+        <state vertical-scroll-proportion="0.9404553">
+          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
           <folding />
         </state>
       </provider>
