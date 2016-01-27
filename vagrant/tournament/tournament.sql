@@ -45,28 +45,21 @@ CREATE TABLE matches (
 );
 
 CREATE VIEW standings AS
-    SELECT players.id as id,players.name as name,COALESCE(counts.wins_count,0) as wins,COALESCE(counts.matches_count,0) as matches
-    FROM
-        players
-        LEFT OUTER JOIN
-        ((SELECT id,COALESCE(count(*),0) as matches_count
-          FROM players, matches
-          WHERE winner = id OR loser = id
-          GROUP BY id) AS total_matches
-         LEFT OUTER JOIN
-         (SELECT id AS uid,COALESCE(count(*),0) as wins_count
-         FROM players, matches
-         WHERE winner = id AND draw
-         GROUP BY id) AS total_wins
-         ON total_matches.id = total_wins.uid) AS counts
-        ON players.id = counts.id
+    SELECT
+        tournament_registration.tournament_id as tournament_id,
+        tournament_registration.player_id as id,
+        (SELECT name FROM players WHERE id = tournament_registration.player_id) as name,
+        (SELECT COALESCE(count(*)) AS wins FROM matches WHERE tournament_registration.player_id = winner),
+        (SELECT COALESCE(count(*)) AS matches FROM matches WHERE tournament_registration.player_id = winner OR tournament_registration.player_id = loser)
+    FROM tournament_registration
+    GROUP BY tournament_registration.player_id, tournament_registration.tournament_id, name
     ORDER BY wins DESC;
 
 
 CREATE VIEW omw_table_raw AS
     SELECT *
     FROM
-        (SELECT tournament_id, winner as player_id, loser as opponent, wins as opponent_wins
+        (SELECT standings.tournament_id, winner as player_id, loser as opponent, wins as opponent_wins
         FROM standings,matches
         WHERE
             -- Make sure we get the wins from the opponent(loser in this case).
@@ -74,7 +67,7 @@ CREATE VIEW omw_table_raw AS
             -- Make sure the match wasn't a draw.
             draw = 0) AS opponents_count
         UNION
-        (SELECT tournament_id, loser as player_id, winner as opponent, wins as opponent_wins
+        (SELECT standings.tournament_id, loser as player_id, winner as opponent, wins as opponent_wins
         FROM standings,matches
         WHERE
             -- Make sure we get the wins from the opponent(winner in this case)
@@ -84,21 +77,20 @@ CREATE VIEW omw_table_raw AS
 
 
 CREATE VIEW omw_table AS
-    SELECT tournament_id, player_id, name, wins,  SUM(opponent_wins) AS opponents_wins
-    FROM omw_table_raw,standings
-    WHERE player_id = id
-    GROUP BY tournament_id, player_id, name, wins
+    SELECT standings.tournament_id,standings.id as id, name, wins,  SUM(COALESCE(opponent_wins,0)) AS opponents_wins
+    FROM standings LEFT OUTER JOIN omw_table_raw ON standings.id = omw_table_raw.player_id
+    GROUP BY standings.tournament_id, standings.id, name, wins
     ORDER BY wins DESC,opponents_wins DESC;
 
 
 CREATE VIEW pairings AS
     SELECT omw_table1.row_number, tournament_id1, id1,name1,id2,name2 FROM
     ( SELECT
-        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, player_id as id1, name as name1
+        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1
       FROM omw_table
     ) omw_table1,
     ( SELECT
-        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, player_id as id2,name as name2
+        ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2
       FROM omw_table
     ) omw_table2
     WHERE omw_table1.row_number % 2 = 1 AND omw_table1.row_number+1=omw_table2.row_number;

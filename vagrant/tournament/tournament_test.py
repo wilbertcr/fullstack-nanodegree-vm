@@ -59,9 +59,14 @@ def testRegisterCountDelete():
 def testStandingsBeforeMatches():
     deleteMatches()
     deletePlayers()
-    registerPlayer("Melpomene Murray")
-    registerPlayer("Randy Schwartz")
-    standings = playerStandings()
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+    player_id = registerPlayer("Melpomene Murray")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Randy Schwartz")
+    registerPlayerInTournament(tournament_id, player_id)
+    standings = playerStandings(tournament_id)
     if len(standings) < 2:
         raise ValueError("Players should appear in playerStandings even before "
                          "they have played any matches.")
@@ -93,11 +98,11 @@ def testReportMatches():
     registerPlayerInTournament(tournament_id, player_id)
     player_id = registerPlayer("Diane Grant")
     registerPlayerInTournament(tournament_id, player_id)
-    standings = playerStandings()
+    standings = playerStandings(tournament_id)
     [id1, id2, id3, id4] = [row[0] for row in standings]
     reportMatch(tournament_id, id1, id2)
     reportMatch(tournament_id, id3, id4)
-    standings = playerStandings()
+    standings = playerStandings(tournament_id)
     for (i, n, w, m) in standings:
         if m != 1:
             raise ValueError("Each player should have one match recorded.")
@@ -122,26 +127,44 @@ def testPairings():
     registerPlayerInTournament(tournament_id, player_id)
     player_id = registerPlayer("Pinkie Pie")
     registerPlayerInTournament(tournament_id, player_id)
-    standings = playerStandings()
-    [id1, id2, id3, id4] = [row[0] for row in standings]
-    # player_name, wins,
+    player_id = registerPlayer("Rarity")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Rainbow Dash")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Princess Celestia")
+    registerPlayerInTournament(tournament_id, player_id)
+    player_id = registerPlayer("Princess Luna")
+    registerPlayerInTournament(tournament_id, player_id)
+
+    standings = playerStandings(tournament_id)
+    [id1, id2, id3, id4, id5, id6, id7, id8] = [row[0] for row in standings]
+    pairings = swissPairings(tournament_id)
+    if len(pairings) != 4:
+        raise ValueError(
+            "For eight players, swissPairings should return 4 pairs. Got {pairs}".format(pairs=len(pairings)))
     reportMatch(tournament_id, id1, id2)
     reportMatch(tournament_id, id3, id4)
-    reportMatch(tournament_id, id1, id3)
-    reportMatch(tournament_id, id2, id4)
-    reportMatch(tournament_id, id2, id1)
-    reportMatch(tournament_id, id4, id3,1)
+    reportMatch(tournament_id, id5, id6)
+    reportMatch(tournament_id, id7, id8)
     pairings = swissPairings(tournament_id)
-    if len(pairings) != 2:
+    if len(pairings) != 4:
         raise ValueError(
-            "For four players, swissPairings should return two pairs.")
-    [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4)] = pairings
-    correct_pairs = set([frozenset([id1, id3]), frozenset([id2, id4])])
-    actual_pairs = set([frozenset([pid1, pid2]), frozenset([pid3, pid4])])
-    if correct_pairs != actual_pairs:
-        raise ValueError(
-            "After one match, players with one win should be paired.")
-    print("8. After one match, players with one win are paired.")
+            "For eight players, swissPairings should return 4 pairs. Got {pairs}".format(pairs=len(pairings)))
+    [(pid1, pname1, pid2, pname2), (pid3, pname3, pid4, pname4), (pid5, pname5, pid6, pname6), (pid7, pname7, pid8, pname8)] = pairings
+    possible_pairs = set([frozenset([id1, id3]), frozenset([id1, id5]),
+                          frozenset([id1, id7]), frozenset([id3, id5]),
+                          frozenset([id3, id7]), frozenset([id5, id7]),
+                          frozenset([id2, id4]), frozenset([id2, id6]),
+                          frozenset([id2, id8]), frozenset([id4, id6]),
+                          frozenset([id4, id8]), frozenset([id6, id8])
+                          ])
+    actual_pairs = set([frozenset([pid1, pid2]), frozenset([pid3, pid4]), frozenset([pid5, pid6]), frozenset([pid7, pid8])])
+    for pair in actual_pairs:
+        if pair not in possible_pairs:
+            raise ValueError(
+                "After one match, players with one win should be paired.")
+    print('10. After one match, players with one win are properly paired.')
+
 
 
 if __name__ == '__main__':

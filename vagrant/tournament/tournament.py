@@ -133,7 +133,7 @@ def registerPlayerInTournament(tournament_id, player_id):
     db_cursor.close()
     db_connection.close()
 
-def playerStandings():
+def playerStandings(tournament_id):
     """Returns a list of the players and their win records, sorted by wins.
 
     The first entry in the list should be the player in first place, or a player
@@ -151,7 +151,7 @@ def playerStandings():
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Execute query
-    db_cursor.execute("SELECT * FROM standings;")
+    db_cursor.execute("SELECT id,name,wins,matches FROM standings WHERE tournament_id = %s;", (tournament_id,))
     # Get results
     results = db_cursor.fetchall()
     # Close cursor and connection
@@ -203,21 +203,26 @@ def swissPairings(tournament_id):
     db_connection = connect()
     # Get db cursor
     db_cursor = db_connection.cursor()
-    # Execute query
-    db_cursor.execute("SELECT count(*) FROM pairings WHERE tournament_id1=%s", (tournament_id,))
+    # Let's find out how many players are registered.
+    db_cursor.execute("SELECT count(*) FROM tournament_registration WHERE tournament_id=%s", (tournament_id,))
+    # And store it in variable "count"
     count = db_cursor.fetchone()[0]
-    # If the number of players in the tournament is even.
-    if count%2 == 0:
-        # We just need to fetch all the pairings.
-        db_cursor.execute("SELECT id1,name1,id2,name2 FROM pairings WHERE tournament_id1=%s;", (tournament_id,))
-        # Get results
+    # If the number of players is even. Then we can get the pairings from the pairings table.
+    db_result = 0
+    if count % 2 == 0:
+        db_cursor.execute("SELECT id1,name1, id2,name2 FROM pairings WHERE tournament_id1=%s", (tournament_id,))
         db_result = db_cursor.fetchall()
+    # If the number of players is not even, then things are more complicated.
     else:
-        db_cursor.execute("SELECT id1,name1,id2,name2 FROM pairings WHERE tournament_id1=%s;", (tournament_id,))
-        # Get results
-        db_result = db_cursor.fetchall()
-        db_result
-
+        # Let's first get all the players in the tournament.
+        db_cursor.execute("SELECT * FROM omw_table WHERE tournament_id=%s;", (tournament_id,))
+        # omw_table = SELECT player_id, name, wins,  SUM(opponent_wins) AS opponents_wins
+        omw_table = db_cursor.fetchall()
+        curr_index = count
+        row = dict(omw_table[count])
+        print(row)
+    #        while True:
+    #           db_cursor.execute("SELECT COUNT(*) FROM matches WHERE tournament_id=%s AND ", (tournament_id,))
     # Close cursor and connection
     db_cursor.close()
     db_connection.close()
