@@ -3,6 +3,9 @@
 # Test cases for tournament.py
 
 from tournament import *
+import csv
+import random
+import math
 
 def testDeleteMatches():
     deleteMatches()
@@ -164,6 +167,50 @@ def testPairings():
                 "After one match, players with one win should be paired.")
     print('10. After one match, players with one win are properly paired.')
 
+def setup_dummy_tournament():
+    deleteMatches()
+    deletePlayers()
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+    with open('players_list_even.csv','rb') as csvfile:
+        file_reader = csv.DictReader(csvfile,delimiter=',')
+        for row in file_reader:
+            registerPlayerInTournament(tournament_id, registerPlayer(row['Name']))
+    f = open("pairings.csv", 'w')
+    f.write("id1, name1, id2, name2,winner\n")
+    c = math.trunc(log(countPlayers(), 2))
+    pairings = swissPairings(tournament_id)
+    for row in pairings:
+        [id1, name1, id2, name2] = row
+        coin_toss = random.randint(0, 1)
+        if coin_toss == 0:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
+            reportMatch(tournament_id, id1, id2)
+        else:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
+            reportMatch(tournament_id, id2, id1)
+    pairings = swissPairings(tournament_id)
+    for row in pairings:
+        [id1, name1, id2, name2] = row
+        coin_toss = random.randint(0, 1)
+        if coin_toss == 0:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
+            reportMatch(tournament_id, id1, id2)
+        else:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
+            reportMatch(tournament_id, id2, id1)
+    pairings = swissPairings(tournament_id)
+    for row in pairings:
+        [id1, name1, id2, name2] = row
+        coin_toss = random.randint(0, 1)
+        if coin_toss == 0:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
+            reportMatch(tournament_id, id1, id2)
+        else:
+            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
+            reportMatch(tournament_id, id2, id1)
+
 def testPairingsOdd():
     deleteMatches()
     deletePlayers()
@@ -181,9 +228,18 @@ def testPairingsOdd():
     player_id = registerPlayer("Rarity")
     registerPlayerInTournament(tournament_id, player_id)
     standings = playerStandings(tournament_id)
-    [id1, id2, id3, id4,id5] = [row[0] for row in standings]
+    [id1, id2, id3, id4, id5] = [row[0] for row in standings]
+    print("Standings:\n")
+    for row in standings:
+        print(row)
     pairings = swissPairings(tournament_id)
-    print(pairings)
+    print("Pairings:\n")
+    for row in pairings:
+        print(row)
+    pairings = swissPairings(tournament_id)
+    print("Pairings:\n")
+    for row in pairings:
+        print(row)
 
 
 
@@ -197,6 +253,7 @@ if __name__ == '__main__':
     testReportMatches()
     testPairings()
     testPairingsOdd()
+    setup_dummy_tournament()
     print("Success!  All tests pass!")
 
 
