@@ -214,11 +214,6 @@ def reportMatch(tournament, winner, loser, draw=0):
 
 def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id):
     # Connect to database
-    """
-
-    Returns:
-        object: 
-    """
     db_connection = connect()
     # Get db cursor
     db_cursor = db_connection.cursor()
@@ -252,14 +247,15 @@ def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
                 # Then we will return it as playing against him/herself in this round.
                 db_cursor.execute("SELECT id as id1, name as name1, id as id2, name as name2 "
                                   "FROM omw_table "
-                                  "WHERE id = %s "
+                                  "WHERE id = %s AND tournament_id = %s"
                                   "UNION "
                                   "SELECT id1,name1,id2,name2 FROM "
                                       "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1 "
-                                      "FROM omw_table WHERE id != %s) omw_table1,"
+                                      "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table1,"
                                       "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2 "
-                                      "FROM omw_table WHERE id != %s) omw_table2 "
-                                  "WHERE mod(omw_table1.row_number, 2) = 1 AND omw_table1.row_number+1=omw_table2.row_number;",(player_id, player_id, player_id))
+                                      "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table2 "
+                                  "WHERE mod(omw_table1.row_number, 2) = 1 AND omw_table1.row_number+1=omw_table2.row_number;"
+                                  , (player_id, tournament_id, player_id, tournament_id, player_id, tournament_id))
                 # Fetch results.
                 db_result = db_cursor.fetchall()
                 # And break out of the loop, since we found a player without a bye for this round.
@@ -377,7 +373,6 @@ def swissPairings(tournament_id):
             # And now let's try to piece them back together.
             index = 0
             while index < len(db_result):
-                db_result
                 db_result[index] = (left[index][0], left[index][1], right[index][0], right[index][1])
                 index += 1
         range_factor += 1
