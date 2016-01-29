@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5ef51bab-4c8e-46c5-91e4-0de9266bac78" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/players.csv" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tournament.py" afterPath="$PROJECT_DIR$/tournament.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tournament.sql" afterPath="$PROJECT_DIR$/tournament.sql" />
@@ -26,21 +27,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="tournament.sql" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tournament.sql" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tournament.sql">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6252189">
-              <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="38" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="39" column="27" selection-start-line="39" selection-start-column="27" selection-end-line="39" selection-end-column="27" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tournament_test.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="tournament_test.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tournament_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="175" column="33" selection-start-line="175" selection-start-column="33" selection-end-line="175" selection-end-column="33" />
+            <state vertical-scroll-proportion="0.4938704">
+              <caret line="193" column="0" selection-start-line="193" selection-start-column="0" selection-end-line="193" selection-end-column="0" />
               <folding>
                 <element signature="e#56#80#0" expanded="true" />
               </folding>
@@ -51,8 +52,8 @@
       <file leaf-file-name="tournament.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tournament.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="204" column="19" selection-start-line="204" selection-start-column="19" selection-end-line="204" selection-end-column="19" />
+            <state vertical-scroll-proportion="-2.6842105">
+              <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="43" />
               <folding>
                 <element signature="e#91#106#0" expanded="true" />
               </folding>
@@ -338,7 +339,13 @@
       <option name="project" value="LOCAL" />
       <updated>1453938225147</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="tournament.py: &#10;- Fixed &quot;swissPairings(tournament_id)&quot; so that it no longer enters a match against a fake player to represent a bye.&#10;Byes are now represented by a pairing showing the player who received the bye against him/herself.&#10;- Function still returns pairings that, if followed, will lead to rematches. We're not there yet. &#10;tournament.sql:&#10;tournament_test.py:&#10;- Added displays of pairings on a tournament with an odd number of players.&#10;- Created &quot;setup_dummy_tournament()&quot; which:&#10;1) loads the names from a csv file.&#10;2) Creates tournament&#10;3) Registers all players&#10;4) Gets pairings and reports matches for such pairings several times to mimmic the playing of a tournament.">
+      <created>1453961540096</created>
+      <option name="number" value="00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1453961540096</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -347,6 +354,7 @@
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24969843" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32922733" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -354,7 +362,6 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -404,7 +411,8 @@
     <MESSAGE value="tournament.sql:&#10;- Fixed &quot;standings&quot; view so that count of wins ignores matches that were draws.&#10;- added 'tournament_id' field to omw_table_raw View.&#10;- added 'tournament_id' and 'name' fields to &quot;omw_table&quot; View&#10;- added 'row_number' and 'tournament_id1' to &quot;pairings&quot; table. To be used in debugging.&#10;tournament.py:&#10;- Started work on swissPairings(), which is now swissPairings(tournament_id). It doesn't work right now. &#10;tournament_test.py:&#10;- Added matches and fixed swissPairings." />
     <MESSAGE value="tournament.py:&#10;- Changed signature of function from playerStandings() to playerStandings(tournament_id)&#10;- Narrowed return of query in playerStandings(tournament_id) so it passes the test.&#10;- Started work on swissPairings(tournament_id). It is working for tournaments with an even number of players. Still needs more work.&#10;tournament.sql:&#10;- Fixed &quot;standings&quot; View. It was returning nothing when there were no matches.&#10;- Cascaded fixes in &quot;standings&quot; to &quot;omw_table_raw&quot; and omw_table&#10;tournament_test.py&#10;- Fixed testStandingsBeforeMatches() to support more than one tournament.&#10;- Fixed testPairings to support multiple tournaments." />
     <MESSAGE value="tournament.py:&#10;- implemented swissPairings(tournament_id) to support tournaments with an odd number of players registered. There is a flaw though.&#10;Multiple calls to the function would continue to award &quot;bye&quot; rounds to the &quot;next&quot; player. It will look for the player with the least wins, least omw &#10;and no &quot;bye&quot; rounds, every time the function is called it'll find the next and will assign a bye to it. &#10;Currently the Database has no concept of state and it doesn't know what round is in and I think that's the problem.&#10;tournament.sql:&#10;- No changes here.&#10;tournament_test.py&#10;- Implemented testPairingsOdd: To test the above. Not finished though, it needs to be defined before it can be tested :).&#10;&#10;&#10;Roadmap: Need to provide state/implement the following(Python? Values in DB?)&#10;&#9;- If no rounds have been played(defined as no match has been committed to the DB), it should know who is supposed&#10;&#9;to play who in the current round of the tournament.&#10;&#9;- When matches are entered, they need to be consistent with the pairings of the current round.&#10;&#9;- Entering one match correctly seals the tournament(players cannot be added or deleted.)&#10;&#9;- Pairings will give an error until all matches in the current round have been input correctly." />
-    <option name="LAST_COMMIT_MESSAGE" value="tournament.py:&#10;- implemented swissPairings(tournament_id) to support tournaments with an odd number of players registered. There is a flaw though.&#10;Multiple calls to the function would continue to award &quot;bye&quot; rounds to the &quot;next&quot; player. It will look for the player with the least wins, least omw &#10;and no &quot;bye&quot; rounds, every time the function is called it'll find the next and will assign a bye to it. &#10;Currently the Database has no concept of state and it doesn't know what round is in and I think that's the problem.&#10;tournament.sql:&#10;- No changes here.&#10;tournament_test.py&#10;- Implemented testPairingsOdd: To test the above. Not finished though, it needs to be defined before it can be tested :).&#10;&#10;&#10;Roadmap: Need to provide state/implement the following(Python? Values in DB?)&#10;&#9;- If no rounds have been played(defined as no match has been committed to the DB), it should know who is supposed&#10;&#9;to play who in the current round of the tournament.&#10;&#9;- When matches are entered, they need to be consistent with the pairings of the current round.&#10;&#9;- Entering one match correctly seals the tournament(players cannot be added or deleted.)&#10;&#9;- Pairings will give an error until all matches in the current round have been input correctly." />
+    <MESSAGE value="tournament.py: &#10;- Fixed &quot;swissPairings(tournament_id)&quot; so that it no longer enters a match against a fake player to represent a bye.&#10;Byes are now represented by a pairing showing the player who received the bye against him/herself.&#10;- Function still returns pairings that, if followed, will lead to rematches. We're not there yet. &#10;tournament.sql:&#10;tournament_test.py:&#10;- Added displays of pairings on a tournament with an odd number of players.&#10;- Created &quot;setup_dummy_tournament()&quot; which:&#10;1) loads the names from a csv file.&#10;2) Creates tournament&#10;3) Registers all players&#10;4) Gets pairings and reports matches for such pairings several times to mimmic the playing of a tournament." />
+    <option name="LAST_COMMIT_MESSAGE" value="tournament.py: &#10;- Fixed &quot;swissPairings(tournament_id)&quot; so that it no longer enters a match against a fake player to represent a bye.&#10;Byes are now represented by a pairing showing the player who received the bye against him/herself.&#10;- Function still returns pairings that, if followed, will lead to rematches. We're not there yet. &#10;tournament.sql:&#10;tournament_test.py:&#10;- Added displays of pairings on a tournament with an odd number of players.&#10;- Created &quot;setup_dummy_tournament()&quot; which:&#10;1) loads the names from a csv file.&#10;2) Creates tournament&#10;3) Registers all players&#10;4) Gets pairings and reports matches for such pairings several times to mimmic the playing of a tournament." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -565,17 +573,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.sql">
+    <entry file="file://$PROJECT_DIR$/tournament.sql">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23817864">
-          <caret line="8" column="19" selection-start-line="0" selection-start-column="0" selection-end-line="8" selection-end-column="19" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="39" column="27" selection-start-line="39" selection-start-column="27" selection-end-line="39" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tournament.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="204" column="19" selection-start-line="204" selection-start-column="19" selection-end-line="204" selection-end-column="19" />
+        <state vertical-scroll-proportion="-2.6842105">
+          <caret line="58" column="4" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="43" />
           <folding>
             <element signature="e#91#106#0" expanded="true" />
           </folding>
@@ -584,19 +593,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tournament_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="175" column="33" selection-start-line="175" selection-start-column="33" selection-end-line="175" selection-end-column="33" />
+        <state vertical-scroll-proportion="0.4938704">
+          <caret line="193" column="0" selection-start-line="193" selection-start-column="0" selection-end-line="193" selection-end-column="0" />
           <folding>
             <element signature="e#56#80#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tournament.sql">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6252189">
-          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="38" />
-          <folding />
         </state>
       </provider>
     </entry>

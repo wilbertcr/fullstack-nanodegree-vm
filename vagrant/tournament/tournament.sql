@@ -19,7 +19,7 @@ CREATE TABLE players (
 
 CREATE TABLE tournaments (
     tournament_id SERIAL PRIMARY KEY,
-    name TEXT,
+    name TEXT
 );
 
 CREATE TABLE tournament_registration(

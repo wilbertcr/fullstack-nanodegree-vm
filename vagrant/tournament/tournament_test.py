@@ -116,7 +116,7 @@ def testReportMatches():
     print("7. After a match, players have updated standings.")
 
 
-def testPairings():
+def testPairingsEven():
     deleteMatches()
     deletePlayers()
     deleteTournaments()
@@ -165,51 +165,8 @@ def testPairings():
         if pair not in possible_pairs:
             raise ValueError(
                 "After one match, players with one win should be paired.")
-    print('10. After one match, players with one win are properly paired.')
+    print('8. After one match, players with one win are properly paired.')
 
-def setup_dummy_tournament():
-    deleteMatches()
-    deletePlayers()
-    deleteTournaments()
-    tournament_name = "Sunday Tournament"
-    tournament_id = registerTournament(tournament_name)
-    with open('players_list_even.csv','rb') as csvfile:
-        file_reader = csv.DictReader(csvfile,delimiter=',')
-        for row in file_reader:
-            registerPlayerInTournament(tournament_id, registerPlayer(row['Name']))
-    f = open("pairings.csv", 'w')
-    f.write("id1, name1, id2, name2,winner\n")
-    c = math.trunc(log(countPlayers(), 2))
-    pairings = swissPairings(tournament_id)
-    for row in pairings:
-        [id1, name1, id2, name2] = row
-        coin_toss = random.randint(0, 1)
-        if coin_toss == 0:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
-            reportMatch(tournament_id, id1, id2)
-        else:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
-            reportMatch(tournament_id, id2, id1)
-    pairings = swissPairings(tournament_id)
-    for row in pairings:
-        [id1, name1, id2, name2] = row
-        coin_toss = random.randint(0, 1)
-        if coin_toss == 0:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
-            reportMatch(tournament_id, id1, id2)
-        else:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
-            reportMatch(tournament_id, id2, id1)
-    pairings = swissPairings(tournament_id)
-    for row in pairings:
-        [id1, name1, id2, name2] = row
-        coin_toss = random.randint(0, 1)
-        if coin_toss == 0:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
-            reportMatch(tournament_id, id1, id2)
-        else:
-            f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
-            reportMatch(tournament_id, id2, id1)
 
 def testPairingsOdd():
     deleteMatches()
@@ -228,19 +185,65 @@ def testPairingsOdd():
     player_id = registerPlayer("Rarity")
     registerPlayerInTournament(tournament_id, player_id)
     standings = playerStandings(tournament_id)
-    [id1, id2, id3, id4, id5] = [row[0] for row in standings]
-    print("Standings:\n")
-    for row in standings:
-        print(row)
-    pairings = swissPairings(tournament_id)
-    print("Pairings:\n")
-    for row in pairings:
-        print(row)
-    pairings = swissPairings(tournament_id)
-    print("Pairings:\n")
-    for row in pairings:
-        print(row)
 
+    [id1, id2, id3, id4, id5] = [row[0] for row in standings]
+    pairings = swissPairings(tournament_id)
+    if len(pairings) != 3:
+        raise ValueError(
+            "For 5 players, swissPairings should return 3 pairs. Got {pairs}".format(pairs=len(pairings)))
+
+    f = open("pairings.csv", 'w')
+    f.write("id1, name1, id2, name2,winner\n")
+    c = int(math.ceil(log(countPlayers(), 2)))
+    while c > 0:
+        pairings = swissPairings(tournament_id)
+        for row in pairings:
+            [id1, name1, id2, name2] = row
+            coin_toss = random.randint(0, 2)
+            if coin_toss == 0:
+                f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
+                reportMatch(tournament_id, id1, id2)
+            elif coin_toss == 1:
+                f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
+                reportMatch(tournament_id, id2, id1)
+            else:
+                f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2, 1))
+                reportMatch(tournament_id, id2, id1, 1)
+        c -= 1
+    print("9. Emulated tournament with 5 players.")
+
+# You can get a list with a lost more players at
+# http://chess-results.com/tnr138146.aspx?lan=1&zeilen=0&flag=30&wi=821&prt=4
+# It's an excel sheet with the same format as the input I am giving it.
+#
+def testPairings():
+    deleteMatches()
+    deletePlayers()
+    deleteTournaments()
+    tournament_name = "Sunday Tournament"
+    tournament_id = registerTournament(tournament_name)
+
+    with open('players.csv','rb') as csvfile:
+        file_reader = csv.DictReader(csvfile,delimiter=',')
+        for row in file_reader:
+            registerPlayerInTournament(tournament_id, registerPlayer(row['Name']))
+    c = int(math.ceil(log(countPlayers(), 2)))
+    while c > 0:
+        f = open("pairings{0}.csv".format(c), 'w')
+        f.write("id1, name1, id2, name2,winner\n")
+        pairings = swissPairings(tournament_id)
+        for row in pairings:
+            [id1, name1, id2, name2] = row
+            coin_toss = random.randint(0, 1)
+            if coin_toss == 0:
+                f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id1))
+                reportMatch(tournament_id, id1, id2)
+            else:
+                f.write("{0},{1},{2},{3},{4}\n".format(id1, name1, id2, name2, id2))
+                reportMatch(tournament_id, id2, id1)
+        c -= 1
+    print("10. Successfully Emulated tournament with {0} players "
+          "loaded from file".format(countPlayersInTournament(tournament_id)))
 
 
 if __name__ == '__main__':
@@ -251,9 +254,9 @@ if __name__ == '__main__':
     testRegisterCountDelete()
     testStandingsBeforeMatches()
     testReportMatches()
-    testPairings()
+    testPairingsEven()
     testPairingsOdd()
-    setup_dummy_tournament()
+    testPairings()
     print("Success!  All tests pass!")
 
 

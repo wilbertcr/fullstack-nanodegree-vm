@@ -5,6 +5,7 @@
 
 import psycopg2
 import bleach
+import random
 from math import log
 
 
@@ -55,6 +56,32 @@ def countPlayers():
     db_connection.close()
     return result[0]
 
+def countPlayersInTournament(tournament_id):
+    # Connect to database
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Let's find out how many players are registered in the tournament.
+    db_cursor.execute("SELECT count(*) FROM tournament_registration WHERE tournament_id=%s", (tournament_id,))
+    # And store it in variable "players_in_tournament"
+    players_in_tournament = db_cursor.fetchone()[0]
+
+    db_cursor.close()
+    db_connection.close()
+    return players_in_tournament
+
+def countMatchesInTournament(tournament_id):
+    # Connect to database
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    # Let's find out how many players are registered in the tournament.
+    db_cursor.execute("SELECT count(*) FROM matches WHERE tournament_id=%s", (tournament_id,))
+    # And store it in variable "count"
+    matches_in_tournament = db_cursor.fetchone()[0]
+    db_cursor.close()
+    db_connection.close()
+    return matches_in_tournament
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -185,6 +212,78 @@ def reportMatch(tournament, winner, loser, draw=0):
     db_connection.close()
 
 
+def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id):
+    # Connect to database
+    """
+
+    Returns:
+        object: 
+    """
+    db_connection = connect()
+    # Get db cursor
+    db_cursor = db_connection.cursor()
+    if registered_matches == 0 or registered_matches % ((players_in_tournament+1)/2) == 0:
+        # Let's first get all the players in the tournament ordered by wins and then by omw.
+        db_cursor.execute("SELECT id, name, wins, opponents_wins "
+                          "FROM omw_table WHERE tournament_id=%s"
+                          "ORDER BY wins,opponents_wins;", (tournament_id,))
+        # omw_table = SELECT
+        omw_table = db_cursor.fetchall()
+        # We're going to start at the bottom index.
+        curr_index = players_in_tournament
+        # We'll use fake_player and draw to create "matches" representing "byes"
+        # Such matches will have the player that was granted the bye as a winner
+        # and playerId -1 as a loser.
+        fake_player = -1
+        # Let's start iterating from the bottom.
+        while curr_index > 0:
+            # Getting current row.
+            current_row = omw_table[curr_index - 1]
+            # Getting row's playerId field.
+            player_id = current_row[0]
+            # Let's check if player has received a bye before.
+            db_cursor.execute("SELECT COALESCE(count(*),0) FROM matches "
+                              "WHERE tournament_id=%s AND "
+                              "winner = %s AND "
+                              "loser = %s", (tournament_id, player_id, fake_player))
+            bye_count = db_cursor.fetchone()[0]
+            # If this player's bye count is zero for this tournament.
+            if bye_count == 0:
+                # Then we will return it as playing against him/herself in this round.
+                db_cursor.execute("SELECT id as id1, name as name1, id as id2, name as name2 "
+                                  "FROM omw_table "
+                                  "WHERE id = %s "
+                                  "UNION "
+                                  "SELECT id1,name1,id2,name2 FROM "
+                                      "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1 "
+                                      "FROM omw_table WHERE id != %s) omw_table1,"
+                                      "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2 "
+                                      "FROM omw_table WHERE id != %s) omw_table2 "
+                                  "WHERE mod(omw_table1.row_number, 2) = 1 AND omw_table1.row_number+1=omw_table2.row_number;",(player_id, player_id, player_id))
+                # Fetch results.
+                db_result = db_cursor.fetchall()
+                # And break out of the loop, since we found a player without a bye for this round.
+                break
+            # Otherwise
+            else:
+                # Let's just check next player up the t
+                curr_index -= 1
+    else:
+        raise Exception('Inconsistent Data. Finish Entering the round!')
+    return db_result
+
+
+def getRange(center, width, max_index):
+    left = center-width/2
+    if left < 0:
+        width += -left
+        left = 0
+    right = center+width/2
+    if right > max_index:
+        right = max_index
+    return [left, right]
+
+
 def swissPairings(tournament_id):
     """Returns a list of pairs of players for the next round of a match.
   
@@ -205,13 +304,12 @@ def swissPairings(tournament_id):
     # Get db cursor
     db_cursor = db_connection.cursor()
     # Let's find out how many players are registered in the tournament.
-    db_cursor.execute("SELECT count(*) FROM tournament_registration WHERE tournament_id=%s", (tournament_id,))
-    # And store it in variable "count"
-    players_in_tournament = db_cursor.fetchone()[0]
-    # If the number of players is even. Then we can get the pairings from the pairings table.
-    db_cursor.execute("SELECT count(*) FROM matches WHERE tournament_id = %s", (tournament_id,))
-    registered_matches = db_cursor.fetchone()[0]
+    players_in_tournament = countPlayersInTournament(tournament_id)
+    # How many matches are there registered?
+    registered_matches = countMatchesInTournament(tournament_id)
+
     db_result = 0
+    # If the number of players is even. Then we can get the pairings from the pairings table.
     if players_in_tournament % 2 == 0:
         if registered_matches == 0 or registered_matches % (players_in_tournament/2)  == 0:
             db_cursor.execute("SELECT id1,name1, id2,name2 FROM pairings WHERE tournament_id1=%s", (tournament_id,))
@@ -220,66 +318,69 @@ def swissPairings(tournament_id):
             print("Finish Entering the round! Data is inaccurate right now! I probably broke something!\n")
     # If the number of players is not even, then things are more complicated.
     else:
-        if registered_matches == 0 or registered_matches % ((players_in_tournament+1)/2) == 0:
-            # Let's first get all the players in the tournament ordered by wins and then by omw.
-            db_cursor.execute("SELECT id, name, wins, opponents_wins "
-                              "FROM omw_table WHERE tournament_id=%s"
-                              "ORDER BY wins,opponents_wins;", (tournament_id,))
-            # omw_table = SELECT
-            omw_table = db_cursor.fetchall()
-            # We're going to start at the bottom index.
-            curr_index = players_in_tournament
-            # We'll use fake_player and draw to create "matches" representing "byes"
-            # Such matches will have the player that was granted the bye as a winner
-            # and playerId -1 as a loser.
-            fake_player = -1
-            # Let's start iterating from the bottom.
-            while curr_index > 0:
-                # Getting current row.
-                current_row = omw_table[curr_index - 1]
-                # Getting row's playerId field.
-                player_id = current_row[0]
-                # Let's check if player has received a bye before.
-                db_cursor.execute("SELECT COALESCE(count(*),0) FROM matches "
-                                  "WHERE tournament_id=%s AND "
-                                  "winner = %s AND "
-                                  "loser = %s", (tournament_id, player_id, fake_player))
-                bye_count = db_cursor.fetchone()[0]
-                # If this player's bye count is zero for this tournament.
-                if bye_count == 0:
-                    # Then we will return it as playing against him/herself in this round.
-                    db_cursor.execute("SELECT id as id1, name as name1, id as id2, name as name2 "
-                                      "FROM omw_table "
-                                      "WHERE id = %s "
-                                      "UNION "
-                                      "SELECT id1,name1,id2,name2 FROM "
-                                          "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1 "
-                                          "FROM omw_table WHERE id != %s) omw_table1,"
-                                          "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2 "
-                                          "FROM omw_table WHERE id != %s) omw_table2 "
-                                      "WHERE mod(omw_table1.row_number, 2) = 1 AND omw_table1.row_number+1=omw_table2.row_number;",(player_id, player_id, player_id))
-                    # Fetch results.
-                    db_result = db_cursor.fetchall()
-                    # And break out of the loop, since we found a player without a bye for this round.
-                    break
-                # Otherwise
-                else:
-                    # Let's just check next player up the t
-                    curr_index -= 1
-        else:
-            print("Finish Entering the round! Data is inaccurate right now! I probably broke something!\n")
-    # Even though this pairing grants the bye to the right players, it can spit out
-    # pairings that will result in rematches.
-    for row in db_result:
-        [id1, name1, id2, name2] = row
-        db_cursor.execute("SELECT count(*) "
-                          "FROM matches "
-                          "WHERE tournament_id = %s AND "
-                          "((winner = %s AND loser = %s) OR (winner = %s AND loser = %s))",
-                          (tournament_id, id1, id2, id2, id1))
-        repeated_pairings = db_cursor.fetchone()[0]
-        if repeated_pairings > 0:
-            print("Pairing between player {0} and {1} is a rematch.\n".format(name1, name2))
+        db_result = getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
+        # Even though this pairing grants the bye to the right player, it can spit out
+        # pairings that will result in rematches, so we need to fix that.
+    loop_canary = True
+    range_factor = 1
+    while loop_canary:
+        loop_canary = False
+        repeated_pairings = 0
+        # We'll store the left side(id1,name1) of the pairings here.
+        left = []
+        # And the right side(id2,name2) here.
+        right = []
+        # This list will tell us the indexes of the problematic pairings.
+        positions = []
+        # This variable keeps track of the row we're in as we iterate
+        # through the pairings.
+        index = 0
+        for row in db_result:
+            # First let's decompose the rows.
+            [id1, name1, id2, name2] = row
+            # Let's populate "left" and "right" for this particular pairing.
+            left.append([id1, name1])
+            right.append([id2, name2])
+            # Have these two played each other before? 0 = no, >1 = yes.
+            db_cursor.execute("SELECT count(*) "
+                              "FROM matches "
+                              "WHERE tournament_id = %s AND "
+                              "((winner = %s AND loser = %s) OR (winner = %s AND loser = %s))",
+                              (tournament_id, id1, id2, id2, id1))
+            # Let's get the answer.
+            repeated_pairings = db_cursor.fetchone()[0]
+
+            # If this is a rematch, we're going to record the index of the pairing.
+            if repeated_pairings > 0:
+                loop_canary = True
+                positions.append(index)
+            # Increase the index.
+            index += 1
+
+        number_of_pairings = len(db_result)
+        # Let's see if there are rematches among the pairings.
+        if len(positions) > 0:
+            # Nop, got some re-matches in that
+            # If there are, let's work through each one.
+            for index in positions:
+                # We're going to shuffle the players in the vicinity
+                # of the player
+                ran = getRange(index, range_factor*2, number_of_pairings)
+                temp = right[ran[0]:ran[1]]
+                random.shuffle(temp)
+                right[ran[0]:ran[1]] = temp
+            if range_factor > number_of_pairings:
+                player_list = left+right
+                random.shuffle(player_list)
+                left = player_list[:number_of_pairings]
+                right = player_list[number_of_pairings:]
+            # And now let's try to piece them back together.
+            index = 0
+            while index < len(db_result):
+                db_result
+                db_result[index] = (left[index][0], left[index][1], right[index][0], right[index][1])
+                index += 1
+        range_factor += 1
     db_cursor.close()
     db_connection.close()
     # Return results.
