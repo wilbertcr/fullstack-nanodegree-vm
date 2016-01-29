@@ -5,6 +5,9 @@
 --
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
+
+DROP DATABASE IF EXISTS tournament;
+CREATE DATABASE tournament;
 \connect tournament;
 
 DROP TABLE IF EXISTS players CASCADE;
@@ -14,7 +17,7 @@ DROP TABLE IF EXISTS tournament_registration CASCADE;
 
 CREATE TABLE players (
     id serial PRIMARY KEY,
-    name TEXT
+    name TEXT NOT NULL
 );
 
 CREATE TABLE tournaments (
@@ -56,7 +59,6 @@ CREATE VIEW standings AS
     ORDER BY wins DESC;
 
 -- This could be a subquery also, but did it this way for clarity.
-
 CREATE VIEW omw_table_raw AS
     SELECT *
     FROM
@@ -77,6 +79,10 @@ CREATE VIEW omw_table_raw AS
             draw = 0);
 
 
+-- Note how omw_table is ordered by wins first and then by opponent wins.
+-- That means pairings fulfill the requirement that:
+    -- When two players have the same number of wins, rank them according to
+    -- OMW (Opponent Match Wins), the total number of wins by players they have played against.
 CREATE VIEW omw_table AS
     SELECT standings.tournament_id,standings.id as id, name, wins,  SUM(COALESCE(opponent_wins,0)) AS opponents_wins
     FROM standings LEFT OUTER JOIN omw_table_raw ON standings.id = omw_table_raw.player_id

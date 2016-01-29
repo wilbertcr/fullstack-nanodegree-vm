@@ -10,16 +10,20 @@ from math import log
 
 
 def connect():
-    """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    """Connect to the PostgreSQL database.  Returns a database connection
+    and a cursor."""
+    try:
+        db = psycopg2.connect("dbname=tournament")
+        cursor = db.cursor()
+    except psycopg2.Error as e:
+        print("{0}: {1}\n".format(e.pgcode, e.pgerror))
+    return db, cursor
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("DELETE FROM matches")
     db_connection.commit()
@@ -30,10 +34,8 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("DELETE FROM players")
     db_connection.commit()
@@ -44,10 +46,8 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("SELECT count(*) FROM players")
     # Close cursor and connection to db.
@@ -57,10 +57,8 @@ def countPlayers():
     return result[0]
 
 def countPlayersInTournament(tournament_id):
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Let's find out how many players are registered in the tournament.
     db_cursor.execute("SELECT count(*) FROM tournament_registration WHERE tournament_id=%s", (tournament_id,))
     # And store it in variable "players_in_tournament"
@@ -71,10 +69,8 @@ def countPlayersInTournament(tournament_id):
     return players_in_tournament
 
 def countMatchesInTournament(tournament_id):
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Let's find out how many players are registered in the tournament.
     db_cursor.execute("SELECT count(*) FROM matches WHERE tournament_id=%s", (tournament_id,))
     # And store it in variable "count"
@@ -92,10 +88,8 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("INSERT INTO players(name) VALUES(%s) RETURNING id", (name,))
     player_id = db_cursor.fetchone()[0]
@@ -107,10 +101,8 @@ def registerPlayer(name):
 
 def deleteTournaments():
     """Remove all the tournament records from the database."""
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("DELETE FROM tournaments")
     db_connection.commit()
@@ -130,10 +122,8 @@ def registerTournament(name):
       :type tournament_id: int
       tournament_id: The tournament's id(unique)
     """
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("INSERT INTO tournaments(name) VALUES(%s) RETURNING tournament_id", (name,))
     db_connection.commit()
@@ -151,9 +141,8 @@ def registerPlayerInTournament(tournament_id, player_id):
         tournament_id:
         player_id:
     """
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("INSERT INTO tournament_registration(tournament_id,player_id) VALUES(%s,%s);",
                       (tournament_id, player_id))
@@ -174,10 +163,8 @@ def playerStandings(tournament_id):
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("SELECT id,name,wins,matches FROM standings WHERE tournament_id = %s;", (tournament_id,))
     # Get results
@@ -198,10 +185,8 @@ def reportMatch(tournament, winner, loser, draw=0):
       loser:  the id number of the player who lost
       draw: whether the game is a draw(1) or not(0)
     """
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Execute query
     db_cursor.execute("INSERT INTO matches(tournament_id, winner, loser,draw) VALUES(%s,%s,%s,%s)",
                       (tournament, winner, loser, draw))
@@ -213,10 +198,9 @@ def reportMatch(tournament, winner, loser, draw=0):
 
 
 def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id):
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
+
     if registered_matches == 0 or registered_matches % ((players_in_tournament+1)/2) == 0:
         # Let's first get all the players in the tournament ordered by wins and then by omw.
         db_cursor.execute("SELECT id, name, wins, opponents_wins "
@@ -226,10 +210,6 @@ def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
         omw_table = db_cursor.fetchall()
         # We're going to start at the bottom index.
         curr_index = players_in_tournament
-        # We'll use fake_player and draw to create "matches" representing "byes"
-        # Such matches will have the player that was granted the bye as a winner
-        # and playerId -1 as a loser.
-        fake_player = -1
         # Let's start iterating from the bottom.
         while curr_index > 0:
             # Getting current row.
@@ -240,7 +220,7 @@ def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
             db_cursor.execute("SELECT COALESCE(count(*),0) FROM matches "
                               "WHERE tournament_id=%s AND "
                               "winner = %s AND "
-                              "loser = %s", (tournament_id, player_id, fake_player))
+                              "loser = %s", (tournament_id, player_id, player_id))
             bye_count = db_cursor.fetchone()[0]
             # If this player's bye count is zero for this tournament.
             if bye_count == 0:
@@ -248,14 +228,15 @@ def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
                 db_cursor.execute("SELECT id as id1, name as name1, id as id2, name as name2 "
                                   "FROM omw_table "
                                   "WHERE id = %s AND tournament_id = %s"
-                                  "UNION "
-                                  "SELECT id1,name1,id2,name2 FROM "
-                                      "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1 "
-                                      "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table1,"
-                                      "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2 "
-                                      "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table2 "
+                                  , (player_id, tournament_id))
+                bye_pairing = db_cursor.fetchone()
+                db_cursor.execute("SELECT id1,name1,id2,name2 FROM "
+                                  "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id1, id as id1, name as name1 "
+                                  "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table1,"
+                                  "(SELECT ROW_NUMBER() OVER () AS row_number,tournament_id as tournament_id2, id as id2,name as name2 "
+                                  "FROM omw_table WHERE id != %s AND tournament_id = %s) omw_table2 "
                                   "WHERE mod(omw_table1.row_number, 2) = 1 AND omw_table1.row_number+1=omw_table2.row_number;"
-                                  , (player_id, tournament_id, player_id, tournament_id, player_id, tournament_id))
+                                  , (player_id, tournament_id, player_id, tournament_id))
                 # Fetch results.
                 db_result = db_cursor.fetchall()
                 # And break out of the loop, since we found a player without a bye for this round.
@@ -266,7 +247,7 @@ def getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
                 curr_index -= 1
     else:
         raise Exception('Inconsistent Data. Finish Entering the round!')
-    return db_result
+    return bye_pairing, db_result
 
 
 def getRange(center, width, max_index):
@@ -295,15 +276,14 @@ def swissPairings(tournament_id):
         id2: the second player's unique id
         name2: the second player's name
     """
-    # Connect to database
-    db_connection = connect()
-    # Get db cursor
-    db_cursor = db_connection.cursor()
+    # Connect to database and get cursor.
+    db_connection, db_cursor = connect()
     # Let's find out how many players are registered in the tournament.
     players_in_tournament = countPlayersInTournament(tournament_id)
     # How many matches are there registered?
     registered_matches = countMatchesInTournament(tournament_id)
-
+    # We may or may not need a bye pairing.
+    bye_pairing = None
     db_result = 0
     # If the number of players is even. Then we can get the pairings from the pairings table.
     if players_in_tournament % 2 == 0:
@@ -314,9 +294,9 @@ def swissPairings(tournament_id):
             print("Finish Entering the round! Data is inaccurate right now! I probably broke something!\n")
     # If the number of players is not even, then things are more complicated.
     else:
-        db_result = getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
+        bye_pairing, db_result = getPairingsWithBye(registered_matches, players_in_tournament, tournament_id)
         # Even though this pairing grants the bye to the right player, it can spit out
-        # pairings that will result in rematches, so we need to fix that.
+        # pairings that will result in rematches, so we will need to fix that.
     loop_canary = True
     # If need be, we'll need to shuffle things around in the vicinity
     # of some pairings. range_factor defines how big that vicinity is.
@@ -324,7 +304,6 @@ def swissPairings(tournament_id):
     range_factor = 1
     # This will loop until the pairing contains no rematches.
     while loop_canary:
-
         loop_canary = False
         repeated_pairings = 0
         # We'll store the left side(id1,name1) of the pairings here.
@@ -388,5 +367,7 @@ def swissPairings(tournament_id):
         range_factor += 1
     db_cursor.close()
     db_connection.close()
-    # Return results.
+    if bye_pairing is not None:
+        db_result = [bye_pairing]+db_result
+    # Return results
     return db_result
