@@ -318,8 +318,13 @@ def swissPairings(tournament_id):
         # Even though this pairing grants the bye to the right player, it can spit out
         # pairings that will result in rematches, so we need to fix that.
     loop_canary = True
+    # If need be, we'll need to shuffle things around in the vicinity
+    # of some pairings. range_factor defines how big that vicinity is.
+    # It starts at 1 and grows as we fail to get pairings without rematches.
     range_factor = 1
+    # This will loop until the pairing contains no rematches.
     while loop_canary:
+
         loop_canary = False
         repeated_pairings = 0
         # We'll store the left side(id1,name1) of the pairings here.
@@ -328,9 +333,10 @@ def swissPairings(tournament_id):
         right = []
         # This list will tell us the indexes of the problematic pairings.
         positions = []
-        # This variable keeps track of the row we're in as we iterate
+        # This variable(index) keeps track of the row we're in as we iterate
         # through the pairings.
         index = 0
+        # Let's check if there are rematches in our pairings.
         for row in db_result:
             # First let's decompose the rows.
             [id1, name1, id2, name2] = row
@@ -345,8 +351,8 @@ def swissPairings(tournament_id):
                               (tournament_id, id1, id2, id2, id1))
             # Let's get the answer.
             repeated_pairings = db_cursor.fetchone()[0]
-
             # If this is a rematch, we're going to record the index of the pairing.
+            # and set the loop canary to true.
             if repeated_pairings > 0:
                 loop_canary = True
                 positions.append(index)
@@ -356,8 +362,8 @@ def swissPairings(tournament_id):
         number_of_pairings = len(db_result)
         # Let's see if there are rematches among the pairings.
         if len(positions) > 0:
-            # Nop, got some re-matches in that
-            # If there are, let's work through each one.
+            # It seems we have some rematches in the list.
+            # Let's work through each one, one by one.
             for index in positions:
                 # We're going to shuffle the players in the vicinity
                 # of the player
@@ -365,6 +371,10 @@ def swissPairings(tournament_id):
                 temp = right[ran[0]:ran[1]]
                 random.shuffle(temp)
                 right[ran[0]:ran[1]] = temp
+            # If range_factor is too large, that means we've
+            # exhausted what we can do by shuffling the "right" side of the matches
+            # and we need to shuffle the entire list of players to get a list
+            # of pairings that contains no rematches.
             if range_factor > number_of_pairings:
                 player_list = left+right
                 random.shuffle(player_list)
