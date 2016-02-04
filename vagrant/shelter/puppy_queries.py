@@ -1,9 +1,9 @@
-Star#This is how a file making use of the objects(rather than creating them in the database)
+#This is how a file making use of the objects(rather than creating them in the database)
 #would look like.
 
 import datetime
-from sqlalchemy import create_engine,desc
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, desc, asc, join, inspect, Column
+from sqlalchemy.orm import sessionmaker,aliased
 from puppies import Base, Shelter, Puppy
 
 engine = create_engine('sqlite:///puppyshelter.db', echo=True)
@@ -17,8 +17,7 @@ session = DBSession()
 query1 = session.query(Puppy).order_by(Puppy.name)
 pups1 = query1.all()
 for item in pups1:
-    print(item.name)
-    print(item.dateOfBirth)
+    print("Name: "+item.name+" DOB: "+str(item.dateOfBirth))
 
 #2. Query all of the puppies that are less than 6 months old organized by the youngest first
 
@@ -58,6 +57,20 @@ for item in pups2:
     print("Name: "+item.name+" DOB: "+str(item.dateOfBirth))
 
 #3. Query all puppies by ascending weight
+query3 = session.query(Puppy).\
+    order_by(asc(Puppy.weight))
+pups3 = query3.all()
+for item in pups3:
+    print("Name: "+item.name+" Weight: "+str(item.weight))
+
+
 
 #4. Query all puppies grouped by the shelter in which they are staying
 
+puppy_alias = aliased(Puppy)
+query4 = session.query(puppy_alias, Shelter).\
+    join(Shelter, Shelter.id == puppy_alias.shelter_id).\
+    order_by(puppy_alias.shelter_id)
+pups4 = query4.all()
+for item in pups4:
+    print("Shelter: "+item[1].name+". Dog Name: "+item[0].name)
