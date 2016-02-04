@@ -2,7 +2,7 @@
 #would look like.
 
 import datetime
-from sqlalchemy import create_engine, desc, asc, join, inspect, Column
+from sqlalchemy import create_engine, desc, asc
 from sqlalchemy.orm import sessionmaker,aliased
 from puppies import Base, Shelter, Puppy
 
@@ -11,7 +11,6 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 """:type: sqlalchemy.orm.Session"""
 session = DBSession()
-
 
 #1. Query all of the puppies and return the results in ascending alphabetical order
 query1 = session.query(Puppy).order_by(Puppy.name)
@@ -26,6 +25,7 @@ for item in pups1:
 query2 = session.query(Puppy).\
     filter((datetime.date.today()-Puppy.dateOfBirth) < datetime.date.today()-(datetime.date.today()-datetime.timedelta(days=182))).\
     order_by(Puppy.dateOfBirth)
+
 # This is what happens under the hood here.
 # 2016-02-03 17:57:23,832 INFO sqlalchemy.engine.base.Engine SELECT puppy.id AS puppy_id, puppy.name AS puppy_name, puppy.gender AS puppy_gender, puppy."dateOfBirth" AS "puppy_dateOfBirth", puppy.picture AS puppy_picture, puppy.shelter_id AS puppy_shelter_id, puppy.weight AS puppy_weight
 # FROM puppy
@@ -47,7 +47,6 @@ def monthdelta(date, delta):
     d = min(date.day, [31, 29 if y%4 == 0 and not y%400 == 0 else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m-1])
     #Let's get the shifted date.
     return date.replace(day=d, month=m, year=y)
-
 
 query2 = session.query(Puppy).\
     filter(Puppy.dateOfBirth > monthdelta(datetime.date.today(), -6)).\
@@ -72,5 +71,6 @@ query4 = session.query(puppy_alias, Shelter).\
     join(Shelter, Shelter.id == puppy_alias.shelter_id).\
     order_by(puppy_alias.shelter_id)
 pups4 = query4.all()
+
 for item in pups4:
     print("Shelter: "+item[1].name+". Dog Name: "+item[0].name)
