@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, Numeric, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -14,7 +14,16 @@ class Shelter(Base):
     state = Column(String(20))
     zipCode = Column(String(10))
     website = Column(String)
-    
+
+adoptions = Table('adoptions', Base.metadata, 
+                  Column('person_id', Integer, ForeignKey('person.id')),
+                  Column('puppy_id', Integer, ForeignKey('puppy.id'))
+                  )
+
+#One-to-one association between the puppies
+#and their profiles
+#Many-to-many relation between 
+#puppies and people
 class Puppy(Base):
     __tablename__ = 'puppy'
     id = Column(Integer, primary_key=True)
@@ -25,6 +34,26 @@ class Puppy(Base):
     shelter_id = Column(Integer, ForeignKey('shelter.id'))
     shelter = relationship(Shelter)
     weight = Column(Numeric(10))
+    profiles = relationship("Profiles", uselist=False, back_populates="puppy")
+    puppies = relationship("Puppy",secondary=adoptions)
+
+#Many-to-many relation between 
+#puppies and people
+class Person(Base):
+    __tablename__ = 'person'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+
+#One-to-one association between the puppies
+#and their profiles
+class Profiles(Base):
+    __tablename__ = 'profiles'
+    id = Column(Integer, primary_key=True)
+    puppy_id = Column(Integer, ForeignKey('puppy.id'))
+    picture = Column(String)
+    description = Column(String(2000))
+    special_needs = Column(String)
+    puppy = relationship("Puppy", back_populates="profiles")
 
 
 engine = create_engine('sqlite:///puppyshelter.db')
