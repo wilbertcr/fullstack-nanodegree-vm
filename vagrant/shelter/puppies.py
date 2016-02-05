@@ -14,6 +14,8 @@ class Shelter(Base):
     state = Column(String(20))
     zipCode = Column(String(10))
     website = Column(String)
+    maximum_capacity = Column(Integer)
+    cur_occupancy = Column(Integer)
 
 adoptions = Table('adoptions', Base.metadata, 
                   Column('person_id', Integer, ForeignKey('person.id')),

@@ -7,7 +7,7 @@ def upgrade(migrate_engine):
     # migrate_engine to your metadata
     meta = MetaData(bind=migrate_engine)
     shelter = Table('shelter', meta, autoload=True)
-    maximum_capacity = Column('maximum_capacity',Integer)
+    maximum_capacity = Column('maximum_capacity', Integer)
     maximum_capacity.create(shelter)
     pass
 
