@@ -1,5 +1,5 @@
 
-import json
+import json, sys
 import datetime
 import urllib.request , urllib.parse
 import time
@@ -158,7 +158,7 @@ def get_distances(origin_address):
             print(shelter['address'])
             print(shelter['driving_distance'])
             return shelter
-
+    raise Exception("Zero empty shelters found.")
 
 origin_address = '655 12th Street, Oakland, CA 94607, USA'
 get_distances(origin_address)
