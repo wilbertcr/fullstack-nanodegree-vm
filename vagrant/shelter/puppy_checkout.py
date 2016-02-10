@@ -96,7 +96,14 @@ def merge_sort(shelters):
                 raise Exception('Could not merge, sub arrays sizes do not match the main array')
 
 
-def get_distances(origin_address):
+def get_closest_shelter(origin_address):
+    """
+    Args:
+        origin_address: The address of the user, looking to check a puppy into a shelter.
+    Returns:
+        shelter: A shelter(id,name,address,...) object
+    Raises: Exception when no shelter has available space for this puppy.
+    """
     api_key = get_key()
     url_base = 'https://maps.googleapis.com/maps/api/distancematrix/json?'
     shelter_occupancy = get_shelter_occupancy()
@@ -161,4 +168,4 @@ def get_distances(origin_address):
     raise Exception("Zero empty shelters found.")
 
 origin_address = '655 12th Street, Oakland, CA 94607, USA'
-get_distances(origin_address)
+get_closest_shelter(origin_address)
