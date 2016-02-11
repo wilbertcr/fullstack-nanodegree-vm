@@ -17,7 +17,7 @@ class Shelter(Base):
     maximum_capacity = Column(Integer)
     cur_occupancy = Column(Integer)
 
-adoptions = Table('adoptions', Base.metadata, 
+adoptions = Table('adoptions', Base.metadata,
                   Column('person_id', Integer, ForeignKey('person.id')),
                   Column('puppy_id', Integer, ForeignKey('puppy.id'))
                   )
@@ -37,7 +37,7 @@ class Puppy(Base):
     shelter = relationship(Shelter)
     weight = Column(Numeric(10))
     profiles = relationship("Profiles", uselist=False, back_populates="puppy")
-    puppies = relationship("Puppy",secondary=adoptions)
+    people = relationship("Person", secondary=adoptions)
 
 #Many-to-many relation between 
 #puppies and people
@@ -45,6 +45,7 @@ class Person(Base):
     __tablename__ = 'person'
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
+    puppies = relationship("Puppy", secondary=adoptions)
 
 #One-to-one association between the puppies
 #and their profiles

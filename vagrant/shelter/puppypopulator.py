@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from puppies import Base, Shelter, Puppy
+from puppies import Base, Shelter, Puppy,Person
 # from flask.ext.sqlalchemy import SQLAlchemy
 from random import randint
 import datetime
@@ -78,11 +78,15 @@ def CreateRandomWeight():
 for i, x in enumerate(male_names):
     new_puppy = Puppy(name=x, gender="male", dateOfBirth=CreateRandomAge(), picture=random.choice(puppy_images),
                       shelter_id=randint(1, 5), weight=CreateRandomWeight())
+    new_person = Person(name=x)
+    session.add(new_person)
     session.add(new_puppy)
     session.commit()
 
 for i, x in enumerate(female_names):
     new_puppy = Puppy(name=x, gender="female", dateOfBirth=CreateRandomAge(), picture=random.choice(puppy_images),
                       shelter_id=randint(1, 5), weight=CreateRandomWeight())
+    new_person = Person(name=x)
+    session.add(new_person)
     session.add(new_puppy)
     session.commit()

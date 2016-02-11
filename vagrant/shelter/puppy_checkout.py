@@ -8,9 +8,9 @@ from sys import maxsize
 from sqlalchemy import create_engine, func, Column, Integer, Table, MetaData, asc
 from sqlalchemy.orm import sessionmaker
 from migrate import changeset
-from puppies import Base, Shelter, Puppy
+from puppies import Base, Shelter, Puppy, Person
 
-engine = create_engine('sqlite:///puppyshelter.db', echo=True)
+engine = create_engine('sqlite:///puppyshelter.db', echo=False)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 """:type: sqlalchemy.orm.Session"""
@@ -43,9 +43,6 @@ def update_occupancy(shelter_occupancy):
         shelter.cur_occupancy = cur_count[1]
         shelter.maximum_capacity = MAX_DOGS
         session.commit()
-
-shelter_occupancy = get_shelter_occupancy()
-update_occupancy(shelter_occupancy)
 
 
 def add_new_puppy(name, gender, dateOfBirth, picture, shelter_id, weight):
@@ -161,11 +158,30 @@ def get_closest_shelter(origin_address):
     #the complete list and have the user choose.
     #Many choices here, all depending on the use case.
     for shelter in container:
+        print(shelter['shelter_object'].cur_occupancy)
+        print(shelter['shelter_object'].maximum_capacity)
         if(shelter['shelter_object'].cur_occupancy < shelter['shelter_object'].maximum_capacity):
             print(shelter['address'])
             print(shelter['driving_distance'])
             return shelter
     raise Exception("Zero empty shelters found.")
 
+def execute_adoption(puppy_id,people_ids):
+    print('executing adoption')
+    for person_id in people_ids:
+        puppy = session.query(Puppy).filter_by(id=puppy_id).first()
+        person = session.query(Person).filter_by(id=person_id).first()
+        if puppy and person:
+            puppy.people.append(person)
+            session.add(puppy)
+            session.commit()
+            print(puppy.people)
+            print(person.puppies)
+
+
+shelter_occupancy = get_shelter_occupancy()
+update_occupancy(shelter_occupancy)
+
 origin_address = '655 12th Street, Oakland, CA 94607, USA'
 get_closest_shelter(origin_address)
+execute_adoption(2, [2, 3, 5, 7])
