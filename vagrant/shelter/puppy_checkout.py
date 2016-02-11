@@ -158,25 +158,23 @@ def get_closest_shelter(origin_address):
     #the complete list and have the user choose.
     #Many choices here, all depending on the use case.
     for shelter in container:
-        print(shelter['shelter_object'].cur_occupancy)
-        print(shelter['shelter_object'].maximum_capacity)
+        #print(shelter['shelter_object'].cur_occupancy)
+        #print(shelter['shelter_object'].maximum_capacity)
         if(shelter['shelter_object'].cur_occupancy < shelter['shelter_object'].maximum_capacity):
-            print(shelter['address'])
-            print(shelter['driving_distance'])
+            #print(shelter['address'])
+            #print(shelter['driving_distance'])
             return shelter
     raise Exception("Zero empty shelters found.")
 
 def execute_adoption(puppy_id,people_ids):
-    print('executing adoption')
+    print('Executing adoption')
+    puppy = session.query(Puppy).filter_by(id=puppy_id).first()
     for person_id in people_ids:
-        puppy = session.query(Puppy).filter_by(id=puppy_id).first()
         person = session.query(Person).filter_by(id=person_id).first()
         if puppy and person:
             puppy.people.append(person)
             session.add(puppy)
             session.commit()
-            print(puppy.people)
-            print(person.puppies)
 
 
 shelter_occupancy = get_shelter_occupancy()
