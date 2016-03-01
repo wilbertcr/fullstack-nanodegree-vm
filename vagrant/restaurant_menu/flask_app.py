@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, flash
 from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
-
+import time
 app = Flask(__name__)
 
 engine = create_engine('postgresql://vagrant:vagrantvm@localhost:5432/restaurant')
@@ -17,7 +17,7 @@ session = DBSession()
 def restaurantMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
-    return render_template('menu.html', restaurant=restaurant, items=items)
+    return render_template('menu.html', restaurant=restaurant, items=items, time=time)
 
 # Task 1: Create route for newMenuItem function here
 
@@ -25,15 +25,7 @@ def restaurantMenu(restaurant_id):
 def newMenuItem(restaurant_id):
     try:
         if request.method == 'GET':
-            output = ""
-            output += '''<form method='POST' enctype='multipart/form-data' action='/restaurants/{0}/menu/new'>'''.format(restaurant_id)
-            output += '''<h2>New menu item</h2>'''
-            output += '''Name: <input name="name" type="text"><br>'''
-            output += '''Description: <input name="description" type="text"><br>'''
-            output += '''Price: <input name="price" type="text"><br>'''
-            output += '''Course:<input name="course" type="text"><br>'''
-            output += '''<input type="submit" value="Submit"> </form>'''
-            return output
+            return render_template('newmenuitem.html', restaurant_id=restaurant_id)
         if request.method == 'POST':
             menuItem = MenuItem()
             menuItem.name = request.form['name']
@@ -43,6 +35,7 @@ def newMenuItem(restaurant_id):
             menuItem.restaurant_id = restaurant_id
             session.add(menuItem)
             session.commit()
+            flash("new menu item created!")
             return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     except Exception as inst:
         print(type(inst))
@@ -67,6 +60,7 @@ def editMenuItem(restaurant_id, menu_id):
             menuItem.price = request.form['price']
             session.add(menuItem)
             session.commit()
+            flash("Menu item edited!")
             return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
     except Exception as inst:
         print(type(inst))
@@ -75,11 +69,24 @@ def editMenuItem(restaurant_id, menu_id):
 
 
 # Task 3: Create a route for deleteMenuItem function here
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete')
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete', methods=['GET', 'POST'])
 def deleteMenuItem(restaurant_id, menu_id):
-    return "page to delete a menu item. Task 3 complete!"
-
+    try:
+        if request.method == 'GET':
+            item = session.query(MenuItem).filter_by(id=menu_id).one()
+            return render_template('deletemenuitem.html', item=item, restaurant_id=restaurant_id)
+        if request.method == 'POST':
+            menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
+            session.delete(menuItem)
+            session.commit()
+            flash("Menu item deleted!")
+            return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
