@@ -23,6 +23,16 @@ class MenuItem(Base):
     price = Column(String(8))
     restaurant_id = Column(Integer, ForeignKey('restaurant.id'))
     restaurant = relationship(Restaurant)
+    @property
+    def serialize(self):
+        #Returns object data in serializeable format
+        return {
+            'name': self.name,
+            'description': self.description,
+            'id': self.id,
+            'price': self.price,
+            'course': self.course,
+        }
 
 
 engine = create_engine('postgresql://vagrant:vagrantvm@localhost:5432/restaurant')

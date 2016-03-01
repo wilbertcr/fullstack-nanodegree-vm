@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, flash
+from flask import Flask, render_template, url_for, redirect, flash, jsonify
 from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -13,11 +13,45 @@ session = DBSession()
 
 
 @app.route('/')
+@app.route('/restaurants')
+def restaurants():
+    try:
+        restaurants = session.query(Restaurant).all()
+        return render_template('restaurants.html', restaurants=restaurants)
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/restaurants/new', methods=['GET', 'POST'])
+def newRestaurant():
+    try:
+        if request.method == 'GET':
+            return render_template('newrestaurant.html')
+        if request.method == 'POST':
+            restaurant = Restaurant()
+            restaurant.name = request.form['name']
+            session.add(restaurant)
+            session.commit()
+            flash("new restaurant created!")
+            return redirect(url_for('restaurants'))
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
-    restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
-    return render_template('menu.html', restaurant=restaurant, items=items, time=time)
+    try:
+        restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+        return render_template('menu.html', restaurant=restaurant, items=items, time=time)
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
 
 # Task 1: Create route for newMenuItem function here
 
@@ -81,6 +115,29 @@ def deleteMenuItem(restaurant_id, menu_id):
             session.commit()
             flash("Menu item deleted!")
             return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def restaurantMenuJSON(restaurant_id):
+    try:
+        restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+        return jsonify(MenuItems=[i.serialize for i in items])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def menuItemJSON(restaurant_id,menu_id):
+    try:
+        restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+        item = session.query(MenuItem).filter_by(id=menu_id).one()
+        return jsonify(MenuItem=[item.serialize])
     except Exception as inst:
         print(type(inst))
         print(inst.args)
