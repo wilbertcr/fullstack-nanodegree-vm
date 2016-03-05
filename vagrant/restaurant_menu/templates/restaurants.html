@@ -1,24 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
     <title>Restaurants</title>
+    <link rel="stylesheet" type="text/css" href="/static/main.css?v={{time.time()}}" />
+    <link rel="stylesheet" type="text/css" href="/static/styles.css?v={{time.time()}}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/babel" src="/static/js/RestaurantMenu.js?v={{time.time()}}"></script>
+    <script type="text/babel" src="/static/js/main.js?v={{time.time()}}"></script>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 </head>
 <body>
-    {% with messages = get_flashed_messages()%}
-        {% if messages %}
-        <ul>
-            {% for message in messages%}
-            <li>{{message}}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-    {% endwith%}
-    <a href="{{url_for('newRestaurant')}}">Create new restaurant</a>
-    <ul>
-    {% for restaurant in restaurants%}
-    <li><a href="{{url_for('restaurantMenu',restaurant_id=restaurant.id)}}">{{restaurant.name}}</a></li>
-    {%endfor%}
-    </ul>
+<!-- Start Border -->
+<div id="border"> <img src="{{url_for('static',filename='images/border-top.jpg')}}" alt="" class="block" />
+  <!-- Start Main Wrapper -->
+  <div id="wrapper">
+    <!-- Start Header -->
+    <div id="header"> <img src="{{url_for('static',filename='images/top-banner.jpg')}}" alt="" class="block" /> </div>
+    <!-- End Header -->
+    <!-- Start Navigation Bar -->
+    <div id="navbar"> Nav
+    <h2>Restaurants</h2>
+    </div>
+    <!--`End Navigation Bar -->
+    <div id="mainbox">
+    </div>
+  </div>
+  <!-- End Main Wrapper -->
+  <img src="{{url_for('static',filename='images/border-bottom.jpg')}}" class="block" style="float:left; margin-bottom: 20px;" alt="" /> <br />
+  <br />
+</div>
+<!-- End Border -->
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, flash, jsonify
+from flask import Flask, render_template, url_for, redirect, flash, jsonify,make_response
 from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -17,7 +17,7 @@ session = DBSession()
 def restaurants():
     try:
         restaurants = session.query(Restaurant).all()
-        return render_template('restaurants.html', restaurants=restaurants)
+        return render_template('restaurants.html', restaurants=restaurants, time=time)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -32,10 +32,11 @@ def newRestaurant():
         if request.method == 'POST':
             restaurant = Restaurant()
             restaurant.name = request.form['name']
-            session.add(restaurant)
-            session.commit()
-            flash("new restaurant created!")
-            return redirect(url_for('restaurants'))
+            if restaurant.name != "":
+                session.add(restaurant)
+                session.commit()
+                restaurants = session.query(Restaurant).all()
+                return jsonify(restaurants=[restaurant.serialize for restaurant in restaurants])
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -63,14 +64,16 @@ def newMenuItem(restaurant_id):
         if request.method == 'POST':
             menuItem = MenuItem()
             menuItem.name = request.form['name']
+            print(menuItem)
             menuItem.description = request.form['description']
             menuItem.course = request.form['course']
             menuItem.price = request.form['price']
             menuItem.restaurant_id = restaurant_id
             session.add(menuItem)
             session.commit()
+
             flash("new menu item created!")
-            return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+            return jsonify(NewItem=[menuItem.serialize])
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -113,12 +116,26 @@ def deleteMenuItem(restaurant_id, menu_id):
             menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
             session.delete(menuItem)
             session.commit()
-            flash("Menu item deleted!")
-            return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
+            restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+            items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+            return jsonify(MenuItems=[i.serialize for i in items])
     except Exception as inst:
         print(type(inst))
         print(inst.args)
         print(inst)
+
+
+
+@app.route('/restaurants/JSON')
+def restaurantSJSON():
+    try:
+        restaurants = session.query(Restaurant).all()
+        return jsonify(restaurants=[restaurant.serialize for restaurant in restaurants])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
 
 @app.route('/restaurants/<int:restaurant_id>/menu/JSON')
 def restaurantMenuJSON(restaurant_id):
@@ -133,9 +150,8 @@ def restaurantMenuJSON(restaurant_id):
 
 
 @app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
-def menuItemJSON(restaurant_id,menu_id):
+def menuItemJSON(restaurant_id, menu_id):
     try:
-        restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
         item = session.query(MenuItem).filter_by(id=menu_id).one()
         return jsonify(MenuItem=[item.serialize])
     except Exception as inst:
