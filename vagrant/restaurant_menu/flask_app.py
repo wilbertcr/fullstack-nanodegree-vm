@@ -43,6 +43,45 @@ def newRestaurant():
         print(inst)
 
 
+@app.route('/restaurants/<int:restaurant_id>/delete', methods=['GET', 'POST'])
+def deleteRestaurant(restaurant_id):
+    try:
+        if request.method == 'GET':
+            return render_template('newrestaurant.html')
+        if request.method == 'POST':
+            restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+            if restaurant.name != "":
+                session.delete(restaurant)
+                session.commit()
+                restaurants = session.query(Restaurant).all()
+                return jsonify(restaurants=[restaurant.serialize for restaurant in restaurants])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+# Task 3: Create a route for deleteMenuItem function here
+@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete', methods=['GET', 'POST'])
+def deleteMenuItem(restaurant_id, menu_id):
+    try:
+        if request.method == 'GET':
+            item = session.query(MenuItem).filter_by(id=menu_id).one()
+            return render_template('deletemenuitem.html', item=item, restaurant_id=restaurant_id)
+        if request.method == 'POST':
+            menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
+            session.delete(menuItem)
+            session.commit()
+            restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+            items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
+            return jsonify(MenuItems=[i.serialize for i in items])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantMenu(restaurant_id):
     try:
@@ -99,26 +138,6 @@ def editMenuItem(restaurant_id, menu_id):
             session.commit()
             flash("Menu item edited!")
             return redirect(url_for('restaurantMenu', restaurant_id=restaurant_id))
-    except Exception as inst:
-        print(type(inst))
-        print(inst.args)
-        print(inst)
-
-
-# Task 3: Create a route for deleteMenuItem function here
-@app.route('/restaurants/<int:restaurant_id>/<int:menu_id>/delete', methods=['GET', 'POST'])
-def deleteMenuItem(restaurant_id, menu_id):
-    try:
-        if request.method == 'GET':
-            item = session.query(MenuItem).filter_by(id=menu_id).one()
-            return render_template('deletemenuitem.html', item=item, restaurant_id=restaurant_id)
-        if request.method == 'POST':
-            menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
-            session.delete(menuItem)
-            session.commit()
-            restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-            items = session.query(MenuItem).filter_by(restaurant_id=restaurant.id)
-            return jsonify(MenuItems=[i.serialize for i in items])
     except Exception as inst:
         print(type(inst))
         print(inst.args)

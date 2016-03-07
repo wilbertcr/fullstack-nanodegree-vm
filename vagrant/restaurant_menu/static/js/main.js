@@ -1,52 +1,48 @@
 
-function xinspect(o,i){
-    if(typeof i=='undefined')i='';
-    if(i.length>50)return '[MAX ITERATIONS]';
-    var r=[];
-    for(var p in o){
-        var t=typeof o[p];
-        r.push(i+'"'+p+'" ('+t+') => '+(t=='object' ? 'object:'+xinspect(o[p],i+'  ') : o[p]+''));
-    }
-    return r.join(i+'\n');
-}
 
-//Menu items can delete themselves by calling a
-//function(deleteMenuItem) in their parent(Menu)
-//and sending the key(or item.id) to it.
-//Not only will this delete the item from the underlying
-//data array, but also from the DB, asynchronously via ajax.
 var MenuItems = React.createClass({
-  render: function() {
+    render: function() {
         var menuItemNodes = this.props.data.map(
             function(item,index){
                 return(
                     <table key={item.id}>
-                    <tbody>
+                        <tbody>
                         <tr>
                             <td className="name left">{item.name}</td>
                             <td className="price right">&#36;{item.price}</td>
                         </tr>
                         <tr>
-                            <td className="left">{item.description}</td>
+                            <td className="left description">{item.description}</td>
                             <td className="right"></td>
                         </tr>
                         <tr>
-                        <td className="left"><button className="editItemButton" onClick={this.props.editMenuItem} data-key={item.id} data-index={index}>edit</button></td>
-                        <td className="right"><button className="deleteItemButton" onClick={this.props.deleteMenuItem} data-key={item.id} data-index={index}>delete</button></td>
+                            <td className="left">
+                                <button className="editItemButton"
+                                        onClick={this.props.editMenuItem}
+                                        data-key={item.id}
+                                        data-index={index}>edit
+                                </button>
+                            </td>
+                            <td className="right">
+                                <button className="deleteItemButton"
+                                        onClick={this.props.deleteMenuItem}
+                                        data-key={item.id}
+                                        data-index={index}>delete
+                                </button>
+                            </td>
                         </tr>
-                    </tbody>
+                        </tbody>
                     </table>
                 );
             }.bind(this)
         );
         return (
-          <div className="menuItems">
-            {menuItemNodes}
-          </div>
+            <div className="menuItems">
+                {menuItemNodes}
+            </div>
         );
     }
 });
-
 
 var Menu = React.createClass({
     //Loads/refreshes menu items in display.
@@ -123,10 +119,6 @@ var Menu = React.createClass({
         );
     }
 });
-
-
-
-
 
 var NewItemForm = React.createClass({
     getInitialState: function(){
@@ -222,9 +214,9 @@ var NewRestaurantForm = React.createClass({
 
 var Restaurant = React.createClass({
     getInitialState: function(){
-        return {menu_posted:false,comp: null};
+        return {comp: null};
     },
-    handleClick: function(){
+    displayMenu: function(){
         var restaurant = this.props.data;
         if(this.state.comp){
             $.ajax({
@@ -233,25 +225,40 @@ var Restaurant = React.createClass({
                 cache: false,
                 success: function(data){
                     this.state.comp.setState({data: data.MenuItems});
-                    console.log("Updated state.");
+                    console.log("Refreshed menu.");
                 }.bind(this),
                 error: function(xhr, status, err){
                     console.error(this.props.url, status, err.toString());
                 }.bind(this)
             });
-        };
-        this.state.comp = ReactDOM.render(
-            <Menu url={"/restaurants/"+restaurant.id+"/menu/JSON"} restaurant={restaurant} pollInterval={2000}/>,
-            document.getElementById('centercolumn')
-        );
+        } else {
+            this.state.comp = ReactDOM.render(
+                <Menu url={"/restaurants/"+restaurant.id+"/menu/JSON"} restaurant={restaurant} pollInterval={2000}/>,
+                document.getElementById('centercolumn')
+            );
+            console.log("Rendering menu.");
+        }
+
     },
     render: function(){
         var restaurant = this.props.data;
         return(
-            //<li key={restaurant.id} onClick={this.handleClick}><a href="#">{restaurant.name}</a></li>
-                <li><a key={restaurant.id}
-                onClick={this.handleClick}
-                >{restaurant.name}</a></li>
+                <li>
+                    <a key={restaurant.id}
+                    onClick={this.displayMenu}>
+                        {restaurant.name}
+                    </a>
+                    <button className="editItemSmallButton"
+                        onClick={this.props.deleteRestaurant}
+                        data-key={restaurant.id}
+                        data-index={this.props.index}>edit
+                    </button>
+                    <button className="deleteItemSmallButton"
+                        onClick={this.props.deleteRestaurant}
+                        data-key={restaurant.id}
+                        data-index={this.props.index}>delete
+                    </button>
+                </li>
         );
 
     }
@@ -293,18 +300,40 @@ var RestaurantList = React.createClass({
         });
 
   },
-  render: function() {
-        var restaurantNodes = this.state.data.map(function(restaurant) {
-          return (
-            <Restaurant data={restaurant}/>
-          );
+  handleDeleteRestaurant: function(e){
+        var key = parseInt(e.target.attributes.getNamedItem('data-key').value,10);
+        var index = parseInt(e.target.attributes.getNamedItem('data-index').value,10);
+        console.log("Erased restaurant with key %d and index %d",key,index);
+        this.setState({data: this.state.data.splice(index,1)});
+        var restaurant_id = key;
+        var endpoint = "/restaurants/"+restaurant_id+"/delete";
+        $.ajax({
+            url: endpoint,
+            dataType: 'json',
+            type: 'POST',
+            data: key,
+            success: function(data){
+                this.setState({data: data.restaurants});
+            }.bind(this),
+            error: function(xhr,status,err){
+                console.error(endpoint,status,err.toString());
+            }.bind(this)
         });
+  },
+  render: function() {
+        var restaurantNodes = this.state.data.map(function(restaurant,index) {
+          return (
+            <Restaurant key={restaurant.id}
+                index={index}
+                data={restaurant}
+                deleteRestaurant={this.handleDeleteRestaurant}/>
+          );
+        }.bind(this));
         return (
           <ul className="mainnav">
             {restaurantNodes}
             <NewRestaurantForm onNewRestaurantSubmit={this.handleNewRestaurantSubmit}/>
           </ul>
-
         );
     }
 });
@@ -312,7 +341,7 @@ var RestaurantList = React.createClass({
 
 var EnclosingApp = React.createClass({
     getInitialState: function(){
-      return{data: [], currentNode: null};
+      return{data: []};
     },
     render: function(){
         return(

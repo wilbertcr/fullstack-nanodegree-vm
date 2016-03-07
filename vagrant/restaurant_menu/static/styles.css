@@ -70,6 +70,7 @@ table {width: 100%}
 	color:#ffffff;
 	font-family:Arial;
 	font-size:12px;
+	font-weight:bold;
 	padding:6px 6px;
 	text-decoration:none;
 	text-shadow:0px 1px 0px #154682;
@@ -78,6 +79,72 @@ table {width: 100%}
 	background-color:#0061a7;
 }
 .editItemButton:active {
+	position:relative;
+	top:1px;
+}
+
+
+.deleteItemSmallButton {
+    width: 40px;
+	-moz-box-shadow:inset 0px 1px 0px 0px #f7c5c0;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #f7c5c0;
+	box-shadow:inset 0px 1px 0px 0px #f7c5c0;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #fc8d83), color-stop(1, #e4685d));
+	background:-moz-linear-gradient(top, #fc8d83 5%, #e4685d 100%);
+	background:-webkit-linear-gradient(top, #fc8d83 5%, #e4685d 100%);
+	background:-o-linear-gradient(top, #fc8d83 5%, #e4685d 100%);
+	background:-ms-linear-gradient(top, #fc8d83 5%, #e4685d 100%);
+	background:linear-gradient(to bottom, #fc8d83 5%, #e4685d 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fc8d83', endColorstr='#e4685d',GradientType=0);
+	background-color:#fc8d83;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #d83526;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:10px;
+	font-weight:bold;
+	padding:6px 6px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #b23e35;
+}
+.deleteItemSmallButton:hover {
+	background-color:#e4685d;
+}
+
+.deleteItemSmallButton:active {
+	position:relative;
+	top:1px;
+}
+
+
+.editItemSmallButton {
+    width: 40px;
+	-moz-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	box-shadow:inset 0px 1px 0px 0px #54a3f7;
+	background-color:#007dc1;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #124d77;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:10px;
+	font-weight:bold;
+	padding:6px 6px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #154682;
+}
+.editItemSmallButton:hover {
+	background-color:#0061a7;
+}
+.editItemSmallButton:active {
 	position:relative;
 	top:1px;
 }
