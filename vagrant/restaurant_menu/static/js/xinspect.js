@@ -1,4 +1,4 @@
-function xinspect(o,i){
+var xinspect = function xinspect(o,i){
     if(typeof i=='undefined')i='';
     if(i.length>50)return '[MAX ITERATIONS]';
     var r=[];

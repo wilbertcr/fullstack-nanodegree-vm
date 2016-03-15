@@ -1,40 +1,38 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import Component from './Component';
+import apiCall from './ApiCall';
 import NewRestaurantForm from './NewRestaurantForm';
 import Restaurant from './Restaurant';
 
 
-export default class RestaurantList extends React.Component{
+export default class RestaurantList extends Component{
     constructor(props) {
         super(props);
-        this.state = {data: []};
-        this.handleNewRestaurantSubmit = this.handleNewRestaurantSubmit.bind(this);
-        this.handleDeleteRestaurant = this.handleDeleteRestaurant.bind(this);
     }
 
-    componentDidMount(){
-        $.ajax({
-            url: this.props.url,
-            dataType:'json',
-            cache: false,
-            success: function(data){
-                this.setState({data: data.restaurants});
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
+    addRestaurant(data){
+        this.props.addRestaurant(data);
     }
 
-    handleNewRestaurantSubmit(data){
-        var restaurants = this.state.data;
-        var endpoint = "restaurants/new"
+    deleteRestaurant(id){
+        this.props.deleteRestaurant(id);
+    }
+
+    editRestaurant(restaurant){
+        var name = restaurant.name;
+        var id= restaurant.id;
+        var index = restaurant.index;
+        var newRestaurant = {name: name, id: id};
+        this.setState({data: this.props.restaurants.splice(index,1,newRestaurant)});
+        var endpoint = "/restaurants/edit/"+id;
         $.ajax({
             url: endpoint,
             dataType: 'json',
             type: 'POST',
-            data: data,
+            data: restaurant,
             success: function(data){
-                this.setState({data: data.restaurants});
+                this.setState({restaurants: data.restaurants});
             }.bind(this),
             error: function(xhr,status,err){
                 console.error(endpoint,status,err.toString());
@@ -43,41 +41,29 @@ export default class RestaurantList extends React.Component{
 
     }
 
-    handleDeleteRestaurant(e){
-        var key = parseInt(e.target.attributes.getNamedItem('data-key').value,10);
-        var index = parseInt(e.target.attributes.getNamedItem('data-index').value,10);
-        console.log("Erased restaurant with key %d and index %d",key,index);
-        this.setState({data: this.state.data.splice(index,1)});
-        var restaurant_id = key;
-        var endpoint = "/restaurants/"+restaurant_id+"/delete";
-        $.ajax({
-            url: endpoint,
-            dataType: 'json',
-            type: 'POST',
-            data: key,
-            success: function(data){
-                this.setState({data: data.restaurants});
-            }.bind(this),
-            error: function(xhr,status,err){
-                console.error(endpoint,status,err.toString());
-            }.bind(this)
-        });
+    displayMenu(restaurant){
+        this.props.displayMenu(restaurant);
     }
 
     render() {
-        var restaurantNodes = this.state.data.map(function(restaurant,index) {
-            return (
-                <Restaurant key={restaurant.id}
-                            index={index}
-                            data={restaurant}
-                            deleteRestaurant={this.handleDeleteRestaurant}/>
-            );
-        }.bind(this));
         return (
-            <ul className="mainnav">
-                {restaurantNodes}
-                <NewRestaurantForm onNewRestaurantSubmit={this.handleNewRestaurantSubmit}/>
-            </ul>
+            <div>
+                <ul className="mainnav">
+                    {this.props.restaurants.map(
+                        function(restaurant,index) {
+                            console.log(restaurant.name);
+                            return <Restaurant key={restaurant.id}
+                                               index={index}
+                                               restaurant={restaurant}
+                                               deleteRestaurant={this.deleteRestaurant}
+                                               editRestaurant={this.editRestaurant}
+                                               displayMenu={this.displayMenu}
+                            />;
+                        }.bind(this)
+                    )}
+                </ul>
+                <NewRestaurantForm onNewRestaurantSubmit={this.addRestaurant}/>
+            </div>
         );
     }
 }

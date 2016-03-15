@@ -1,25 +1,26 @@
 import React from 'react';
+import Component from './Component';
 
-export default class NewItemForm extends React.Component{
+
+export default class NewItemForm extends Component{
     constructor(props){
         super(props);
         this.state = {name: '',price:'',course:'',description:''};
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handlePriceChange = this.handlePriceChange.bind(this);
-        this.handleCourseChange = this.handleCourseChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
     handleNameChange(e){
+        e.preventDefault();
         this.setState({name: e.target.value});
     }
     handleDescriptionChange(e){
+        e.preventDefault();
         this.setState({description: e.target.value});
     }
     handlePriceChange(e){
+        e.preventDefault();
         this.setState({price: e.target.value});
     }
     handleCourseChange(e){
+        e.preventDefault();
         this.setState({course: e.target.value});
     }
     handleSubmit(e){

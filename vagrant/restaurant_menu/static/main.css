@@ -46,20 +46,20 @@ img {
  list-style: none;
 }
 
-ul.mainnav li a {
- display: block;
+ul.mainnav li div {
+ display: flex;
  text-decoration: none;
  width: 160px;
  padding: 4px 0px 4px 7px;
- color: #999;
  border-bottom: 1px solid #E9E9E9;
+ color: #999;
  text-align: left;
  background-color: #F9F2F9;
 }
 
 
 ul.mainnav li a:link, ul.mainnav li a:visited {
- display: block;
+ display: flex;
  text-decoration: none;
  width: 160px;
  padding: 4px 0px 4px 7px;
@@ -75,9 +75,8 @@ li.border-top {
 }
 
 ul.mainnav li a:hover {
- display: block;
+ display: flex;
  text-decoration: none;
- padding: 4px 0px 4px 7px;
  color: #B5B5B5;
  width: 160px;
  background-color: #F9F2F9;

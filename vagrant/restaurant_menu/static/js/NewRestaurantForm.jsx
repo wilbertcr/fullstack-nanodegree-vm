@@ -1,14 +1,14 @@
 import React from 'react';
+import Component from './Component';
 
-export default class NewRestaurantForm extends React.Component{
+
+export default class NewRestaurantForm extends Component{
     constructor(props){
         super(props);
         this.state = {name: ''};
-        this.handleNameChange = this.handleNameChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleNameChange(e){
+    handleNameChange(e) {
         this.setState({name: e.target.value});
     }
     handleSubmit(e){
@@ -26,7 +26,9 @@ export default class NewRestaurantForm extends React.Component{
                     value={this.state.name}
                     onChange={this.handleNameChange}
                 /><br/>
-                <input className="redButton" type="submit" value="Submit"/>
+                <button className="redButton" type="submit">
+                    <i className="fa fa-paper-plane"></i>
+                </button>
             </form>
         );
     }

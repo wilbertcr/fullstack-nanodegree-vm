@@ -1,86 +1,48 @@
 import React from 'react';
-import MenuItems from './MenuItems';
+import Component from './Component';
+import MenuItem from './MenuItem';
 import NewItemForm from './NewItemForm';
 
-export default class Menu extends React.Component{
+export default class Menu extends Component{
     constructor(props){
         super(props);
         this.state = {data: []};
-        this.loadItemsFromServer = this.loadItemsFromServer.bind(this);
-        this.handleNewItemSubmit = this.handleNewItemSubmit.bind(this);
-        this.deleteMenuItem = this.deleteMenuItem.bind(this);
     }
 
-    //Loads/refreshes menu items in display.
-    loadItemsFromServer(){
-        $.ajax({
-            url: this.props.url,
-            dataType:'json',
-            cache: false,
-            success: function(data){
-                this.setState({data: data.MenuItems});
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.error(this.props.url, status, err.toString());
-            }.bind(this)
-        });
-    }
     //Stores the new item in the server and updates the
     //menu accordingly once the server has responded appropriately.
     handleNewItemSubmit(item){
-        var restaurant = this.props.restaurant;
-        var MenuItems = this.state.data;
-        var endpoint = "/restaurants/"+restaurant.id+"/menu/new";
-        $.ajax({
-            url: endpoint,
-            dataType: 'json',
-            type: 'POST',
-            data: item,
-            success: function(data){
-                var NewItemWrapper = data['NewItem'];
-                var NewItem = NewItemWrapper[0];
-                var newMenuItems = MenuItems.concat([NewItem]);
-                this.setState({data: newMenuItems});
-            }.bind(this),
-            error: function(xhr,status,err){
-                console.error(endpoint,status,err.toString());
-            }.bind(this)
-        });
+        this.props.addMenuItem(item);
+    }
+
+    editMenuItem(data){
+    //    TODO: Implement update.
+        console.log(data);
     }
 
 
-    componentDidMount(){
-        this.loadItemsFromServer();
-        setInterval(this.loadItemsFromServer,this.props.pollInterval);
-    }
-
-    deleteMenuItem(e){
-        var key = parseInt(e.target.attributes.getNamedItem('data-key').value,10);
-        var index = parseInt(e.target.attributes.getNamedItem('data-index').value,10);
-        console.log("Erased menu item with key %d and index %d",key,index);
-        this.setState({data: this.state.data.splice(index,1)});
-        var restaurant = this.props.restaurant;
-        var endpoint = "/restaurants/"+restaurant.id+"/"+key+"/delete";
-        $.ajax({
-            url: endpoint,
-            dataType: 'json',
-            type: 'POST',
-            data: key,
-            success: function(data){
-                this.setState({data: data.MenuItems});
-            }.bind(this),
-            error: function(xhr,status,err){
-                console.error(endpoint,status,err.toString());
-            }.bind(this)
-        });
+    deleteMenuItem(item){
+        console.log("Menu item:");
+        console.log(item);
+        this.props.deleteMenuItem(item);
     }
 
     render() {
-        var restaurant = this.props.restaurant;
+        let name = this.props.initialized ? this.props.name+"'s" : "";
         return(
             <div className="Menu">
-                <h2>{restaurant.name+"'s"} Menu</h2>
-                <MenuItems data={this.state.data} deleteMenuItem={this.deleteMenuItem}/>
+                <h2>{name} Menu</h2>
+                <div>
+                    {this.props.menuItems.map(
+                        function(item,index){
+                            return <MenuItem key={item.id}
+                                             item={item}
+                                             editMenuItem={this.editMenuItem}
+                                             deleteMenuItem={this.deleteMenuItem}
+                                             index = {index}/>;
+                        }.bind(this)
+                    )}
+                </div>
                 <NewItemForm onNewItemSubmit={this.handleNewItemSubmit}/>
             </div>
         );
