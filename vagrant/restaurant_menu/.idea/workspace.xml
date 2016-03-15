@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9f9bba0f-e4cd-4fb3-9040-6b18919f9c06" name="Default" comment="First Commit.">
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/order" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/.name" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/encodings.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/misc.xml" />
@@ -11,6 +10,7 @@
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/shelter.iml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/vcs.xml" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../shelter/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/../../.gitignore" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/action_provision" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/action_set_name" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/creator_uid" afterPath="" />
@@ -19,11 +19,6 @@
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/private_key" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/putty_key.ppk" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/synced_folders" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/database_setup.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/restaurant.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/restaurant_menu_schema.sql" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/static/js/xinspect.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/webserver.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../shelter/puppy_queries.py" afterPath="$PROJECT_DIR$/../shelter/puppy_queries.py" />
     </list>
