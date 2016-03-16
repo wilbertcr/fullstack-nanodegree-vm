@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship, backref
 
 Base = declarative_base()
 
-
 class MenuItem(Base):
     __tablename__ = 'menu_item'
     name = Column(String(80), nullable=False)

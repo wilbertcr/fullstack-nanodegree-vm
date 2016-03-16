@@ -1,8 +1,13 @@
+#!/usr/bin/python
+"""
+Main flask application code.
+"""
 from flask import Flask, render_template, url_for, jsonify, make_response
 from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from config.database_setup import Base, Restaurant, MenuItem
+from pydoc import help
 import time
 import sys
 sys.path.insert(0, '../')
@@ -18,6 +23,10 @@ session = DBSession()
 @app.route('/')
 @app.route('/restaurants')
 def restaurants():
+    '''
+    Renders main page.
+    Returns: restaurants.html
+    '''
     try:
         return render_template('restaurants.html', time=time)
     except Exception as inst:
@@ -178,3 +187,4 @@ if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host='0.0.0.0', port=5000)
+
