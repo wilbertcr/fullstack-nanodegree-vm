@@ -1,4 +1,4 @@
-{"presets":["es2016"],
-"presets":["react"],
-"plugins": ["transform-object-rest-spread"]
+{"presets":['es2016'],
+"presets":['react'],
+"plugins": ['transform-object-rest-spread']
 }

@@ -22,7 +22,7 @@ export default class NewRestaurantForm extends Component{
             <form className="newRestaurantForm" onSubmit={this.handleSubmit}>
                 <input
                     type="text"
-                    placeholder="Name"
+                    placeholder="New Restaurant"
                     value={this.state.name}
                     onChange={this.handleNameChange}
                 /><br/>

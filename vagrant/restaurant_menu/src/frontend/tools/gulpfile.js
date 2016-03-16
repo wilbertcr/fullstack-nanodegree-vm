@@ -8,14 +8,14 @@ gulp.task('transpile',function() {
                 presets: ['es2016','react'],
                 plugins: ['transform-object-rest-spread']
             }))
-            .pipe(gulp.dest('../../backend/static/javascript/'));
+            .pipe(gulp.dest('../compiled-components/'));
     }
 );
 
 gulp.task('default',['transpile'], function() {
-    return gulp.src('../../backend/static/javascript/index.js')
+    return gulp.src('../compiled-components/index.js')
         .pipe(webpack_stream(require('./webpack.config.js')))
-        .pipe(gulp.dest('../../backend/static/javascript/'));
+        .pipe(gulp.dest('../../backend/python/static/javascript/'));
 });
 
 //gulp.watch('../components/*.jsx',['transpile','default']);
