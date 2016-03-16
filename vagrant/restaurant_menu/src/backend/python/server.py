@@ -6,7 +6,7 @@ from flask import Flask, render_template, url_for, jsonify, make_response
 from flask import request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from config.database_setup import Base, Restaurant, MenuItem
+from config.sql_alchemy_setup import Base, Restaurant, MenuItem
 from pydoc import help
 import time
 import sys

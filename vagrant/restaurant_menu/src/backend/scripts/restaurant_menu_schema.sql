@@ -1,0 +1,3 @@
+ALTER ROLE vagrant WITH ENCRYPTED PASSWORD 'vagrantvm';
+DROP DATABASE IF EXISTS restaurant;
+CREATE DATABASE restaurant;
