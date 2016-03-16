@@ -17,13 +17,14 @@
     "gulp-babel": "^6.1.2",
     "webpack": "~1.12.14",
     "webpack-stream": "~3.1.0",
+    "babel": "~6.5.2",
     "babel-runtime": "^6.6.1",
+    "babel-preset-react": "~6.5.0",
     "babel-preset-es2016": "^6.0.6",
     "babel-plugin-transform-object-rest-spread": "~6.6.5",
     "react": "~0.14.7",
     "react-dom": "~0.14.7",
-    "riek": "^1.0.0",
-    "babel-preset-react": "~6.5.0"
+    "riek": "^1.0.0"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1"
