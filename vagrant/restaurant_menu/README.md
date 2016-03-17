@@ -5,15 +5,19 @@ User can add,edit and delete restaurants and add,edit and delete their respectiv
 
 Backend in flask and front end using React.js
 
-#Important: Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.
+#Important: 
 
-In order to make sure we start at the same point. Please run:
+Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.
+
+#Installation
+
+*In order to make sure we start at the same point. Please run:
 
 `$vagrant destroy`
 
 `$vagrant up`
 
-Then setup your SSH and login to the box. Once you get:
+*Then setup your SSH and login to the box. Once you get:
 
 ```Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
 
@@ -39,16 +43,15 @@ Then setup your SSH and login to the box. Once you get:
 The shared directory is located at /vagrant
 To access your shared files: cd /vagrant```
 
-#Installation
-
-First you need to setup the database, in the vagrant machine:
+*You need to setup the database, in the vagrant machine:
 
 `$cd /vagrant/restaurant_menu`
 
 `$./build_and_run.sh`
 
+
 The script will ask you to confirm installation of Node.js and NPM(Needed for react). After you do that, it should set everything up on its own. 
-When the script ends, you should see this:
+It will be a while, about 5 to 10 minutes. When the script ends, you should see this:
 
 ```
 ...
@@ -69,8 +72,20 @@ Build took 4 seconds (4652 ms)
  * Restarting with reloader
  ````
 
-Then you can just go to `http://localhost:5000/restaurants` on your browser, add a restaurant, click it and then  you'll
+Then you can just go to:
+ 
+ `http://localhost:5000/restaurants` 
+ 
+On your favorite browser, add a restaurant, click it and then you'll
 be able to save items to its menu. 
+
+To kill the app: CTRL-C
+
+#Running the app
+
+Once the app has been installed, you can run it:
+
+`$./run_app.sh`
 
 
 ##Directory tree pre-build
