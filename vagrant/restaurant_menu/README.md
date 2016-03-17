@@ -19,7 +19,9 @@ Instructions are meant to be used by a user running the vagrant machine provided
 
 *Then setup your SSH and login to the box. Once you get:
 
-```Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
+```
+...
+Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
 
  * Documentation:  https://help.ubuntu.com/
 
@@ -41,7 +43,9 @@ Instructions are meant to be used by a user running the vagrant machine provided
 
 
 The shared directory is located at /vagrant
-To access your shared files: cd /vagrant```
+To access your shared files: cd /vagrant
+````
+
 
 *You need to setup the database, in the vagrant machine:
 
