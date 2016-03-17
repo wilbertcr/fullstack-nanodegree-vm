@@ -87,7 +87,7 @@ To kill the app: CTRL-C
 
 #Running the app
 
-Once the app has been installed, you can run it:
+Once the app has been installed, you can restart it like this:
 
 `$./run_app.sh`
 
