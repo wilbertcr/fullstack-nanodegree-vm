@@ -10,12 +10,12 @@ Backend in flask and front end using React.js
 In order to make sure we start at the same point. Please run:
 
 `$vagrant destroy`
+
 `$vagrant up`
 
 Then setup your SSH and login to the box. Once you get:
 
-```
-Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
+```Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
 
  * Documentation:  https://help.ubuntu.com/
 
@@ -37,20 +37,21 @@ Welcome to Ubuntu 14.04.3 LTS (GNU/Linux 3.13.0-76-generic i686)
 
 
 The shared directory is located at /vagrant
-To access your shared files: cd /vagrant
-```
+To access your shared files: cd /vagrant```
 
 #Installation
 
 First you need to setup the database, in the vagrant machine:
 
 `$cd /vagrant/restaurant_menu`
+
 `$./build_and_run.sh`
 
 The script will ask you to confirm installation of Node.js and NPM(Needed for react). After you do that, it should set everything up on its own. 
 When the script ends, you should see this:
 
-`
+```
+...
 [WARN]  Module 'server' was not imported by the covered tests
 [WARN]  Module '__init__' was not imported by the covered tests
 Coverage.py warning: No data was collected.
@@ -59,22 +60,21 @@ Coverage.py warning: No data was collected.
 [WARN]  Overall coverage is below 70%:  0%
 [INFO]  Overall coverage branch coverage is  0%
 [INFO]  Overall coverage partial branch coverage is 100%
-------------------------------------------------------------
 BUILD FAILED - Test coverage for at least one module is below 70%
-------------------------------------------------------------
 Build finished at 2016-03-16 21:22:06
 Build took 4 seconds (4652 ms)
 + sleep 3s
 + python target/dist/restaurant_menu-1.0.dev0/server.py
  * Running on http://0.0.0.0:5000/
  * Restarting with reloader
-`
+ ````
 
 Then you can just go to `http://localhost:5000/restaurants` on your browser, add a restaurant, click it and then  you'll
 be able to save items to its menu. 
 
 
 ##Directory tree pre-build
+
 ```
 .
 ├── build.py
