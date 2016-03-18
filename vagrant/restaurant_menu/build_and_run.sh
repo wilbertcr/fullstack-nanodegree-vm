@@ -24,6 +24,8 @@ cd src/backend/scripts/
 cd ../../../
 echo "Setting up SQLAlchemy objects"
 python src/backend/python/config/sql_alchemy_setup.py
+echo "Popularing database."
+python src/backend/python/config/populate_db.py
 echo "Installing PyBuilder"
 sudo -H pip install pybuilder
 echo "Installing mockito"
@@ -34,6 +36,22 @@ echo "Installing xmlrunner"
 sudo pip install xmlrunner
 echo "Installing coverage"
 sudo pip install coverage
+echo "Installing bleach"
+pip install bleach
+echo "Installing oauth2client"
+pip install oauth2client
+echo "Installing requests"
+pip install requests
+echo "Installing httplib2"
+pip install httplib2
+echo "Installing redis"
+pip install redis
+echo "Installing passlib"
+pip install passlib
+echo "Installing itsdangerous"
+pip install itsdangerous
+echo "Installing flask-httpauth"
+pip install flask-httpauth
 echo "Executing PyBuilder"
 pyb install_dependencies publish
 python target/dist/*/server.py

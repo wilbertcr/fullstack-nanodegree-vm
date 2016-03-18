@@ -2,6 +2,11 @@
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
+
+# Custom gititnores
+#Here's where the client's secret is. We don't want that up on github do we?
+client_secrets.json
+
 *.iml
 
 ## Directory-based project format:

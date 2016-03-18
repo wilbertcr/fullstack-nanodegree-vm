@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles/login.css?v={{time.time()}}" />
+      <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+    </script>
+    <script src="//apis.google.com/js/platform.js?onload=start"></script>
+</head>
+<body>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <div class="account-wall">
+                <img class="profile-img" src="{{url_for('static',filename='images/google-plus-icon.png')}}"
+                    alt="">
+                <center>
+                <div id="signInButton">
+                    <span class="g-signin"
+                          data-scope="openid email"
+                          data-clientid="487962395938-f923dbtpisv3oq7tivlvu4127g1jlh9m.apps.googleusercontent.com"
+                          data-redirecturi="postmessage"
+                          data-accesstype="offline"
+                          data-cookiepolicy="single_host_origin"
+                          data-callback="signInCallBack"
+                          data-approvalprompt="force"
+                    ></span>
+                </div>
+                <div id="result"></div>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function signInCallBack(authResult){
+        if (authResult['code']){
+            $.ajax({
+                type: 'POST',
+                url: '/gconnect?state={{STATE}}',
+                processData: false,
+                data: authResult['code'],
+                contentType: 'application/octet-stream; charset=utf-8',
+                success: function(result) {
+                    if(result){
+                        $('#result').html('Login Successful!</br>'+result+'</br> Redirecting...')
+                        setTimeout(function(){
+                            window.location.href="/restaurants";
+                        },4000);
+                    } else if(authResult['error']) {
+                        console.log("There was an error: "+authResult['error']);
+                    } else {
+                        $('#result').html('Failed to make a server-side call. Check configuration and console.');
+                    }
+                }
+
+            })
+
+        }
+    }
+</script>
+</body>
+</html>

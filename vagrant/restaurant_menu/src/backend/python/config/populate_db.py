@@ -28,7 +28,7 @@ session.commit()
 
 restaurant1 = session.query(Restaurant).filter_by(name="Urban Burger").first()
 
-menuItem1 = MenuItem(name="French Fries", description="with garlic and parmesan", price="$2.99", course="Appetizer", restaurant_id=restaurant1.id)
+menuItem1 = MenuItem(name="French Fries", description="with garlic and parmesan", price="2.99", course="Appetizer", restaurant_id=restaurant1.id)
 
 session.add(menuItem1)
 session.commit()
