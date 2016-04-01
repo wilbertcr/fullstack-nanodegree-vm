@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
+import Item from './Item';
 
 export default class ItemsContainer extends Component {
 
@@ -17,20 +18,15 @@ export default class ItemsContainer extends Component {
     render() {
         return (
             <div className="ui cards container">
-                <div className="card">
-                    <div className="content">
-                        <img className="left floated tiny ui image" src="/static/images/baseball_glove.jpg"></img>
-                        <div className="header">
-                            Baseball Glove
-                        </div>
-                        <div className="meta">
-                            $200
-                        </div>
-                        <div className="description">
-                            This is a very expensive baseball glove
-                        </div>
-                    </div>
-                </div>
+                {this.props.items.map(
+                    function(item,index){
+                        return <Item key={item.id}
+                                index={index}
+                                item={item}
+                                login_status={this.props.login_status}
+                                />;
+                    }.bind(this)
+                )}
             </div>
         );
     }

@@ -54,11 +54,10 @@ def gconnect():
     # Validate that the state token we sent and the one we received are the same.
     if request.args.get('state') != login_session['state']:
         response = make_response(
-            json.dumps('Invalid state parameter.'), 401
+            json.dumps({'error': 'Invalid state parameter'}), 401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
-
     # Obtain authorization code(it was sent to us by google.)
     code = request.data
     try:
@@ -70,7 +69,7 @@ def gconnect():
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
         response = make_response(
-            json.dumps('Failed to upgrade the authorization code'), 401
+            json.dumps({'error': 'Failed to upgrade the authorization code'}), 401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -82,7 +81,7 @@ def gconnect():
     result = json.loads(h.request(url, 'GET')[1])
     # If we get an error, we abort.
     if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error')), 500)
+        response = make_response(json.dumps({'error': result.get('error')}), 500)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -90,7 +89,7 @@ def gconnect():
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(
-            json.dumps('Token user IDs do not match.'), 401
+            json.dumps({'error': 'Token user IDs do not match apps'}), 401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -98,7 +97,7 @@ def gconnect():
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
-            json.dumps('Token client IDs do not match apps'), 401
+            json.dumps({'error': 'Token client IDs do not match apps'}), 401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -106,10 +105,12 @@ def gconnect():
     # Is the user already logged in?
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
-
     if stored_access_token is not None and gplus_id == stored_gplus_id:
+        # Our response will include a new nonce.
+        state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+        login_session['state'] = state
         response = make_response(
-            json.dumps('Success. User is already connected.'), 200
+            json.dumps({'success': 'User already connected', 'nonce': login_session['state']}), 200
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -136,8 +137,11 @@ def gconnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
 
+    # Our response will include a new nonce.
+    state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+    login_session['state'] = state
     response = make_response(
-        json.dumps('Success'), 200
+        json.dumps({'success': 'User connected', 'nonce': login_session['state']}), 200
     )
     response.headers['Content-Type'] = 'application/json'
     return response
@@ -145,10 +149,16 @@ def gconnect():
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error': 'Invalid state parameter'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
     # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
-        app.logger.warning("User was not connected. Sending to login screen.")
+        app.logger.warning("User was not connected.")
         response = make_response(
             json.dumps('Current user not connected.'), 401
         )
@@ -168,8 +178,11 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        # Our response will include a new nonce.
+        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        login_session['state'] = state
         response = make_response(
-            json.dumps('Successfully disconnected.'), 200
+            json.dumps({'success': 'User disconnected', 'nonce': login_session['state']}), 200
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -180,8 +193,11 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        # Our response will include a new nonce.
+        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        login_session['state'] = state
         response = make_response(
-            json.dumps('Successfully disconnected.'), 200
+            json.dumps({'success': 'User was already disconnected', 'nonce': login_session['state']}), 200
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -191,6 +207,18 @@ def gdisconnect():
         )
         response.headers['Content-Type'] = 'application/json'
         return response
+
+
+@app.route('/categories/json')
+def categories_json():
+    try:
+        categories = session.query(Category).all()
+        return jsonify(categories=[category.serialize for category in categories])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
 
 def getUserID(email):
     try:
@@ -206,9 +234,10 @@ def getUserInfo(user_id):
 
 
 def createUser(login_session):
-    newUser = User(name = login_session['username'],
-                   email = login_session['email'],
-                   picture = login_session['picture'])
+    newUser = User(id=login_session['gplus_id'],
+                   name=login_session['username'],
+                   email=login_session['email'],
+                   picture=login_session['picture'])
     session.add(newUser)
     session.commit()
 

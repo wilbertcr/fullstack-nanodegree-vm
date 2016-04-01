@@ -9,14 +9,24 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     # e-mails cannot be larger than 250 characters by definition, so this shouldn't fail with
     # any legitimate e-mail.
     email = Column(String(250), nullable=False)
     picture = Column(String)
-    is_admin = Column(Boolean, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
 
+    @property
+    def serialize(self):
+        # Returns object data in serializeable format
+        return {
+            'id': self.id,
+            'name': self.name,
+            'email': self.email,
+            'picture': self.picture,
+            'is_admin': self.is_admin
+        }
 
 class Category(Base):
     __tablename__ = 'category'
@@ -31,7 +41,8 @@ class Category(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'picture': self.picture
+            'picture': self.picture,
+            'items': [item.serialize for item in self.items]
         }
 
 
@@ -53,6 +64,7 @@ class Item(Base):
             'name': self.name,
             'description': self.description,
             'price': self.price,
+            'picture': self.picture,
             'category_id': self.category_id
         }
 
