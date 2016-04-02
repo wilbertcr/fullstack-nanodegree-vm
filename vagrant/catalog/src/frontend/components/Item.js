@@ -14,11 +14,18 @@ export default class Item extends Component {
      * */
     constructor(props) {
         super(props);
+        /**
+         *Represents login status
+         * @type {Object}
+         * @property {{value: true, name: "LoggedIn"}} STATUS.LoggedIn - User is logged in.
+         * @property {{value: false, name: "LoggedOut"}} STATUS.LoggedOut - User is logged out.
+         * */
+        this.STATUS = {
+            LoggedIn : {value: true, name: "LoggedIn"},
+            LoggedOut : {value: false, name: "LoggedOut"}
+        };
     }
 
-    /**
-     *@member render - Renders Virtual DOM.
-     * */
     render() {
         return (
             <div className="card">
@@ -45,12 +52,3 @@ export default class Item extends Component {
         );
     }
 }
-
-Item.defaultProps = {
-    item: {
-        name: " ",
-        picture: "",
-        price: "0",
-        description: " ",
-        login_status: this.STATUS.LoggedOut }
-};

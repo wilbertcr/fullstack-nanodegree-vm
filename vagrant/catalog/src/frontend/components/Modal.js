@@ -3,24 +3,28 @@ import ReactDOM from 'react-dom';
 import Component from './Component';
 import EditCategoryForm from './EditCategoryForm';
 
+/**
+ * Represents the modal itself.
+ * @class Modal
+ * */
 export default class Modal extends Component {
-
+    /**
+     * @constructs Modal
+     * @param {Object} props - Object passed down to us from our parent.
+     * */
     constructor(props) {
         super(props);
         this.state = {
         }
     }
 
-    //We don't want a click on the form to
-    //hide the modal, so we prevent them from
-    //propagating.
+    /**
+     * Click handler. We don't want clicks propagating up, as they would hide the entire modal.
+     * So here we stop propagation of clicks.
+     * @param e - The click event.
+     * */
     handleClick(e){
         e.stopPropagation();
-    }
-
-    //Called then edit is finalized.
-    editCategory(category){
-        this.props.editCategory(category);
     }
 
     render() {
@@ -32,9 +36,11 @@ export default class Modal extends Component {
                 <div className="header">
                     Edit Category
                 </div>
+                <div className="image content">
+                </div>
                 <div className="content">
                     <EditCategoryForm category={this.props.category}
-                                      editCategory={this.editCategory}/>
+                                      editCategory={this.props.editCategory}/>
                 </div>
             </div>
         );

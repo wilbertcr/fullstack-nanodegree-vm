@@ -4,12 +4,12 @@ import Component from './Component';
 import GoogleAuth2 from './GoogleAuth2'
 import Sidebar from './Sidebar'
 import ItemsContainer from './ItemsContainer'
+import apiCall from './apiCall'
 
 /**
  * Main container.
  * @class CatalogApp
  * */
-
 export default class CatalogApp extends Component {
     /**
      * @constructs CatalogApp
@@ -96,7 +96,11 @@ export default class CatalogApp extends Component {
                               newCategory,
                               ...this.state.categories.slice(index+1)}
         });
-/*
+
+        /**
+         * @todo Implement backend functionality.
+         * */
+        /*
         var endpoint = "/categories/edit/"+category.id;
         $.ajax({
             url: endpoint,
@@ -110,14 +114,14 @@ export default class CatalogApp extends Component {
                 console.error(endpoint,status,err.toString());
             }.bind(this)
         });
-*/
+        */
     }
 
     /**
      * Loads categories from server.
      * */
     loadCategories(){
-        $.ajax({
+        apiCall({
             url: '/categories/json',
             dataType:'json',
             cache: false,
@@ -142,7 +146,7 @@ export default class CatalogApp extends Component {
                 </div>
                 <div className="left floated three wide column" style={{marginTop: '50px'}}>
                     <Sidebar categories={this.state.categories}
-                             login_status={this.state.loginStatus}
+                             loginStatus={this.state.loginStatus}
                              displayCategory={this.displayCategory}
                              deleteCategory={this.deleteCategory}
                              addCategory={this.addCategory}
@@ -150,7 +154,7 @@ export default class CatalogApp extends Component {
                 </div>
                 <div className="left floated left aligned thirteen wide column" style={{marginTop: '55px'}}>
                     <ItemsContainer items={this.state.items}
-                                    login_status={this.state.loginStatus}/>
+                                    loginStatus={this.state.loginStatus}/>
                 </div>
             </div>
         );

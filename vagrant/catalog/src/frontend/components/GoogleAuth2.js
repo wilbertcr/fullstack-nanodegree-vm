@@ -8,7 +8,10 @@ import apiCall from './apiCall';
  * @class GoogleAuth2
  * */
 export default class GoogleAuth2 extends Component {
-
+    /**
+     * @constructs GoogleAuth2
+     * @param {Object} props - Object passed down to us from our parent.
+     * */
     constructor(props) {
         super(props);
         /**

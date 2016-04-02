@@ -3,16 +3,17 @@ import ReactDOM from 'react-dom';
 import Component from './Component';
 import Item from './Item';
 
+/**
+ * Main container.
+ * @class ItemsContainer
+ * */
 export default class ItemsContainer extends Component {
-
+    /**
+     * @constructs ItemsContainer
+     * @param {Object} props - Object passed down to us from our parent..
+     * */
     constructor(props) {
         super(props);
-        this.state = {}
-    }
-
-
-    componentDidMount() {
-
     }
 
     render() {
@@ -23,7 +24,7 @@ export default class ItemsContainer extends Component {
                         return <Item key={item.id}
                                 index={index}
                                 item={item}
-                                login_status={this.props.loginStatus}
+                                loginStatus={this.props.loginStatus}
                                 />;
                     }.bind(this)
                 )}

@@ -9,8 +9,8 @@ export default class Category extends Component{
         super(props);
         this.state = {name:'',
             editing: false,
-            edit_modal_visible: false};
-        this.props = {data: {}};
+            edit_modal_visible: false
+        };
     }
 
     updateName(name){
