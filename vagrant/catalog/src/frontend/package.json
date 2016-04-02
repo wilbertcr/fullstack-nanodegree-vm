@@ -23,13 +23,17 @@
     "bleach": "^0.3.0",
     "gulp": "~3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-esdoc": "^0.2.0",
+    "gulp-jsdoc": "^0.1.5",
+    "gulp-jsdoc3": "~0.2.1",
     "less": "^2.6.1",
     "react": "~0.14.7",
     "react-dom": "~0.14.7",
     "react-router": "~2.0.1",
     "riek": "^1.0.0",
     "webpack": "~1.12.14",
-    "webpack-stream": "~3.1.0"
+    "webpack-stream": "~3.1.0",
+    "esdoc-es7-plugin": "0.0.3"
   },
   "dependencies": {
     "babel-runtime": "^6.6.1",
