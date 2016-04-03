@@ -35,7 +35,6 @@ export default class GoogleAuth2 extends Component {
          * @property {string} state.userPicture
          * */
         this.state = {
-            nonce: $('#root').data("state"),
             loginStatus: this.STATUS.LoggedOut,
             userId: 0,
             userName: "",
@@ -64,7 +63,7 @@ export default class GoogleAuth2 extends Component {
                 //we need to send it to the back end.
                 if (authResponse['code']){
                     apiCall({
-                            url: "/gconnect?state="+this.state.nonce,
+                            url: "/gconnect?state="+this.props.nonce,
                             type: 'POST',
                             data: authResponse['code'],
                             processData: false,
@@ -83,7 +82,6 @@ export default class GoogleAuth2 extends Component {
                                         userEmail: userProfile.getEmail(),
                                         userName: userProfile.getName(),
                                         userId: userProfile.getId(),
-                                        nonce: result.nonce
                                     });
                                     this.props.onSessionChange(this.state.loginStatus);
                                 } else {
@@ -94,11 +92,8 @@ export default class GoogleAuth2 extends Component {
                             error: function (xhr, status, err) {
                                 console.error("Error signing in user.");
                                 console.error(xhr, status, err.toString());
-                                this.setState({...this.state,
-                                    nonce: status.nonce
-                                });
                             }.bind(this)
-                        });
+                    },this);
                 }
             }.bind(this));
         } else {
@@ -133,7 +128,7 @@ export default class GoogleAuth2 extends Component {
         //lying around. Hence, we will revoke all permits
         //whenever a user signs out.
         apiCall({
-                url: '/gdisconnect?state='+this.state.nonce,
+                url: '/gdisconnect?state='+this.props.nonce,
                 type: 'GET',
                 data: [],
                 processData: false,
@@ -151,8 +146,7 @@ export default class GoogleAuth2 extends Component {
                     this.setState({...this.state,
                         userPicture : "",
                         userEmail: "",
-                        userName: "",
-                        nonce: result.nonce
+                        userName: ""
                     });
                 }.bind(this),
                 error: function (xhr, status, err) {
@@ -160,7 +154,7 @@ export default class GoogleAuth2 extends Component {
                     console.error(status);
                     console.error(err.toString());
                 }.bind(this)
-            });
+            },this);
     }
 
     componentDidMount() {

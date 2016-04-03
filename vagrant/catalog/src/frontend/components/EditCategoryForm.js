@@ -11,8 +11,12 @@ export default class EditCategoryForm extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {category: this.props.category,
-                        validated: true}
+        this.state = {
+            category: this.props.category,
+            name: this.props.category.name,
+            validated: true,
+            stage: 0
+        }
     }
 
     /**
@@ -20,33 +24,28 @@ export default class EditCategoryForm extends Component {
      * @param {Object} e - The event's object.
      * */
     updateName(e){
-        var category = this.state.category;
-        /**
-         * We don't want any html in that name do we?
-         * */
-        category.name = bleach.sanitize(this.textInput.value);
         /**
          * We keep track of the state of validation. We don't want empty names.
          * */
+        var name = bleach.sanitize(this.textInput.value);
         this.setState({...this.state,
-            category: category,
-            validated: !(category.name==="")});
+            name: name,
+            validated: !(name==="")
+        });
     }
 
-    /**
-     * Attempts to save the data(it won't save if state is "invalidated")
-     * */
-    handleKey(e){
-        if(e.key==='Enter'){
-            this.editCategory();
-        }
+    advanceStage(){
+        this.setState({...this.state,stage: this.state.stage+1});
     }
+
 
     /**
      * Clicking Submit button saves the data if it is validated.
      * */
     editCategory(){
         if(this.state.validated){
+            this.state.category.name = this.state.name;
+            this.setState({stage: 0});
             this.props.editCategory(this.state.category);
         }
     }
@@ -59,11 +58,54 @@ export default class EditCategoryForm extends Component {
         this.setState({category: this.props.category});
     }
 
+    switchModalVisibility(){
+        this.props.switchModalVisibility();
+        this.setState({
+            stage: 0,
+            category: this.props.category,
+            name: this.props.category.name
+        });
+    }
+
     render() {
-        //formClasses An error is displayed if content is invalidated.
-        var formClasses = (this.state.validated) ? 'ui small form': 'ui small form error';
-        //Button becomes disabled if content is invalidated.
-        var submitClasses = (this.state.validated) ? 'ui submit button': 'ui disabled submit button';
+        var formClasses;
+        var button;
+        if(this.state.stage===0 && this.state.validated){
+            /**
+             * If we're editing and content is validated
+             * */
+            //Then we want a regular form.
+            formClasses = 'ui small form';
+            //And a submit button.
+            button = <div className="ui one button">
+                <div className="ui submit button" onClick={this.advanceStage}>
+                    Submit
+                </div>
+            </div>;        }
+        if(this.state.stage===0 && !this.state.validated){
+            //If we're editing and content is not validated.
+            //We want to show an error in the form and to disable the button.
+            formClasses = 'ui small form error';
+            button = <div className="ui one button">
+                <div className="ui disabled submit button">
+                    Submit
+                </div>
+            </div>;
+        }
+        if(this.state.stage===1 && this.state.validated){
+            //If we are done editing.
+            //We want to ask the user to confirm via a "success" message.
+            button = <div className="ui two buttons">
+                    <div className="ui submit button" onClick={this.editCategory}>
+                        Ok
+                    </div>
+                    <div className="ui submit button" onClick={this.switchModalVisibility}>
+                        Cancel
+                    </div>
+                </div>;
+            formClasses = 'ui small form success';
+        }
+
         return (
             <div className={formClasses}>
                 <div className="one field">
@@ -71,18 +113,20 @@ export default class EditCategoryForm extends Component {
                         <label>Category</label>
                         <input type="text"
                                ref={(ref) => this.textInput = ref}
-                               value={this.state.category.name}
-                               onChange={this.updateName}
-                               onKeyPress={this.handleKey}/>
+                               value={this.state.name}
+                               onChange={this.updateName}/>
                     </div>
                     <div className="ui error message">
                         <div className="header">Empty name</div>
                         <p>Category must have a nonempty name.</p>
                     </div>
+                    <div className="ui success message">
+                        <div className="header">
+                            Please confirm the change
+                        </div>
+                    </div>
                 </div>
-                <div className={submitClasses} onClick={this.editCategory}>
-                    Submit
-                </div>
+                {button}
             </div>
         );
     }

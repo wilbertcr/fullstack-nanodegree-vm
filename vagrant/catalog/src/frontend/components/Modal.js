@@ -25,6 +25,7 @@ export default class Modal extends Component {
      * */
     handleClick(e){
         e.stopPropagation();
+        "";
     }
 
     render() {
@@ -40,7 +41,8 @@ export default class Modal extends Component {
                 </div>
                 <div className="content">
                     <EditCategoryForm category={this.props.category}
-                                      editCategory={this.props.editCategory}/>
+                                      editCategory={this.props.editCategory}
+                                      switchModalVisibility={this.props.switchModalVisibility}/>
                 </div>
             </div>
         );

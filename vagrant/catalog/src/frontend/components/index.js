@@ -39,10 +39,14 @@ export default class CatalogApp extends Component {
             categories: [],
             items: [],
             loginStatus: this.STATUS.LoggedOut,
-            categoryId: 0
+            categoryId: 0,
+            nonce: $('#root').data("state")
         };
     }
 
+    updateNonce(nonce){
+        this.setState({...this.state, nonce: nonce});
+    }
     /**
      * Listener triggered by GoogleAuth2 when a change in login state occurs.
      * @param {STATUS} state - The current login status.
@@ -80,41 +84,57 @@ export default class CatalogApp extends Component {
 
     /**
      * Updates category to match the one passed in.
-     * @param {Object} category - category we wish to edit.
+     * @param {Object} newCategory - category we wish to edit.
      * */
-    editCategory(category){
+    editCategory(newCategory){
         console.log("Editing.");
         var index;
+        /**
+         * We need the category's index in the categories array.
+         * */
         for(let i=0;i<this.state.categories.length;i++){
-            if(category.id===this.state.categories[i].id){
+            if(newCategory.id===this.state.categories[i].id){
                 index = i;
                 break;
             }
         }
-        var newCategory = category;
-        this.setState({data: {...this.state.categories.slice(0,index),
-                              newCategory,
-                              ...this.state.categories.slice(index+1)}
-        });
+        /**
+         * Let's keep the previous state, in case something goes wrong.
+         * */
+        var prevState = this.state;
+        /**
+         * This is the state we wish to move to, but we need confirmation that
+         * it is consistent with the DB before we can set this in stone.
+         * */
+        var nextState = {
+            ...this.state,
+            categories : [
+                ...this.state.categories.slice(0,index),
+                newCategory,
+                ...this.state.categories.slice(index+1)
+            ]
+        };
+        /**
+         * We're going to be optimistic, and change the state before contating the
+         * backend.
+         * */
+        this.setState(nextState);
 
         /**
-         * @todo Implement backend functionality.
+         *We're sending the new category to the backend for processing.
          * */
-        /*
-        var endpoint = "/categories/edit/"+category.id;
-        $.ajax({
-            url: endpoint,
+        var endpoint = "/categories/edit/"+newCategory.id+"?state=";
+        apiCall({
+            url: endpoint+this.state.nonce,
             dataType: 'json',
             type: 'POST',
-            data: category,
-            success: function(data){
-                this.setState({categories: data.categories});
-            }.bind(this),
+            data: newCategory,
+            //If things go wrong, we just go back to the previous state :)
             error: function(xhr,status,err){
+                this.setState(prevState);
                 console.error(endpoint,status,err.toString());
             }.bind(this)
-        });
-        */
+        },this);
     }
 
     /**
@@ -122,7 +142,7 @@ export default class CatalogApp extends Component {
      * */
     loadCategories(){
         apiCall({
-            url: '/categories/json',
+            url: '/categories/json?state='+this.state.nonce,
             dataType:'json',
             cache: false,
             success: function(data){
@@ -131,7 +151,7 @@ export default class CatalogApp extends Component {
             error: function(xhr, status, err){
                 console.error(this.state.restaurantListURL, status, err.toString());
             }.bind(this)
-        });
+        },this);
     }
 
     componentDidMount(){
@@ -142,7 +162,9 @@ export default class CatalogApp extends Component {
         return(
             <div className="root_container ui grid">
                 <div className="sixteen column inverted row">
-                    <GoogleAuth2 onSessionChange={this.onSessionChange}/>
+                    <GoogleAuth2 onSessionChange={this.onSessionChange}
+                                 nonce={this.state.nonce}
+                                 updateNonce={this.updateNonce}/>
                 </div>
                 <div className="left floated three wide column" style={{marginTop: '50px'}}>
                     <Sidebar categories={this.state.categories}

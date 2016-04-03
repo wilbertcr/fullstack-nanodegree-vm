@@ -13,16 +13,11 @@ export default class Category extends Component{
         };
     }
 
-    updateName(name){
-        this.props.category.name = name;
-        this.setState({...this.state});
-        console.log(this.props.category.name);
-    }
-
     editCategory(category){
         this.props.editCategory(category);
         this.setState({...this.state,edit_modal_visible: !this.state.edit_modal_visible});
     }
+
 
     deleteCategory(){
         console.log("Showing modal");
@@ -34,23 +29,11 @@ export default class Category extends Component{
         this.props.displayCategory(this.props.category);
     }
 
-    handleEdit(e){
-        if(!this.state.editing){
-            this.setState({editing: true});
-        } else {
-            this.setState({editing: false});
-        }
-        console.log();
-    }
 
-    displayDeleteModal(){
-
-    }
-
-    displayEditModal(){
+    switchModalVisibility(){
         if(this.props.loginStatus.value){
             this.setState({...this.state,edit_modal_visible: !this.state.edit_modal_visible});
-            console.log("Modal is s now:"+this.state.edit_modal_visible);
+            console.log("Modal is now:"+this.state.edit_modal_visible);
         }
     }
 
@@ -59,7 +42,7 @@ export default class Category extends Component{
             <a className="blue left item">
                 <i className="edit icon"
                       style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
-                      onClick={this.displayEditModal}>
+                      onClick={this.switchModalVisibility}>
                 </i>
                 <i className="erase icon"
                       style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
@@ -72,7 +55,7 @@ export default class Category extends Component{
                 </div>
                 <ModalPage category={this.props.category}
                            modal_visible={this.state.edit_modal_visible}
-                           displayModal={this.displayEditModal}
+                           switchModalVisibility={this.switchModalVisibility}
                            editCategory={this.editCategory} />
            </a>
         );
