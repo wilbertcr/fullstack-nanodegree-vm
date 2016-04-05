@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
 import Category from './Category';
-
+import ModalPageGeneric from './ModalPageGeneric'
+import EditCategoryForm from './EditCategoryForm'
 /**
  * Sidebar container component.
  * @class Sidebar
@@ -14,26 +15,21 @@ export default class Sidebar extends Component {
      * */
     constructor(props){
         super(props);
+        this.state = {
+            isModalVisible: false,
+            //
+            name: " "
+        }
     }
 
-    addCategory(category){
-        this.props.addCategory(category);
+    switchModalVisibility(){
+        this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
-
-    deleteCategory(id){
-        this.props.deleteCategory(id);
-    }
-
-    editCategory(category){
-        this.props.editCategory(category);
-    }
-
-    displayCategory(category){
-        this.props.displayCategory(category);
-    }    
 
     render(){
-
+        console.log("teslt.");
+        this.EditCategoryForm = <element/>;
+        console.log("test.");
         return(
             <div className="ui left vertical menu">
                 {this.props.categories.map(
@@ -42,11 +38,23 @@ export default class Sidebar extends Component {
                                          index={index}
                                          category={category}
                                          loginStatus={this.props.loginStatus}
-                                         deleteCategory={this.deleteCategory}
+                                         deleteCategory={this.props.deleteCategory}
                                          editCategory={this.props.editCategory}
-                                         displayCategory={this.displayCategory}/>;
+                                         displayCategory={this.props.displayCategory}/>;
                     }.bind(this)
                 )}
+                <div className="ui item">
+                    <div className="ui buttons">
+                        <div className="medium ui icon blue basic button"
+                             onClick={this.switchModalVisibility}>
+                            <i className="add square icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <ModalPageGeneric isVisible={this.state.isModalVisible}
+                                  switchModalVisibility={this.switchModalVisibility}
+                                  reactComponent={this.EditCategoryForm}
+                />
             </div>
         );
     }

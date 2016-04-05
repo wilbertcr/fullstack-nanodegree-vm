@@ -7,15 +7,13 @@ import EditCategoryForm from './EditCategoryForm';
  * Represents the modal itself.
  * @class Modal
  * */
-export default class Modal extends Component {
+export default class ModalGeneric extends Component {
     /**
      * @constructs Modal
      * @param {Object} props - Object passed down to us from our parent.
      * */
     constructor(props) {
         super(props);
-        this.state = {
-        }
     }
 
     /**
@@ -25,26 +23,24 @@ export default class Modal extends Component {
      * */
     handleClick(e){
         e.stopPropagation();
-        "";
     }
 
     render() {
         //modalClasses determine if the modal is visible of hidden.
-        var modalClasses = (this.props.modal_visible)? 'ui small modal transition visible active': 'ui modal transition hidden';
+        console.log(this.props.reactComponent.props);
+        console.log(this.props);
+        var modalClasses = (this.props.isVisible)? 'ui small modal transition visible active': 'ui modal transition hidden';
         return (
             <div className={modalClasses}
                 onClick={this.handleClick}>
-                <div className="header">
-                    Edit Category
-                </div>
-                <div className="image content">
-                </div>
-                <div className="content">
-                    <EditCategoryForm category={this.props.category}
-                                      editCategory={this.props.editCategory}
-                                      switchModalVisibility={this.props.switchModalVisibility}/>
-                </div>
+                {this.props.reactComponent}
             </div>
         );
     }
+}
+
+ModalGeneric.propTypes = {
+    isVisible: React.PropTypes.bool.isRequired,
+    switchModalVisibility: React.PropTypes.func.isRequired,
+    reactComponent: React.PropTypes.element.isRequired
 }

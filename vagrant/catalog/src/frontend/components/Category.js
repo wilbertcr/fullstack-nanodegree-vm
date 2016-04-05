@@ -2,20 +2,21 @@ import React from 'react';
 import { RIEToggle, RIEInput, RIENumber, RIETags } from 'riek';
 import Component from './Component';
 import ModalPage from './ModalPage';
+import ModalPageGeneric from './ModalPageGeneric'
+import EditCategoryForm from './EditCategoryForm'
 
 export default class Category extends Component{
 
     constructor(props) {
         super(props);
         this.state = {name:'',
-            editing: false,
-            edit_modal_visible: false
+            isModalVisible: false
         };
+        this.reactComponent = <element></element>;
     }
 
     editCategory(category){
         this.props.editCategory(category);
-        this.setState({...this.state,edit_modal_visible: !this.state.edit_modal_visible});
     }
 
 
@@ -30,14 +31,21 @@ export default class Category extends Component{
     }
 
 
+    /**
+     *
+     * */
     switchModalVisibility(){
-        if(this.props.loginStatus.value){
-            this.setState({...this.state,edit_modal_visible: !this.state.edit_modal_visible});
-            console.log("Modal is now:"+this.state.edit_modal_visible);
-        }
+        console.log("Modal is now:"+this.state.isModalVisible ? 'visible': 'hidden');
+        this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
+    }
+
+    componentDidMount(){
+
     }
 
     render(){
+        {console.log({...this.props,switchModalVisibility: this.switchModalVisibility})}
+        this.EditCategoryForm = <EditCategoryForm {...this.props} switchModalVisibility={this.switchModalVisibility}/>;
         return(
             <a className="blue left item">
                 <i className="edit icon"
@@ -48,15 +56,20 @@ export default class Category extends Component{
                       style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
                       onClick={this.displayDeleteModal}>
                 </i>
-                <div className="ui blue circular label">{this.props.category.items.length}</div>
+                <div className="ui blue circular label"
+                     onClick={this.displayCategory}>
+                    {this.props.category.items.length}
+                </div>
                 <div className="ui text"
                      onClick={this.displayCategory}>
                     {this.props.category.name}
                 </div>
-                <ModalPage category={this.props.category}
-                           modal_visible={this.state.edit_modal_visible}
-                           switchModalVisibility={this.switchModalVisibility}
-                           editCategory={this.editCategory} />
+                <ModalPageGeneric category={this.props.category}
+                                  isVisible={this.state.isModalVisible}
+                                  switchModalVisibility={this.switchModalVisibility}
+                                  editCategory={this.editCategory}
+                                  reactComponent={this.EditCategoryForm}
+                />
            </a>
         );
     }
