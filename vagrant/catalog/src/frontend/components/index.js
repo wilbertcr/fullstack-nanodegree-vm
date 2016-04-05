@@ -79,7 +79,8 @@ export default class CatalogApp extends Component {
      * @param {Object} category - category we wish to append.
      * */
     addCategory(category){
-
+        console.log("Add category: ")
+        console.log(category);
     }
 
     /**

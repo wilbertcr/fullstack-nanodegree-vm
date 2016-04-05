@@ -1,7 +1,5 @@
 import React from 'react';
-import { RIEToggle, RIEInput, RIENumber, RIETags } from 'riek';
 import Component from './Component';
-import ModalPage from './ModalPage';
 import ModalPageGeneric from './ModalPageGeneric'
 import EditCategoryForm from './EditCategoryForm'
 
@@ -40,7 +38,7 @@ export default class Category extends Component{
     }
 
     componentDidMount(){
-
+        console.log('test');
     }
 
     render(){

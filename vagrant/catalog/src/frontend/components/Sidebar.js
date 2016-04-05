@@ -4,6 +4,8 @@ import Component from './Component';
 import Category from './Category';
 import ModalPageGeneric from './ModalPageGeneric'
 import EditCategoryForm from './EditCategoryForm'
+import AddCategoryForm from './AddCategoryForm'
+
 /**
  * Sidebar container component.
  * @class Sidebar
@@ -28,8 +30,11 @@ export default class Sidebar extends Component {
 
     render(){
         console.log("teslt.");
-        this.EditCategoryForm = <element/>;
-        console.log("test.");
+        this.reactElement = <AddCategoryForm
+            {...this.props}
+            switchModalVisibility={this.switchModalVisibility}
+            addCategory={this.props.addCategory}
+        />;
         return(
             <div className="ui left vertical menu">
                 {this.props.categories.map(
@@ -53,7 +58,7 @@ export default class Sidebar extends Component {
                 </div>
                 <ModalPageGeneric isVisible={this.state.isModalVisible}
                                   switchModalVisibility={this.switchModalVisibility}
-                                  reactComponent={this.EditCategoryForm}
+                                  reactComponent={this.reactElement}
                 />
             </div>
         );

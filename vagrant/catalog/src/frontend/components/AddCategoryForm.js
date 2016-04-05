@@ -1,79 +1,64 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
-var bleach = require('bleach');
 
-/**
- * Wrapper around Semantic-ui's "ui form". May be I should just call it Form.
- * @class EditCategoryForm
- * */
-export default class EditCategoryForm extends Component {
+export default class AddCategoryForm extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            category: this.props.category,
-            name: this.props.category.name,
-            validated: true,
-            stage: 0
-        }
+                validated: true,
+                id: 0,
+                name: "",
+                picture: "",
+                stage: 0
+            }
     }
 
-    /**
-     * Fired by the onChange event in the input field.
-     * @param {Object} e - The event's object.
-     * */
-    updateName(e){
-        /**
-         * We keep track of the state of validation. We don't want empty names.
-         * */
-        var name = bleach.sanitize(this.textInput.value);
-        this.setState({...this.state,
-            name: name,
-            validated: !(name==="")
-        });
+    updateName(name){
+        this.setState({...this.state,name: this.inputName.value});
+    }
+
+    updatePicture(event){
+        console.log(event.target.value);
+
     }
 
     advanceStage(){
         this.setState({...this.state,stage: this.state.stage+1});
     }
 
-
-    /**
-     * Clicking Submit button saves the data if it is validated.
-     * */
-    editCategory(){
+    addCategory(){
         if(this.state.validated){
-            //We are editing, so we change the name in the category.
-            this.state.category.name = this.state.name;
-            //Then we ship it to the right function.
-            this.props.editCategory(this.state.category);
-            //We also need to close the modal, since we're done here.
+            var category = {
+                id: this.state.id,
+                name: this.state.name,
+                picture: this.state.picture
+            };
+            this.props.addCategory(category);
             this.props.switchModalVisibility();
-            //Finally, let's make sure the modal starts where it is supposed to next time
-            //it loads.
-            this.setState({stage: 0});
+            this.resetFields();
         } else {
-            console.error("EditCagetoryForm.js - Line 51: This shouldn't be called when data is invalid.");
+            console.error("AddCategoryForm.js - Line 44: This shouldn't be called when data is invalid.");
         }
     }
 
-    /**
-     * The category is going to change, so we want to store it in a state
-     * variable.
-     * */
-    componentDidMount() {
-        this.setState({category: this.props.category});
+    resetFields(){
+        this.setState({
+            ...this.state,
+            id: 0,
+            name: "",
+            picture:"",
+            validated: true,
+            state: 0
+        });
     }
 
     switchModalVisibility(){
-        this.setState({
-            stage: 0,
-            category: this.props.category,
-            name: this.props.category.name
-        });
+        this.resetFields();
         this.props.switchModalVisibility();
     }
+
 
     render() {
         var formClasses;
@@ -82,7 +67,7 @@ export default class EditCategoryForm extends Component {
             /**
              * If we're editing and content is validated
              * */
-            //Then we want a regular form.
+                //Then we want a regular form.
             formClasses = 'ui small form';
             //And a submit button.
             buttons = <div className="ui one button">
@@ -106,33 +91,42 @@ export default class EditCategoryForm extends Component {
             //If we are done editing.
             //We want to ask the user to confirm via a "success" message.
             buttons = <div className="ui two buttons">
-                    <div className="ui submit button"
-                         onClick={this.editCategory}>
-                        Ok
-                    </div>
-                    <div className="ui submit button"
-                         onClick={this.switchModalVisibility}>
-                        Cancel
-                    </div>
-                </div>;
+                <div className="ui submit button"
+                     onClick={this.addCategory}>
+                    Ok
+                </div>
+                <div className="ui submit button"
+                     onClick={this.switchModalVisibility}>
+                    Cancel
+                </div>
+            </div>;
         }
-
+        {console.log("Showing form")}
         return (
+
             <div className="ui item">
                 <div className="header">
-                    Edit Category
+                    Add Category
                 </div>
                 <div className="image content">
+
                 </div>
                 <div className="content">
                     <div className={formClasses}>
-                        <div className="one field">
+                        <div className="ui field">
                             <div className="required field">
-                                <label>Category</label>
+                                <label>Name</label>
                                 <input type="text"
-                                       ref={(ref) => this.textInput = ref}
+                                       ref={(ref) => this.inputName=ref}
                                        value={this.state.name}
                                        onChange={this.updateName}/>
+                            </div>
+                            <div className="ui field">
+                                <label>Picture</label>
+                                <input type="file"
+                                       name="Picture"
+                                       ref={(ref) => this.inputPicture=ref}
+                                       onChange={this.updatePicture}/>
                             </div>
                             <div className="ui error message">
                                 <div className="header">Empty name</div>
@@ -144,8 +138,8 @@ export default class EditCategoryForm extends Component {
                                 </div>
                             </div>
                         </div>
-                        {buttons}
                     </div>
+                    {buttons}
                 </div>
             </div>
         );

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
-import EditCategoryForm from './EditCategoryForm';
+
 
 /**
  * Represents the modal itself.
@@ -28,7 +28,7 @@ export default class ModalGeneric extends Component {
     render() {
         //modalClasses determine if the modal is visible of hidden.
         console.log(this.props.reactComponent.props);
-        console.log(this.props);
+
         var modalClasses = (this.props.isVisible)? 'ui small modal transition visible active': 'ui modal transition hidden';
         return (
             <div className={modalClasses}
