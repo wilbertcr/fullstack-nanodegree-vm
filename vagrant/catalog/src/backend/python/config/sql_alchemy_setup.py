@@ -28,6 +28,7 @@ class User(Base):
             'is_admin': self.is_admin
         }
 
+
 class Category(Base):
     __tablename__ = 'category'
 
@@ -51,7 +52,7 @@ class Item(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    price = Column(String)
+    price = Column(String, nullable=False)
     picture = Column(String)
     category_id = Column(Integer, ForeignKey('category.id', ondelete="CASCADE"))
     category = relationship(Category, back_populates="items")

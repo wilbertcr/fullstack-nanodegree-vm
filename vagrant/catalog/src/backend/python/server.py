@@ -52,9 +52,15 @@ def show_login():
 def gconnect():
     i = 0
     # Validate that the state token we sent and the one we received are the same.
+    app.logger.warning("Received state: "+request.args.get('state'))
+    app.logger.warning("Current state: "+login_session['state'])
     if request.args.get('state') != login_session['state']:
         response = make_response(
-            json.dumps({'error': 'Invalid state parameter'}), 401
+            json.dumps({
+                'error': 'Invalid state parameter',
+                'expected': login_session['state']
+            }),
+            401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -132,9 +138,9 @@ def gconnect():
     login_session['email'] = answer_json['email']
 
     # see if user exists, otherwise create a new one.
-    user_id = getUserID(answer_json['email'])
+    user_id = get_user_id(answer_json['email'])
     if not user_id:
-        user_id = createUser(login_session)
+        user_id = create_user(login_session)
     login_session['user_id'] = user_id
 
     # Our response will include a new nonce.
@@ -212,6 +218,7 @@ def gdisconnect():
 @app.route('/categories/json')
 def categories_json():
     try:
+        app.logger.warning("State sent back: "+login_session['state'])
         categories = session.query(Category).all()
         return jsonify(categories=[category.serialize for category in categories])
     except Exception as inst:
@@ -219,28 +226,132 @@ def categories_json():
         print(inst.args)
         print(inst)
 
-
-def getUserID(email):
+@app.route('/categories/new', methods=['POST'])
+def add_category():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error': 'Invalid state parameter.'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
     try:
-        user = session.query(User).filter_by(email = email).one()
+        if request.method == 'POST':
+            category = Category()
+            category.name = request.form['name']
+            state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+            login_session['state'] = state
+            session.add(category)
+            # flush() allows me to see the id that will be
+            # assigned upon comitting the session.
+            session.flush()
+            response = make_response(
+                json.dumps({'category': category.serialize, 'nonce': login_session['state']}), 200
+            )
+            response.headers['Content-Type'] = 'application/json'
+            session.commit()
+            return response
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/categories/delete/<int:category_id>', methods=['DELETE'])
+def delete_category(category_id):
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error': 'Invalid state parameter.'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'DELETE':
+            category = session.query(Category).filter_by(id=category_id).one()
+            session.delete(category)
+            session.commit()
+            state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+            login_session['state'] = state
+            response = make_response(
+                json.dumps({'success': '', 'nonce': login_session['state']}), 200
+            )
+            response.headers['Content-Type'] = 'application/json'
+            return response
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/categories/edit/<int:category_id>', methods=['POST'])
+def edit_category(category_id):
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error':'Invalid state parameter.'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'POST':
+            category = session.query(Category).filter_by(id=category_id).all()
+            if len(category) > 0:
+                state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+                login_session['state'] = state
+                category = category[0]
+                category.name = request.form['name']
+                session.add(category)
+                session.commit()
+                response = make_response(
+                    json.dumps({'Success': '','nonce': login_session['state']}), 200
+                )
+                response.headers['Content-Type'] = 'application/json'
+                return response
+            else:
+                return make_response(jsonify(error=["No results found"]), 404)
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+def get_user_id(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
 
 
-def getUserInfo(user_id):
+def get_user_info(user_id):
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
-def createUser(login_session):
-    newUser = User(id=login_session['gplus_id'],
+def create_user(login_session):
+    new_user = User(id=login_session['gplus_id'],
                    name=login_session['username'],
                    email=login_session['email'],
                    picture=login_session['picture'])
-    session.add(newUser)
+    session.add(new_user)
+    session.flush()
     session.commit()
-
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
