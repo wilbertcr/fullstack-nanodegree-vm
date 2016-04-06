@@ -29,7 +29,7 @@ export default class Sidebar extends Component {
     }
 
     render(){
-        console.log("teslt.");
+
         this.reactElement = <AddCategoryForm
             {...this.props}
             switchModalVisibility={this.switchModalVisibility}
@@ -48,7 +48,8 @@ export default class Sidebar extends Component {
                                          displayCategory={this.props.displayCategory}/>;
                     }.bind(this)
                 )}
-                <div className="ui item">
+                <div className="ui item"
+                     style={{display: this.props.loginStatus.value ? 'block' : 'none'}}>
                     <div className="ui buttons">
                         <div className="medium ui icon blue basic button"
                              onClick={this.switchModalVisibility}>

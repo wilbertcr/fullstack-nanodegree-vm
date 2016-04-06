@@ -3,8 +3,15 @@ import Component from './Component';
 import ModalPageGeneric from './ModalPageGeneric'
 import EditCategoryForm from './EditCategoryForm'
 
+/**
+ * Represents the modal itself.
+ * @class Category
+ * */
 export default class Category extends Component{
-
+    /**
+     * @constructs Category
+     * @param {Object} props - Object passed down to us from our parent.
+     * */
     constructor(props) {
         super(props);
         this.state = {name:'',
@@ -13,19 +20,12 @@ export default class Category extends Component{
         this.reactComponent = <element></element>;
     }
 
-    editCategory(category){
-        this.props.editCategory(category);
-    }
-
-
     deleteCategory(){
-        console.log("Showing modal");
-        console.log(this.state.modal_ref);
         this.props.deleteCategory(this.props.category.id);
     }
 
     displayCategory(){
-        this.props.displayCategory(this.props.category);
+        this.props.displayCategory(this.props.category.id);
     }
 
 
@@ -38,12 +38,14 @@ export default class Category extends Component{
     }
 
     componentDidMount(){
-        console.log('test');
+
     }
 
     render(){
-        {console.log({...this.props,switchModalVisibility: this.switchModalVisibility})}
-        this.EditCategoryForm = <EditCategoryForm {...this.props} switchModalVisibility={this.switchModalVisibility}/>;
+        this.reactElement = <EditCategoryForm
+            {...this.props}
+            switchModalVisibility={this.switchModalVisibility}
+        />;
         return(
             <a className="blue left item">
                 <i className="edit icon"
@@ -52,7 +54,7 @@ export default class Category extends Component{
                 </i>
                 <i className="erase icon"
                       style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
-                      onClick={this.displayDeleteModal}>
+                      onClick={this.deleteCategory}>
                 </i>
                 <div className="ui blue circular label"
                      onClick={this.displayCategory}>
@@ -65,8 +67,8 @@ export default class Category extends Component{
                 <ModalPageGeneric category={this.props.category}
                                   isVisible={this.state.isModalVisible}
                                   switchModalVisibility={this.switchModalVisibility}
-                                  editCategory={this.editCategory}
-                                  reactComponent={this.EditCategoryForm}
+                                  editCategory={this.props.editCategory}
+                                  reactComponent={this.reactElement}
                 />
            </a>
         );

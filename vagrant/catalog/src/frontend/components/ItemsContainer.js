@@ -24,7 +24,7 @@ export default class ItemsContainer extends Component {
                         return <Item key={item.id}
                                 index={index}
                                 item={item}
-                                loginStatus={this.props.loginStatus}
+                                {...this.props}
                                 />;
                     }.bind(this)
                 )}

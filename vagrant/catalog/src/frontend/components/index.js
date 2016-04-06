@@ -47,6 +47,7 @@ export default class CatalogApp extends Component {
     updateNonce(nonce){
         this.setState({...this.state, nonce: nonce});
     }
+
     /**
      * Listener triggered by GoogleAuth2 when a change in login state occurs.
      * @param {STATUS} state - The current login status.
@@ -62,25 +63,75 @@ export default class CatalogApp extends Component {
      * Sets state such that the objects in the category passed in are displayed.
      * @param {Object} category - category we want to display.
      * */
-    displayCategory(category){
-        this.setState({...this.state, items: category.items,categoryId: category.id});
-    }
-
-    /**
-     * deletes category with id equal to the one passed in.
-     * @param {integer} id - categoryId of the category we wish to delete.
-     * */
-    deleteCategory(id){
-
+    displayCategory(id){
+        var index;
+        /**
+         * We need the category's index in the categories array.
+         * */
+        for(let i=0;i<this.state.categories.length;i++){
+            if(id===this.state.categories[i].id){
+                index = i;
+                break;
+            }
+        }
+        var category = this.state.categories[index];
+        var items = category.items;
+        this.setState({...this.state, items: items,categoryId: id});
     }
 
     /**
      * Appends the category to the list of categories.
      * @param {Object} category - category we wish to append.
      * */
-    addCategory(category){
+    addCategory(name){
         console.log("Add category: ")
-        console.log(category);
+        console.log(name);
+        var newCategory = {
+            id: 0,
+            name: name,
+            picture: "",
+            items: []
+        };
+        var categories = this.state.categories;
+        var newCategories = [...categories,newCategory];
+        var index = newCategories.length-1;
+        var prevState = {...this.state};
+        var nextState = {...this.state,categories: newCategories};
+        this.setState(nextState);
+        /**
+         *We're sending the new category to the backend for processing.
+         * */
+        var endpoint = "/categories/new?state=";
+        apiCall({
+            url: endpoint+this.state.nonce,
+            dataType: 'json',
+            type: 'POST',
+            data: newCategory,
+            success: function(data) {
+                /**
+                 * This is the state we wish to move to, but we need confirmation that
+                 * it is consistent with the DB before we can set this in stone.
+                 * */
+                newCategory.id = data.category.id;
+                var nextState = {
+                    ...this.state,
+                    categories : [
+                        ...this.state.categories.slice(0,index),
+                        newCategory
+                    ]
+                };
+                /**
+                 * We're going to be optimistic, and change the state before contating the
+                 * backend.
+                 * */
+                this.setState(nextState);
+            }.bind(this),
+            error: function(xhr,status,err){
+                this.setState(prevState);
+                console.error(endpoint,status,err.toString());
+            }.bind(this)
+        },this);
+
     }
 
     /**
@@ -102,7 +153,7 @@ export default class CatalogApp extends Component {
         /**
          * Let's keep the previous state, in case something goes wrong.
          * */
-        var prevState = this.state;
+        var prevState = {...this.state};
         /**
          * This is the state we wish to move to, but we need confirmation that
          * it is consistent with the DB before we can set this in stone.
@@ -122,7 +173,7 @@ export default class CatalogApp extends Component {
         this.setState(nextState);
 
         /**
-         *We're sending the new category to the backend for processing.
+         *We're sending the edited category to the backend for processing.
          * */
         var endpoint = "/categories/edit/"+newCategory.id+"?state=";
         apiCall({
@@ -137,6 +188,72 @@ export default class CatalogApp extends Component {
             }.bind(this)
         },this);
     }
+
+
+    /**
+     * deletes category with id equal to the one passed in.
+     * @param {integer} id - categoryId of the category we wish to delete.
+     * */
+    deleteCategory(id){
+        var index;
+        /**
+         * We need the category's index in the categories array.
+         * */
+        for(let i=0;i<this.state.categories.length;i++){
+            if(id===this.state.categories[i].id){
+                index = i;
+                break;
+            }
+        }
+        /**
+         * Let's keep the previous state, in case something goes wrong.
+         * */
+        var prevState = {...this.state};
+        /**
+         * This is the state we wish to move to, but we need confirmation that
+         * it is consistent with the DB before we can set this in stone.
+         * */
+        var nextState = {
+            ...this.state,
+            categories : [
+                ...this.state.categories.slice(0,index),
+                ...this.state.categories.slice(index+1)
+            ]
+        };
+        /**
+         * Unless this category's items are being displayed right now, if that's the case
+         * then we want them to disappear since their parent category is being deleted.
+         * */
+        if(id===this.state.categoryId){
+            nextState = {
+                ...nextState,
+                items:[],
+                categoryId:0
+            }
+        }
+        /**
+         * We're going to be optimistic, and change the state before contating the
+         * backend.
+         * */
+        this.setState(nextState);
+        /**
+         *We're sending the request to the backend..
+         * */
+        var endpoint = "/categories/delete/"+id+"?state=";
+        apiCall({
+            url: endpoint+this.state.nonce,
+            dataType: 'json',
+            type: 'DELETE',
+            error: function(xhr,status,err){
+                this.setState(prevState);
+                console.error(endpoint,status,err.toString());
+            }.bind(this)
+        },this);
+
+    }
+
+
+
 
     /**
      * Loads categories from server.
@@ -159,6 +276,21 @@ export default class CatalogApp extends Component {
         this.loadCategories();
     }
 
+    addItem(Item){
+        console.log("AddItem");
+        console.log(Item);
+    }
+
+    editItem(Item){
+        console.log("editItem");
+        console.log(Item);
+    }
+
+    deleteItem(id){
+        console.log("deleteItem");
+        console.log(id);
+    }
+
     render(){
         return(
             <div className="root_container ui grid">
@@ -177,7 +309,11 @@ export default class CatalogApp extends Component {
                 </div>
                 <div className="left floated left aligned thirteen wide column" style={{marginTop: '55px'}}>
                     <ItemsContainer items={this.state.items}
-                                    loginStatus={this.state.loginStatus}/>
+                                    loginStatus={this.state.loginStatus}
+                                    categoryId={this.state.categoryId}
+                                    addItem={this.addItem}
+                                    editItem={this.editItem}
+                                    deleteItem={this.deleteItem}/>
                 </div>
             </div>
         );
@@ -190,4 +326,3 @@ $( document ).ready(function() {
         document.getElementById("root")
     );
 });
-

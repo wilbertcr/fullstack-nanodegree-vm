@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
-
+import EditItemForm from './EditItemForm';
+import ModalPageGeneric from './ModalPageGeneric'
 /**
  * Represents an item in a category.
  * @class Item
@@ -24,9 +25,20 @@ export default class Item extends Component {
             LoggedIn : {value: true, name: "LoggedIn"},
             LoggedOut : {value: false, name: "LoggedOut"}
         };
+        this.state = {
+            isModalVisible: false
+        }
+    }
+
+    switchModalVisibility(){
+        this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
 
     render() {
+        this.reactElement = <EditItemForm
+            {...this.props}
+            switchModalVisibility={this.switchModalVisibility}
+        />;
         return (
             <div className="card">
                 <div className="content">
@@ -44,10 +56,15 @@ export default class Item extends Component {
                 <div className="extra content"
                      style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}>
                     <div className="ui two butons">
-                        <div className="ui basic blue button">Edit</div>
+                        <div className="ui basic blue button"
+                             onClick={this.switchModalVisibility}>Edit</div>
                         <div className="ui basic red button">Delete</div>
                     </div>
                 </div>
+                <ModalPageGeneric isVisible={this.state.isModalVisible}
+                                  switchModalVisibility={this.switchModalVisibility}
+                                  reactComponent={this.reactElement}
+                />
             </div>
         );
     }

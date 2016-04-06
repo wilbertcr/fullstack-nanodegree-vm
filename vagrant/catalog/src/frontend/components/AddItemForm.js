@@ -2,47 +2,54 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
 
-/**
- *
- * @class AddCategoryForm
- * */
-export default class AddCategoryForm extends Component {
-    /**
-     * @constructs AddCategoryForm
-     * @param {Object} props - Object passed down to us from our parent..
-     * */
+export default class AddItemForm extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
                 validated: true,
+                id: 0,
                 name: "",
+                picture: "",
                 stage: 0
             }
     }
 
-    /**
-     * Updates the state based on the current value in the input field.
-     * @param {String} name - The name of the category we wish to add.
-     * */
     updateName(name){
         this.setState({...this.state,name: this.inputName.value});
     }
 
-    /**
-     * Moves state to confirmation stage.
-     * */
+    updatePicture(event){
+        var pictureFile = event.target.files[0];
+        this.state.picture = pictureFile;
+        if(!pictureFile){
+            //File uploaded is empty
+            return;
+        }
+        if (!pictureFile.name.match(/\.(jpg|jpeg|png|gif)$/)){
+            //File uploaded isn't an imag
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var rawData = reader.result;
+        };
+        reader.readAsBinaryString(pictureFile);
+        console.log(pictureFile);
+    }
+
     advanceStage(){
         this.setState({...this.state,stage: this.state.stage+1});
     }
 
-    /**
-     *Requests this.props.addCategory to add the new category
-     *after making sure the content is validated.
-     * It also switches the modal off and resets the fields.
-     * */
     addCategory(){
         if(this.state.validated){
-            this.props.addCategory(this.state.name);
+            var category = {
+                id: this.state.id,
+                name: this.state.name,
+                picture: this.state.picture
+            };
+            this.props.addCategory(category);
             this.props.switchModalVisibility();
             this.resetFields();
         } else {
@@ -50,25 +57,22 @@ export default class AddCategoryForm extends Component {
         }
     }
 
-    /**
-     * Reset the fields in the form to their original state.
-     * */
     resetFields(){
         this.setState({
             ...this.state,
+            id: 0,
             name: "",
+            picture:"",
             validated: true,
-            stage: 0
+            state: 0
         });
     }
 
-    /**
-     * Resets fields and hides modal.
-     * */
     switchModalVisibility(){
         this.resetFields();
         this.props.switchModalVisibility();
     }
+
 
     render() {
         var formClasses;
@@ -84,6 +88,7 @@ export default class AddCategoryForm extends Component {
                 <div className="ui submit button"
                      onClick={this.advanceStage}>
                     Submit
+
                 </div>
             </div>;        }
         if(this.state.stage===0 && !this.state.validated){
@@ -111,6 +116,7 @@ export default class AddCategoryForm extends Component {
                 </div>
             </div>;
         }
+
         return (
 
             <div className="ui item">
@@ -129,6 +135,13 @@ export default class AddCategoryForm extends Component {
                                        ref={(ref) => this.inputName=ref}
                                        value={this.state.name}
                                        onChange={this.updateName}/>
+                            </div>
+                            <div className="ui field">
+                                <label>Picture</label>
+                                <input type="file"
+                                       name="Picture"
+                                       ref={(ref) => this.inputPicture=ref}
+                                       onChange={this.updatePicture}/>
                             </div>
                             <div className="ui error message">
                                 <div className="header">Empty name</div>
