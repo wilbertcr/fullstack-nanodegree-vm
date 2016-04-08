@@ -22,11 +22,18 @@ export default class ModalPageGeneric extends Component {
         super(props);
     }
 
+    stopEvent(e){
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     render() {
         var modal_classes = (this.props.isVisible) ? 'ui dimmer modals page transition visible active' : 'ui dimmer modals page transition hidden';
         return (
             <div className={modal_classes}
-                 onClick={this.props.switchModalVisibility}>
+                 onClick={this.props.switchModalVisibility}
+                 onDrop={this.stopEvent}
+                 onDragOver={this.stopEvent}>
                 <ModalGeneric {...this.props}/>
             </div>
         );

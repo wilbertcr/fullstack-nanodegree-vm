@@ -14,6 +14,13 @@ export default class ModalGeneric extends Component {
      * */
     constructor(props) {
         super(props);
+        this.state = {
+            node: null,
+            styles: {
+                top: 0,
+                left: 0
+            }
+        };
     }
 
     /**
@@ -25,12 +32,20 @@ export default class ModalGeneric extends Component {
         e.stopPropagation();
     }
 
+    componentDidMount(){
+        this.state.node = ReactDOM.findDOMNode(this.modalRef);
+    }
+
     render() {
+        var top = (window.innerHeight-$(this.state.node).height())/2;
+        console.log(top);
         //modalClasses determine if the modal is visible of hidden.
         var modalClasses = (this.props.isVisible)? 'ui small modal transition visible active': 'ui modal transition hidden';
         return (
             <div className={modalClasses}
-                onClick={this.handleClick}>
+                 onClick={this.handleClick}
+                 style={{top: top}}
+                 ref={(ref) => this.modalRef=ref}>
                 {this.props.reactComponent}
             </div>
         );

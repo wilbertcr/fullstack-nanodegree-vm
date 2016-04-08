@@ -193,7 +193,7 @@ export default class GoogleAuth2 extends Component {
         $('.ui.dropdown').dropdown();
         return (
             <div className="ui blue top fixed inverted menu"
-            style={{height: '76px'}}>
+                 style={this.state.loginStatus.value ? {height: '54px'}: {} }>
                 <div className="right menu">
                     <a className="ui item">
                         <div id="signInButton"

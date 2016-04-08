@@ -18,7 +18,7 @@ export default class ItemsContainer extends Component {
 
     render() {
         return (
-            <div className="ui cards container">
+            <div className="ui one stackable doubling cards">
                 {this.props.items.map(
                     function(item,index){
                         return <Item key={item.id}

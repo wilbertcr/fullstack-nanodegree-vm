@@ -42,7 +42,7 @@ export default class Item extends Component {
         return (
             <div className="card">
                 <div className="content">
-                    <img className="ui medium circular bordered image" src={this.props.item.picture}></img>
+                    <img className="ui small circular bordered image" src={this.props.item.picture}></img>
                     <div className="header">
                         Name: {this.props.item.name}
                     </div>

@@ -36,7 +36,7 @@ export default class Sidebar extends Component {
             addCategory={this.props.addCategory}
         />;
         return(
-            <div className="ui left vertical menu">
+            <div className="ui small left vertical menu">
                 {this.props.categories.map(
                     function(category,index){
                         return <Category key={category.id}

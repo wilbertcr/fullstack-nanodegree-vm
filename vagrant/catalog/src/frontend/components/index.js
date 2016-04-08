@@ -61,7 +61,7 @@ export default class CatalogApp extends Component {
 
     /**
      * Sets state such that the objects in the category passed in are displayed.
-     * @param {Object} category - category we want to display.
+     * @param {integer} id - category id of the category we want to display.
      * */
     displayCategory(id){
         var index;
@@ -81,7 +81,7 @@ export default class CatalogApp extends Component {
 
     /**
      * Appends the category to the list of categories.
-     * @param {Object} category - category we wish to append.
+     * @param {string} name - name of the category we wish to append.
      * */
     addCategory(name){
         console.log("Add category: ")
@@ -281,9 +281,62 @@ export default class CatalogApp extends Component {
         console.log(Item);
     }
 
-    editItem(Item){
-        console.log("editItem");
-        console.log(Item);
+    editItem(item){
+
+        var catIndex;
+        var itemIndex;
+        for(let i=0;i<this.state.categories.length;i++){
+            if(item.categoryId===this.state.categories[i].id){
+                catIndex=i;
+                var prevCategory = this.state.categories[i];
+                for(let j=0;j<prevCategory.items.length;j++){
+                    if(item.id===prevCategory.items[j].id){
+                        itemIndex = j;
+                    }
+                }
+            }
+        }
+        var prevCategories = this.state.categories;
+        var nextCategories = [...this.state.categories];
+        var prevItem =  nextCategories[catIndex].items[itemIndex];
+        var nextItem = {...nextCategories[catIndex].items[itemIndex]};
+        nextItem.picture = item.picture;
+        nextItem.name = item.name;
+        nextItem.description = item.description;
+        nextItem.price = item.price;
+        /**
+         * Does the item contains a new picture? Or just changes
+         * to the text?
+         * */
+        if(item.newPicture){
+
+        } else {
+            //If it is just changes to the text
+            //Let's be optimistic and update the
+            nextCategories[catIndex].items[itemIndex] = nextItem;
+            this.setState({
+                categories: nextCategories,
+                items: nextCategories[catIndex].items}
+            );
+            let endpoint = "/items/edit/"+item.id+"?state=";
+            apiCall({
+                url: endpoint+this.state.nonce,
+                dataType: 'json',
+                type: 'POST',
+                data: item,
+                error: function(xhr,status,err){
+                    //If things go bad, we go back to
+                    //the previous state.
+                    console.log("going back to previous state.");
+                    console.log(prevItem);
+                    prevCategories[catIndex].items[itemIndex] = prevItem;
+                    this.setState({...this.state,
+                        categories: prevCategories,
+                        items:prevCategories[catIndex].items}
+                    );
+                }.bind(this),
+            },this);
+        }
     }
 
     deleteItem(id){
@@ -293,27 +346,30 @@ export default class CatalogApp extends Component {
 
     render(){
         return(
-            <div className="root_container ui grid">
-                <div className="sixteen column inverted row">
-                    <GoogleAuth2 onSessionChange={this.onSessionChange}
-                                 nonce={this.state.nonce}
-                                 updateNonce={this.updateNonce}/>
-                </div>
-                <div className="left floated three wide column" style={{marginTop: '50px'}}>
-                    <Sidebar categories={this.state.categories}
-                             loginStatus={this.state.loginStatus}
-                             displayCategory={this.displayCategory}
-                             deleteCategory={this.deleteCategory}
-                             addCategory={this.addCategory}
-                             editCategory={this.editCategory}/>
-                </div>
-                <div className="left floated left aligned thirteen wide column" style={{marginTop: '55px'}}>
-                    <ItemsContainer items={this.state.items}
-                                    loginStatus={this.state.loginStatus}
-                                    categoryId={this.state.categoryId}
-                                    addItem={this.addItem}
-                                    editItem={this.editItem}
-                                    deleteItem={this.deleteItem}/>
+            <div>
+                <GoogleAuth2 onSessionChange={this.onSessionChange}
+                             nonce={this.state.nonce}
+                             updateNonce={this.updateNonce}/>
+                <div className="root_container ui stackable padded grid"
+                     style={this.state.loginStatus.value ? {paddingTop: '54px'}: {} }>
+                    <div className="row">
+                        <div className="left floated left two wide column">
+                            <Sidebar categories={this.state.categories}
+                                     loginStatus={this.state.loginStatus}
+                                     displayCategory={this.displayCategory}
+                                     deleteCategory={this.deleteCategory}
+                                     addCategory={this.addCategory}
+                                     editCategory={this.editCategory}/>
+                        </div>
+                        <div className="left floated left aligned thirteen wide column">
+                            <ItemsContainer items={this.state.items}
+                                            loginStatus={this.state.loginStatus}
+                                            categoryId={this.state.categoryId}
+                                            addItem={this.addItem}
+                                            editItem={this.editItem}
+                                            deleteItem={this.deleteItem}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
