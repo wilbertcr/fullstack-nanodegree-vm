@@ -9,7 +9,6 @@ from sqlalchemy.orm import sessionmaker
 from config.sql_alchemy_setup import Base, User, Category, Item
 from flask import session as login_session
 from oauth2client.client import flow_from_clientsecrets
-#Exception used to catch erros occurred during flow exchanges.
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import AccessTokenCredentials
 import httplib2
@@ -42,7 +41,7 @@ CLIENT_ID = json.loads(
 @app.route('/')
 @app.route('/index')
 def show_login():
-    state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+    state = get_new_state()
     login_session['state'] = state
     #"Current sessions state {0}".format(login_session['state'])
     return render_template('index.html', time=time, STATE=state)
@@ -52,8 +51,6 @@ def show_login():
 def gconnect():
     i = 0
     # Validate that the state token we sent and the one we received are the same.
-    app.logger.warning("Received state: "+request.args.get('state'))
-    app.logger.warning("Current state: "+login_session['state'])
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({
@@ -113,7 +110,7 @@ def gconnect():
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
         # Our response will include a new nonce.
-        state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+        state = get_new_state()
         login_session['state'] = state
         response = make_response(
             json.dumps({'success': 'User already connected', 'nonce': login_session['state']}), 200
@@ -144,7 +141,7 @@ def gconnect():
     login_session['user_id'] = user_id
 
     # Our response will include a new nonce.
-    state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+    state = get_new_state()
     login_session['state'] = state
     response = make_response(
         json.dumps({'success': 'User connected', 'nonce': login_session['state']}), 200
@@ -155,6 +152,7 @@ def gconnect():
 
 @app.route('/gdisconnect')
 def gdisconnect():
+    # Verify that the nonce received is valid.
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter'}), 401
@@ -166,7 +164,7 @@ def gdisconnect():
     if access_token is None:
         app.logger.warning("User was not connected.")
         response = make_response(
-            json.dumps('Current user not connected.'), 401
+            json.dumps({'error': 'Current user not connected.'}), 404
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -185,7 +183,7 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
         # Our response will include a new nonce.
-        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        state = get_new_state()
         login_session['state'] = state
         response = make_response(
             json.dumps({'success': 'User disconnected', 'nonce': login_session['state']}), 200
@@ -200,7 +198,7 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
         # Our response will include a new nonce.
-        state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+        state = get_new_state()
         login_session['state'] = state
         response = make_response(
             json.dumps({'success': 'User was already disconnected', 'nonce': login_session['state']}), 200
@@ -244,7 +242,7 @@ def add_category():
         if request.method == 'POST':
             category = Category()
             category.name = request.form['name']
-            state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+            state = get_new_state()
             login_session['state'] = state
             session.add(category)
             # flush() allows me to see the id that will be
@@ -281,7 +279,7 @@ def delete_category(category_id):
             category = session.query(Category).filter_by(id=category_id).one()
             session.delete(category)
             session.commit()
-            state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+            state = get_new_state()
             login_session['state'] = state
             response = make_response(
                 json.dumps({'success': '', 'nonce': login_session['state']}), 200
@@ -312,7 +310,7 @@ def edit_category(category_id):
         if request.method == 'POST':
             category = session.query(Category).filter_by(id=category_id).all()
             if len(category) > 0:
-                state = ''.join(random.choice(string.ascii_uppercase+string.digits) for x in xrange(32))
+                state = get_new_state()
                 login_session['state'] = state
                 category = category[0]
                 category.name = request.form['name']
@@ -325,6 +323,44 @@ def edit_category(category_id):
                 return response
             else:
                 return make_response(jsonify(error=["No results found"]), 404)
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+# Task 1: Create route for newMenuItem function here
+@app.route('/items/edit/<int:item_id>', methods=['POST'])
+def edit_item(item_id):
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error': 'Invalid state parameter.'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'POST':
+            item = session.query(Item).filter_by(id=item_id).one()
+            item.name = request.form['picture']
+            item.name = request.form['name']
+            item.price = request.form['price']
+            item.description = request.form['description']
+            item.user_id = login_session['user_id']
+            session.add(item)
+            session.commit()
+            state = get_new_state()
+            login_session['state'] = state
+            response = make_response(
+                json.dumps({'Success': '', 'nonce': login_session['state']}), 200
+            )
+            response.headers['Content-Type'] = 'application/json'
+            return response
     except Exception as inst:
         print(type(inst))
         print(inst.args)
@@ -355,6 +391,9 @@ def create_user(login_session):
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
+def get_new_state():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    return state
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
