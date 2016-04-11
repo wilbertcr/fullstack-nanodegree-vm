@@ -2,37 +2,44 @@
 """
 Main flask application code.
 """
-from flask import Flask, render_template, url_for, jsonify, make_response
-from flask import request, redirect
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from config.sql_alchemy_setup import Base, User, Category, Item
-from flask import session as login_session
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
-from oauth2client.client import AccessTokenCredentials
-import httplib2
-import requests
 import json
+import os
 import random
 import string
-import time
 import sys
+import time
+from pprint import pprint
 
+import httplib2
+import requests
+from flask import Flask, render_template, jsonify, make_response
+from flask import request
+from flask import session as login_session
+from flask.ext.socketio import SocketIO, emit
+from oauth2client.client import AccessTokenCredentials
+from oauth2client.client import FlowExchangeError
+from oauth2client.client import flow_from_clientsecrets
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from werkzeug.utils import secure_filename
+from config.sql_alchemy_setup import Base, User, Category, Item
 
-#Pybuilder needs to know where the root of all packages is so we need to set path to it here.
-#as it picks it up from it.
+# Pybuilder needs to know where the root of all packages is so we need to set path to it here.
+# as it picks it up from it.
 sys.path.insert(0, '../')
 
-APPLICATION_NAME = "Catalog App"
-
 app = Flask(__name__)
+APPLICATION_NAME = "Catalog App"
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+socketio = SocketIO(app)
+
 engine = create_engine('postgresql://vagrant:vagrantvm@localhost:5432/catalog')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-secrets_path = 'src/backend/python/client_secrets.json'
+secrets_path = './client_secrets.json'
 CLIENT_ID = json.loads(
     open(secrets_path, 'r').read()
 )['web']['client_id']
@@ -43,12 +50,17 @@ CLIENT_ID = json.loads(
 def show_login():
     state = get_new_state()
     login_session['state'] = state
-    #"Current sessions state {0}".format(login_session['state'])
+    # "Current sessions state {0}".format(login_session['state'])
     return render_template('index.html', time=time, STATE=state)
 
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """
+    This route deals with logging in a user using googleAuth2
+    and getting basic profile information from google about the
+    user.
+    """
     i = 0
     # Validate that the state token we sent and the one we received are the same.
     if request.args.get('state') != login_session['state']:
@@ -224,6 +236,7 @@ def categories_json():
         print(inst.args)
         print(inst)
 
+
 @app.route('/categories/new', methods=['POST'])
 def add_category():
     if request.args.get('state') != login_session['state']:
@@ -329,9 +342,75 @@ def edit_category(category_id):
         print(inst)
 
 
-# Task 1: Create route for newMenuItem function here
+@app.route('/items/add', methods=['POST'])
+def add_item():
+    """
+    Adds an item to the database.
+    """
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'POST':
+            item = Item()
+            item.picture = request.form['picture']
+            item.name = request.form['name']
+            item.price = request.form['price']
+            item.description = request.form['description']
+            item.user_id = login_session['user_id']
+            session.add(item)
+            session.commit()
+            response = make_response(
+                json.dumps({'Success': '', 'nonce': login_session['state']}), 200
+            )
+            response.headers['Content-Type'] = 'application/json'
+            return response
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
 @app.route('/items/edit/<int:item_id>', methods=['POST'])
 def edit_item(item_id):
+    """
+    Edits an item's contents based on the information submitted by the form.
+    """
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'POST':
+            item = session.query(Item).filter_by(id=item_id).one()
+            item.picture = request.form['picture']
+            item.name = request.form['name']
+            item.price = request.form['price']
+            item.description = request.form['description']
+            item.user_id = login_session['user_id']
+            session.add(item)
+            session.commit()
+            response = make_response(
+                json.dumps({'Success': '', 'nonce': login_session['state']}), 200
+            )
+            response.headers['Content-Type'] = 'application/json'
+            return response
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/items/delete/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    """
+    Deletes an item.
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -345,14 +424,9 @@ def edit_item(item_id):
         response.headers['Content-Type'] = 'application/json'
         return response
     try:
-        if request.method == 'POST':
+        if request.method == 'DELETE':
             item = session.query(Item).filter_by(id=item_id).one()
-            item.name = request.form['picture']
-            item.name = request.form['name']
-            item.price = request.form['price']
-            item.description = request.form['description']
-            item.user_id = login_session['user_id']
-            session.add(item)
+            session.delete(item)
             session.commit()
             state = get_new_state()
             login_session['state'] = state
@@ -367,35 +441,127 @@ def edit_item(item_id):
         print(inst)
 
 
+@app.route('/static/images/<string:image_name>', methods=['POST'])
+def store_image(image_name):
+    if request.args.get('state') != login_session['state']:
+        response = make_response(
+            json.dumps({'error': 'Invalid state parameter.'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    if 'username' not in login_session:
+        response = make_response(
+            json.dumps({'error': 'User is logged out. This should not happen'}), 401
+        )
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    try:
+        if request.method == 'POST':
+            received_file = request.files['picture_file']
+            if received_file and allowed_file(received_file.filename):
+                filename = secure_filename(received_file.filename)
+                full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                received_file.save(full_path)
+                state = get_new_state()
+                login_session['state'] = state
+                response = make_response(
+                    json.dumps({
+                        'path': request.path,
+                        'success': '',
+                        'nonce': login_session['state']
+                    }),
+                    200
+                )
+                response.headers['Content-Type'] = 'application/json'
+                return response
+    except Exception as inst:
+        app.logger.error(type(inst))
+        app.logger.error(inst.args)
+        app.logger.error(inst)
+
+
+def info(object, spacing=10, collapse=1):
+    """Print methods and doc strings.
+    Takes module, class, list, dictionary, or string."""
+    method_list = [e for e in dir(object) if callable(getattr(object, e))]
+    process_func = collapse and (lambda s: " ".join(s.split())) or (lambda s: s)
+    return "\n".join(["%s %s" %
+                     (method.ljust(spacing),
+                      process_func(str(getattr(object, method).__doc__)))
+                     for method in method_list])
+
+
 def get_user_id(email):
+    """
+    Given an email address, it returns the user_id associated with it.
+    Args:
+        email (str): An email address
+    Returns:
+        int: If successful, it returns the user_id related to the email address received. Otherwise it returns -1
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
-    except:
-        return None
+    except NoResultFound:
+        app.logger.warning("Search by email returned no results.")
+        return -1
+    except MultipleResultsFound:
+        app.logger.error("Search by email returned multiple results.")
+        return -1
 
 
 def get_user_info(user_id):
+    """
+    Returns a User object.
+    Args:
+        user_id(int): The user id.
+    Returns:
+        user(object): A user, containing id, name, email, picture attributes.
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
-def create_user(login_session):
+def create_user():
+    """
+    Stores user's information in the database.
+    Returns:
+        int: The user id.
+    """
     new_user = User(id=login_session['gplus_id'],
-                   name=login_session['username'],
-                   email=login_session['email'],
-                   picture=login_session['picture'])
+                    name=login_session['username'],
+                    email=login_session['email'],
+                    picture=login_session['picture'])
     session.add(new_user)
     session.flush()
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
+
 def get_new_state():
+    """The 'state' is used as a nonce. It is sent to the client when the page is rendered
+    and it is required on next request. Not all requests use it, but those altering data do.
+    Nonce is refreshed on each interaction on which is requested, client needs to make sure it is
+    updated.
+    """
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     return state
+
+
+# http://flask.pocoo.org/docs/0.10/patterns/fileuploads/
+def allowed_file(filename):
+    """
+    Args:
+        filename(str): The name of the file.
+    Returns:
+        bool: True if the file's extension is allowed, false otherwise.
+    """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    app.config['UPLOAD_FOLDER'] = './static/images/'
+    socketio.run(app, host='0.0.0.0', port=5000)
