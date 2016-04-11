@@ -54,6 +54,8 @@ echo "Installing itsdangerous"
 pip install itsdangerous
 echo "Installing flask-httpauth"
 pip install flask-httpauth
+echo "Installing flask-socketio"
+pip install flask-socketio
 echo "Executing PyBuilder"
 pyb install_dependencies publish
 python target/dist/*/server.py
