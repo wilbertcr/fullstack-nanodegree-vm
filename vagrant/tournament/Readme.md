@@ -1,10 +1,8 @@
 # Tournament Project
 
-<<<<<<< HEAD
 I believe there is enough information about the project so I will not explain it again. I will limit this file to an explanation on how to run the program.
 =======
 I believe there is enough information about the project so I will not explain it again. I will limit this file to an explanation on how to run the program and what you should expect to find as a result of that.
->>>>>>> refs/remotes/origin/ExtraCredit
 
 Steps:
 
@@ -16,7 +14,6 @@ $ vagrant up
 $ vagrant ssh
 $ cd tournament
 ```
-<<<<<<< HEAD
 - Create the database and run the test.
 ![alt text](https://github.com/wilbertcr/fullstack-nanodegree-vm/blob/master/vagrant/tournament/CreateDBAndRunTest.png)
 =======
@@ -35,4 +32,3 @@ CTRL+D
 You should see several pairings# files in the tournament folder. Each file contains a round of matches, as prescribed
 by swissPairings(tournament_id). The outcomes of each match are semi-randomly chosen but equally likely in probability and
 includes draws.
->>>>>>> refs/remotes/origin/ExtraCredit
