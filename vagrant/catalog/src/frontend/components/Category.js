@@ -15,7 +15,8 @@ export default class Category extends Component{
     constructor(props) {
         super(props);
         this.state = {name:'',
-            isModalVisible: false
+            isModalVisible: false,
+            active: false,
         };
         this.reactComponent = <element></element>;
     }
@@ -25,7 +26,9 @@ export default class Category extends Component{
     }
 
     displayCategory(){
+        this.setState({...this.state,active: true});
         this.props.displayCategory(this.props.category.id);
+        this.props.setActiveCategory(this.props.category.id)
     }
 
 
@@ -37,6 +40,10 @@ export default class Category extends Component{
         this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
 
+    setActiveCategory(){
+
+    }
+
     componentDidMount(){
 
     }
@@ -46,15 +53,18 @@ export default class Category extends Component{
             {...this.props}
             switchModalVisibility={this.switchModalVisibility}
         />;
+        var classes = this.props.activeCategory==this.props.category.id ?
+            "blue left active item":
+            "blue left item";
         return(
-            <a className="blue left item">
-                <i className="edit icon"
+            <a className={classes}>
+                <i className="trash red icon"
+                   style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
+                   onClick={this.deleteCategory}>
+                </i>
+                <i className="edit blue icon"
                       style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
                       onClick={this.switchModalVisibility}>
-                </i>
-                <i className="erase icon"
-                      style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}
-                      onClick={this.deleteCategory}>
                 </i>
                 <div className="ui blue circular label"
                      onClick={this.displayCategory}>

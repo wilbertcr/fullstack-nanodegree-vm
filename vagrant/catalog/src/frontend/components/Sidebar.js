@@ -20,12 +20,17 @@ export default class Sidebar extends Component {
         this.state = {
             isModalVisible: false,
             //
-            name: " "
+            name: " ",
+            activeCategory: 0
         }
     }
 
     switchModalVisibility(){
         this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
+    }
+
+    setActiveCategory(id){
+        this.setState({activeCategory: id})
     }
 
     render(){
@@ -42,6 +47,8 @@ export default class Sidebar extends Component {
                         return <Category key={category.id}
                                          index={index}
                                          category={category}
+                                         activeCategory={this.state.activeCategory}
+                                         setActiveCategory={this.setActiveCategory}
                                          loginStatus={this.props.loginStatus}
                                          deleteCategory={this.props.deleteCategory}
                                          editCategory={this.props.editCategory}
@@ -50,17 +57,17 @@ export default class Sidebar extends Component {
                 )}
                 <div className="ui item"
                      style={{display: this.props.loginStatus.value ? 'block' : 'none'}}>
-                    <div className="ui buttons">
+                    <div className="ui buttons" style={{display: 'flex'}}>
                         <div className="medium ui icon blue basic button"
                              onClick={this.switchModalVisibility}>
                             <i className="add square icon"></i>
                         </div>
                     </div>
+                    <ModalPageGeneric isVisible={this.state.isModalVisible}
+                                      switchModalVisibility={this.switchModalVisibility}
+                                      reactComponent={this.reactElement}
+                    />
                 </div>
-                <ModalPageGeneric isVisible={this.state.isModalVisible}
-                                  switchModalVisibility={this.switchModalVisibility}
-                                  reactComponent={this.reactElement}
-                />
             </div>
         );
     }

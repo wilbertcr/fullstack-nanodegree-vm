@@ -34,31 +34,47 @@ export default class Item extends Component {
         this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
 
+    componentWillMount(){
+
+    }
+
+
+
     render() {
+
+
         this.reactElement = <EditItemForm
             {...this.props}
             switchModalVisibility={this.switchModalVisibility}
         />;
         return (
-            <div className="card">
+            <div className="item">
+                <div className="ui small circular bordered image">
+                    <img src={this.props.item.picture}></img>
+                </div>
                 <div className="content">
-                    <img className="ui small circular bordered image" src={this.props.item.picture}></img>
-                    <div className="header">
+                    <a className="header">
                         Name: {this.props.item.name}
-                    </div>
+                    </a>
                     <div className="meta">
                         Price: ${this.props.item.price}
                     </div>
-                    <div className="content">
+                    <div className="description">
                         Description: {this.props.item.description}
                     </div>
-                </div>
-                <div className="extra content"
-                     style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}>
-                    <div className="ui two butons">
-                        <div className="ui basic blue button"
-                             onClick={this.switchModalVisibility}>Edit</div>
-                        <div className="ui basic red button">Delete</div>
+                    <div className="extra"
+                         style={{display: this.props.loginStatus.value ? 'inline-block' : 'none'}}>
+                        <div className="ui two butons">
+                            <div className="ui basic blue icon button"
+                                 tabIndex="0"
+                                 onClick={this.switchModalVisibility}>
+                                <i className="edit icon"></i>
+                            </div>
+                            <div className="ui basic red icon button"
+                                 tabIndex="1">
+                                <i className="trash icon"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <ModalPageGeneric isVisible={this.state.isModalVisible}

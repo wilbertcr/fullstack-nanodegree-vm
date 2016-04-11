@@ -38,7 +38,6 @@ export default class ModalGeneric extends Component {
 
     render() {
         var top = (window.innerHeight-$(this.state.node).height())/2;
-        console.log(top);
         //modalClasses determine if the modal is visible of hidden.
         var modalClasses = (this.props.isVisible)? 'ui small modal transition visible active': 'ui modal transition hidden';
         return (

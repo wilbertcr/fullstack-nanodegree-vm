@@ -35,9 +35,18 @@ export default class EditCategoryForm extends Component {
     }
 
     advanceStage(){
-        this.setState({...this.state,stage: this.state.stage+1});
+        this.setState({
+            ...this.state,
+            stage: this.state.stage+1
+        });
     }
 
+    goBack(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage-1
+        });
+    }
 
     /**
      * Clicking Submit button saves the data if it is validated.
@@ -82,39 +91,55 @@ export default class EditCategoryForm extends Component {
             /**
              * If we're editing and content is validated
              * */
-            //Then we want a regular form.
-            formClasses = 'ui small form';
-            //And a submit button.
-            buttons = <div className="ui one button">
-                <div className="ui submit button"
-                     onClick={this.advanceStage}>
-                    Submit
+                //Then we want a regular form.
+            formClasses = 'ui form';
+            //And functioning buttons
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
                 </div>
-            </div>;        }
+                <div className="ui basic green button"
+                     onClick={this.advanceStage}>
+                    Submit<i className="chevron circle right icon"></i>
+                </div>
+            </div>;
+        }
         if(this.state.stage===0 && !this.state.validated){
             //If we're editing and content is not validated.
             //We want to show an error in the form and to disable the button.
             formClasses = 'ui small form error';
-            buttons = <div className="ui one button">
-                <div className="ui disabled submit button">
-                    Submit
+            //And we want buttons to be disabled.
+            buttons = <div className="ui buttons">
+                <div className="ui disabled basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
+                </div>
+                <div className="ui disabled basic green button"
+                     onClick={this.advanceStage}>
+                    Submit<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
         if(this.state.stage===1 && this.state.validated){
-            formClasses = 'ui small form success';
             //If we are done editing.
+            //We want to show a success message.
+            formClasses = 'ui small form success';
             //We want to ask the user to confirm via a "success" message.
-            buttons = <div className="ui two buttons">
-                    <div className="ui submit button"
-                         onClick={this.editCategory}>
-                        Ok
-                    </div>
-                    <div className="ui submit button"
-                         onClick={this.switchModalVisibility}>
-                        Cancel
-                    </div>
-                </div>;
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.goBack}>
+                    <i className="chevron circle left icon"></i>Back
+                </div>
+                <div className="ui basic green button"
+                     onClick={this.addItem}>
+                    Send<i className="chevron circle right icon"></i>
+                </div>
+                <div className="ui basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="remove circle icon"></i>Cancel
+                </div>
+            </div>;
         }
 
         return (

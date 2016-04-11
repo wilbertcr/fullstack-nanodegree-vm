@@ -5,12 +5,7 @@ import ModalGeneric from './ModalGeneric';
 
 /**
  * Represents the background of the modal.
- * Wrapping component must have a state that is passed in
- * as "modal_visible" pass in:
- * this.props.modal_visible - boolean value provides default state.
- * this.props.switchModalVisibility - A function that switches
- * modal_visible back and forth.
- *
+ * See bottom of file for required props.
  * @class ModalPage
  * */
 export default class ModalPageGeneric extends Component {
@@ -22,10 +17,15 @@ export default class ModalPageGeneric extends Component {
         super(props);
     }
 
+    /**
+     * Pretty obvious.
+     * */
     stopEvent(e){
+        console.log('test.');
         e.preventDefault();
         e.stopPropagation();
     }
+
 
     render() {
         var modal_classes = (this.props.isVisible) ? 'ui dimmer modals page transition visible active' : 'ui dimmer modals page transition hidden';

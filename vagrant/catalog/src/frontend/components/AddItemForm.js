@@ -2,77 +2,178 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
 
-export default class AddItemForm extends Component {
-
+/**
+ * Form allows edition of items.
+ * There are two stages. It begins with the form
+ * containing the current values of the item.
+ * Pr
+ * @class EditItemForm
+ * */
+export default class EditItemForm extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
-                validated: true,
+                categoryId: this.props.categoryId,
+                isNameValid: true,
+                isPriceValid:true,
+                isDescriptionValid: true,
+                newPictureMounted:false,
                 id: 0,
+                picture: "/static/images/image.png",
                 name: "",
-                picture: "",
-                stage: 0
+                price: "",
+                description: "",
+                stage: 0,
+                file: null,
+                validated: true
             }
     }
 
-    updateName(name){
-        this.setState({...this.state,name: this.inputName.value});
-    }
-
-    updatePicture(event){
-        var pictureFile = event.target.files[0];
-        this.state.picture = pictureFile;
-        if(!pictureFile){
-            //File uploaded is empty
-            return;
-        }
-        if (!pictureFile.name.match(/\.(jpg|jpeg|png|gif)$/)){
-            //File uploaded isn't an imag
-        }
-
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var rawData = reader.result;
-        };
-        reader.readAsBinaryString(pictureFile);
-        console.log(pictureFile);
-    }
-
+    /**
+     * Moves form from editing(0) to confirmation(1) stage.
+     * */
     advanceStage(){
-        this.setState({...this.state,stage: this.state.stage+1});
-    }
-
-    addCategory(){
-        if(this.state.validated){
-            var category = {
-                id: this.state.id,
-                name: this.state.name,
-                picture: this.state.picture
-            };
-            this.props.addCategory(category);
-            this.props.switchModalVisibility();
-            this.resetFields();
-        } else {
-            console.error("AddCategoryForm.js - Line 44: This shouldn't be called when data is invalid.");
-        }
-    }
-
-    resetFields(){
         this.setState({
             ...this.state,
-            id: 0,
-            name: "",
-            picture:"",
-            validated: true,
-            state: 0
+            stage: this.state.stage+1
         });
     }
 
+    goBack(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage-1
+        });
+    }
+
+    isValidated(){
+        return "" !== this.state.price &&
+            "" !== this.state.name &&
+            "" !== this.state.description &&
+            "" !== this.state.picture &&
+                this.state.newPictureMounted;
+    }
+
+    hasChanged(){
+        return  "" !== this.state.price ||
+                "" !== this.state.name ||
+                "" !== this.state.description ||
+                "" !== this.state.picture;
+    }
+
+    updateName(e){
+        console.log(e);
+        let newName = this.inputName.value;
+        this.setState({
+            ...this.state,
+            name:newName,
+            validated: this.isValidated() && newName!=="",
+            isNameValid: newName!==""
+        });
+    }
+
+    updatePrice(e){
+        let newPrice = this.inputPrice.value;
+        this.setState({
+            ...this.state,
+            price: newPrice,
+            validated: this.isValidated() && newPrice!=="",
+            isPriceValid: newPrice!==""
+        });
+    }
+
+    updateDescription(e){
+        console.log(e);
+        let newDescription = this.inputDescription.value;
+        this.setState({
+            ...this.state,
+            description: newDescription,
+            validated: this.isValidated() && newDescription!=="",
+            isDescriptionValid: newDescription!==""
+        });
+    }
+
+    /**
+     * Effectively hiding the modal without
+     * successfully saving its contents.
+     * */
     switchModalVisibility(){
-        this.resetFields();
+        /**
+         * Reset form's stage back to initial one.
+         * */
+        this.setState({stage: 0});
         this.props.switchModalVisibility();
     }
 
+    /**
+     * Ships item for editing in both, front end and back end.
+     * */
+    addItem(){
+        /**
+         * Item must be "valid"
+         * */
+        if(this.isValidated()){
+            var item = {
+                categoryId: this.state.categoryId,
+                id:this.state.id,
+                picture: "/static/images/"+this.state.file.name,
+                name: this.state.name,
+                price: this.state.price,
+                description: this.state.description,
+                file: this.state.file,
+                newPicture: this.state.newPictureMounted
+            };
+            /**
+             * We only want to talk to the backend
+             * if there's something to change
+             * */
+            if(this.hasChanged()){
+                this.props.addItem(item);
+            } else {
+                console.log("It thinks nothing changed");
+            }
+            /**
+             * Now we start the process of
+             * hiding this menu and its modal.
+             * */
+            this.switchModalVisibility();
+        }
+    }
+
+    /**
+     * Prevents default behavior and prevents
+     * event e from propagaing up the node tree.
+     * */
+    stopEvent(e){
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    handleDrop(e){
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('test');
+        const droppedFiles = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+        var file = droppedFiles[0];
+        file.preview = window.URL.createObjectURL(file);
+        if (file.name.match(/\.(jpg|jpeg|png|gif)$/)){
+            //File uploaded is an image
+            this.setState({
+                picture: file.preview,
+                file: file,
+                newPictureMounted: true
+            });
+        }
+        console.log(droppedFiles);
+    }
+
+    componentDidMount(){
+        this.setState({
+            ...this.state,
+            validated: this.isValidated()
+        });
+    }
 
     render() {
         var formClasses;
@@ -81,80 +182,106 @@ export default class AddItemForm extends Component {
             /**
              * If we're editing and content is validated
              * */
-                //Then we want a regular form.
-            formClasses = 'ui small form';
-            //And a submit button.
-            buttons = <div className="ui one button">
-                <div className="ui submit button"
-                     onClick={this.advanceStage}>
-                    Submit
-
+            //Then we want a regular form.
+            formClasses = 'ui form';
+            //And functioning buttons
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
                 </div>
-            </div>;        }
+                <div className="ui basic green button"
+                     onClick={this.advanceStage}>
+                    Submit<i className="chevron circle right icon"></i>
+                </div>
+            </div>;
+        }
         if(this.state.stage===0 && !this.state.validated){
             //If we're editing and content is not validated.
             //We want to show an error in the form and to disable the button.
             formClasses = 'ui small form error';
-            buttons = <div className="ui one button">
-                <div className="ui disabled submit button">
-                    Submit
+            //And we want buttons to be disabled.
+            buttons = <div className="ui buttons">
+                <div className="ui disabled basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
+                </div>
+                <div className="ui disabled basic green button"
+                     onClick={this.advanceStage}>
+                    Submit<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
         if(this.state.stage===1 && this.state.validated){
-            formClasses = 'ui small form success';
             //If we are done editing.
+            //We want to show a success message.
+            formClasses = 'ui small form success';
             //We want to ask the user to confirm via a "success" message.
-            buttons = <div className="ui two buttons">
-                <div className="ui submit button"
-                     onClick={this.addCategory}>
-                    Ok
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.goBack}>
+                    <i className="chevron circle left icon"></i>Back
                 </div>
-                <div className="ui submit button"
+                <div className="ui basic green button"
+                     onClick={this.addItem}>
+                    Send<i className="chevron circle right icon"></i>
+                </div>
+                <div className="ui basic blue button"
                      onClick={this.switchModalVisibility}>
-                    Cancel
+                    <i className="remove circle icon"></i>Cancel
                 </div>
             </div>;
         }
 
         return (
-
-            <div className="ui item">
-                <div className="header">
-                    Add Category
-                </div>
-                <div className="image content">
-
-                </div>
-                <div className="content">
-                    <div className={formClasses}>
-                        <div className="ui field">
-                            <div className="required field">
-                                <label>Name</label>
-                                <input type="text"
-                                       ref={(ref) => this.inputName=ref}
-                                       value={this.state.name}
-                                       onChange={this.updateName}/>
+            <div className="ui grid container">
+                <div className="ui container segment">
+                    <a className="ui inverted red ribbon label">Drag and drop <i className="photo icon"></i></a>
+                    <div className="item">
+                        <div className="ui small image"
+                             onDragOver={this.stopEvent}
+                             onDrop={this.handleDrop}>
+                            <div className="ui container segment">
+                                <img src={this.state.picture}></img>
                             </div>
-                            <div className="ui field">
-                                <label>Picture</label>
-                                <input type="file"
-                                       name="Picture"
-                                       ref={(ref) => this.inputPicture=ref}
-                                       onChange={this.updatePicture}/>
-                            </div>
-                            <div className="ui error message">
-                                <div className="header">Empty name</div>
-                                <p>Category must have a nonempty name.</p>
-                            </div>
-                            <div className="ui success message">
-                                <div className="header">
-                                    Please confirm the change.
+                        </div>
+                        <div className="content">
+                            <div className={formClasses}>
+                                <div className="required field"
+                                     ref={(ref) => this.FormContainer=ref}>
+                                    <label>Name</label>
+                                    <input type="text"
+                                           ref={(ref) => this.inputName=ref}
+                                           value={this.state.name}
+                                           onChange={this.updateName}/>
                                 </div>
+                                <div className="required field">
+                                    <label>Price</label>
+                                    <input type="text"
+                                           ref={(ref) => this.inputPrice=ref}
+                                           value={this.state.price}
+                                           onChange={this.updatePrice}/>
+                                </div>
+                                <div className="required field">
+                                    <label>Description</label>
+                                    <textarea type="text"
+                                           ref={(ref) => this.inputDescription=ref}
+                                           value={this.state.description}
+                                           onChange={this.updateDescription}/>
+                                </div>
+                                <div className="ui error message">
+                                    <div className="header">Empty name</div>
+                                    <p>Something is missing...</p>
+                                </div>
+                                <div className="ui success message">
+                                    <div className="header">
+                                        <p>Please confirm.</p>
+                                    </div>
+                                </div>
+                                {buttons}
                             </div>
                         </div>
                     </div>
-                    {buttons}
                 </div>
             </div>
         );

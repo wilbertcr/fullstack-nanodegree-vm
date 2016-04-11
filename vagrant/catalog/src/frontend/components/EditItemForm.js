@@ -2,9 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
 
+/**
+ * Form allows edition of items.
+ * There are two stages. It begins with the form
+ * containing the current values of the item.
+ * Pr
+ * @class EditItemForm
+ * */
 export default class EditItemForm extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
                 categoryId: this.props.categoryId,
                 isNameValid: true,
@@ -17,16 +25,25 @@ export default class EditItemForm extends Component {
                 price: this.props.item.price,
                 description: this.props.item.description,
                 stage: 0,
-                node: null,
                 file: null,
                 validated: true
             }
     }
 
+    /**
+     * Moves form from editing(0) to confirmation(1) stage.
+     * */
     advanceStage(){
         this.setState({
             ...this.state,
             stage: this.state.stage+1
+        });
+    }
+
+    goBack(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage-1
         });
     }
 
@@ -37,7 +54,11 @@ export default class EditItemForm extends Component {
     }
 
     hasChanged(){
-        return  this.props.item.picture !== this.state.picture ||
+        console.log("Props price");
+        console.log(this.props.item.price);
+        console.log("State price");
+        console.log(this.state.price);
+        return  this.props.item.price !== this.state.price ||
                 this.props.item.name !== this.state.name ||
                 this.props.item.description !== this.state.description ||
                 this.props.item.picture !== this.state.picture;
@@ -98,10 +119,11 @@ export default class EditItemForm extends Component {
             var item = {
                 categoryId: this.state.categoryId,
                 id:this.state.id,
-                picture: this.state.newPictureMounted ? this.state.file: this.state.picture,
+                picture: "/static/images/"+this.state.file.name,
                 name: this.state.name,
                 price: this.state.price,
                 description: this.state.description,
+                file: this.state.file,
                 newPicture: this.state.newPictureMounted
             };
             /**
@@ -110,6 +132,8 @@ export default class EditItemForm extends Component {
              * */
             if(this.hasChanged()){
                 this.props.editItem(item);
+            } else {
+                console.log("It thinks nothing changed");
             }
             /**
              * Now we start the process of
@@ -136,14 +160,12 @@ export default class EditItemForm extends Component {
         var file = droppedFiles[0];
         file.preview = window.URL.createObjectURL(file);
         if (file.name.match(/\.(jpg|jpeg|png|gif)$/)){
-            //File uploaded isn't an imag
+            //File uploaded is an image
             this.setState({
                 picture: file.preview,
                 file: file,
                 newPictureMounted: true
             });
-        } else {
-            //File uploaded isn an imag
         }
         console.log(droppedFiles);
     }
@@ -155,17 +177,22 @@ export default class EditItemForm extends Component {
     render() {
         var formClasses;
         var buttons;
+        var steps;
         if(this.state.stage===0 && this.state.validated){
             /**
              * If we're editing and content is validated
              * */
                 //Then we want a regular form.
             formClasses = 'ui form';
-            //And a submit button.
-            buttons = <div className="ui one button">
-                <div className="ui submit button"
+            //And functioning buttons
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
+                </div>
+                <div className="ui basic green button"
                      onClick={this.advanceStage}>
-                    Submit
+                    Submit<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
@@ -173,24 +200,35 @@ export default class EditItemForm extends Component {
             //If we're editing and content is not validated.
             //We want to show an error in the form and to disable the button.
             formClasses = 'ui small form error';
-            buttons = <div className="ui one button">
-                <div className="ui disabled submit button">
-                    Submit
+            //And we want buttons to be disabled.
+            buttons = <div className="ui buttons">
+                <div className="ui disabled basic blue button"
+                     onClick={this.switchModalVisibility}>
+                    <i className="chevron circle left icon"></i>Back
+                </div>
+                <div className="ui disabled basic green button"
+                     onClick={this.advanceStage}>
+                    Submit<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
         if(this.state.stage===1 && this.state.validated){
-            formClasses = 'ui small form success';
             //If we are done editing.
+            //We want to show a success message.
+            formClasses = 'ui small form success';
             //We want to ask the user to confirm via a "success" message.
-            buttons = <div className="ui two buttons">
-                <div className="ui submit button"
-                     onClick={this.editItem}>
-                    Ok
+            buttons = <div className="ui buttons">
+                <div className="ui basic blue button"
+                     onClick={this.goBack}>
+                    <i className="chevron circle left icon"></i>Back
                 </div>
-                <div className="ui submit button"
+                <div className="ui basic green button"
+                     onClick={this.addItem}>
+                    Send<i className="chevron circle right icon"></i>
+                </div>
+                <div className="ui basic blue button"
                      onClick={this.switchModalVisibility}>
-                    Cancel
+                    <i className="remove circle icon"></i>Cancel
                 </div>
             </div>;
         }
@@ -198,10 +236,8 @@ export default class EditItemForm extends Component {
         return (
             <div className="ui grid container">
                 <div className="ui container segment">
+                    <a className="ui inverted red ribbon label">Drag and drop <i className="photo icon"></i></a>
                     <div className="item">
-                        <div className="header">
-                            Drag 'n drop
-                        </div>
                         <div className="image content"
                              onDragOver={this.stopEvent}
                              onDrop={this.handleDrop}>
@@ -234,7 +270,7 @@ export default class EditItemForm extends Component {
                                 </div>
                                 <div className="ui error message">
                                     <div className="header">Empty name</div>
-                                    <p>Category must have a nonempty name.</p>
+                                    <p>Something is missing...</p>
                                 </div>
                                 <div className="ui success message">
                                     <div className="header">

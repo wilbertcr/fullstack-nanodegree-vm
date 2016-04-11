@@ -6,6 +6,7 @@ import Sidebar from './Sidebar'
 import ItemsContainer from './ItemsContainer'
 import apiCall from './apiCall'
 
+
 /**
  * Main container.
  * @class CatalogApp
@@ -53,7 +54,7 @@ export default class CatalogApp extends Component {
      * @param {STATUS} state - The current login status.
      * */
     onSessionChange(state){
-        console.log("Update in login status received.")
+        console.log("Update in login status received.");
         console.log(state);
         this.setState({...this.state,
             loginStatus: state.value ? this.STATUS.LoggedIn : this.STATUS.LoggedOut});
@@ -84,7 +85,7 @@ export default class CatalogApp extends Component {
      * @param {string} name - name of the category we wish to append.
      * */
     addCategory(name){
-        console.log("Add category: ")
+        console.log("Add category: ");
         console.log(name);
         var newCategory = {
             id: 0,
@@ -282,7 +283,6 @@ export default class CatalogApp extends Component {
     }
 
     editItem(item){
-
         var catIndex;
         var itemIndex;
         for(let i=0;i<this.state.categories.length;i++){
@@ -304,23 +304,90 @@ export default class CatalogApp extends Component {
         nextItem.name = item.name;
         nextItem.description = item.description;
         nextItem.price = item.price;
+        nextItem.file = item.file;
+
         /**
          * Does the item contains a new picture? Or just changes
          * to the text?
          * */
         if(item.newPicture){
-
-        } else {
-            //If it is just changes to the text
-            //Let's be optimistic and update the
+            /**
+             * If the item does contain a new picture.
+             * */
+            //We're gong to extract the file.
+            let file = nextItem.file;
+            console.log(file);
+            var fd = new FormData();
+            fd.append("picture_file", file);
+            var filePath = "/static/images/"+file.name;
+            var url1 = filePath+"?state=";
+            //File is in the server now, so we can update the picture.
             nextCategories[catIndex].items[itemIndex] = nextItem;
             this.setState({
                 categories: nextCategories,
                 items: nextCategories[catIndex].items}
             );
-            let endpoint = "/items/edit/"+item.id+"?state=";
             apiCall({
-                url: endpoint+this.state.nonce,
+                url: url1+this.state.nonce,
+                type: 'POST',
+                data: fd,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                    console.log(data);
+                }.bind(this),
+                error: function (xhr, status, err) {
+                    //If something goes wrong.
+                    // Let's go back to the previous state.
+                    this.setState({
+                        categories: prevCategories,
+                        items: prevCategories[catIndex].items}
+                    );
+                    //And communicate the error.
+                    //Something production ready would do
+                    //something to the UI to make the user aware of this.
+                    console.error("Error uploading picture.");
+                    console.error(xhr, status, err.toString());
+                }.bind(this)
+            },this).then(function(){
+                nextItem.file = "";
+                nextCategories[catIndex].items[itemIndex] = nextItem;
+                this.setState({
+                    categories: nextCategories,
+                    items: nextCategories[catIndex].items}
+                );
+                var url2 = "/items/edit/"+item.id+"?state=";
+                console.log(url2);
+                console.log(nextItem);
+                apiCall({
+                    url: url2+this.state.nonce,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: nextItem,
+                    error: function(xhr,status,err){
+                        //If things go bad, we go back to
+                        //the previous state.
+                        console.log("going back to previous state.");
+                        console.log(prevItem);
+                        prevCategories[catIndex].items[itemIndex] = prevItem;
+                        this.setState({...this.state,
+                            categories: prevCategories,
+                            items:prevCategories[catIndex].items}
+                        );
+                    }.bind(this)
+                },this);
+            }.bind(this));
+        } else {
+            //If it is just changes to the text
+            //Let's be optimistic and update the item.
+            nextCategories[catIndex].items[itemIndex] = nextItem;
+            this.setState({
+                categories: nextCategories,
+                items: nextCategories[catIndex].items}
+            );
+            var url1 = "/items/edit/"+item.id+"?state=";
+            apiCall({
+                url: url2+this.state.nonce,
                 dataType: 'json',
                 type: 'POST',
                 data: item,
@@ -334,7 +401,7 @@ export default class CatalogApp extends Component {
                         categories: prevCategories,
                         items:prevCategories[catIndex].items}
                     );
-                }.bind(this),
+                }.bind(this)
             },this);
         }
     }
