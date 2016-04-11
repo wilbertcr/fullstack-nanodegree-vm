@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python ./src/backend/python/server.py
+./src/backend/python/run_dev_app.sh
