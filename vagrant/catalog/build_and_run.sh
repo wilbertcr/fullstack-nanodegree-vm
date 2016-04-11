@@ -3,6 +3,8 @@
 echo "You will be asked to allow installation of dependencies. Simply press enter when this happens."
 echo "Installing Node.js"
 sudo apt-get install node
+echo "Installing Nodejs legacy(ubuntu fix)"
+sudo apt-get install nodejs-legacy
 echo "Installing npm package manager"
 sudo apt-get install npm
 echo "Installing NodeJS dependencies and build tools for JS."
