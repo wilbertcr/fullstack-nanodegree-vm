@@ -8,11 +8,11 @@ Each project is in its own folder:
 ```
 ├── fullstack-nanodegree-vm
     ├── vagrant
-         ├── _catalog
-         ├── _forum
-         ├── _restaurant_menu
-         ├── _shelter
-         ├── _tournament
+         ├── catalog
+         ├── forum
+         ├── restaurant_menu
+         ├── shelter
+         ├── tournament
 ```
 
 Installation:
