@@ -15,7 +15,6 @@ import requests
 from flask import Flask, render_template, jsonify, make_response
 from flask import request
 from flask import session as login_session
-from flask.ext.socketio import SocketIO, emit
 from oauth2client.client import AccessTokenCredentials
 from oauth2client.client import FlowExchangeError
 from oauth2client.client import flow_from_clientsecrets
@@ -32,7 +31,6 @@ sys.path.insert(0, '../')
 app = Flask(__name__)
 APPLICATION_NAME = "Catalog App"
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-socketio = SocketIO(app)
 
 engine = create_engine('postgresql://vagrant:vagrantvm@localhost:5432/catalog')
 Base.metadata.bind = engine
@@ -564,4 +562,4 @@ if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
     app.config['UPLOAD_FOLDER'] = './static/images/'
-    socketio.run(app, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
