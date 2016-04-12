@@ -7,8 +7,6 @@
   border: 1px solid;
   border-color: #C59F43 #AA8326 #957321;
 }
-
-
 .ui.primary.button:hover {
   border-color: #C59F43 #AA8326 #957321;
   color: #111111;
