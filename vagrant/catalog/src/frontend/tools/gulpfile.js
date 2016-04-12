@@ -1,6 +1,4 @@
 var gulp = require('gulp');
-var build_semtic = require('../semantic/tasks/build');
-var watch_semtic = require('../semantic/tasks/watch');
 var babel = require('gulp-babel');
 var webpackConfig = require('./webpack.config.js');
 var webpack = require('webpack');
@@ -8,7 +6,7 @@ var esdoc = require('gulp-esdoc');
 var gutil = require('gulp-util');
 var error = "No error";
 
-//This one
+
 gulp.task('transpile',function() {
         return gulp.src('../components/*.js')
             .pipe(babel({
@@ -54,10 +52,6 @@ gulp.task('webpack',['transpile'],function(callback){
 });
 
 gulp.task('default',['webpack','doc']);
-
-gulp.task('build_semantic', build_semtic);
-
-gulp.task('watch_semantic', watch_semtic);
 
 gulp.task('watch',function(){
     gulp.watch('../components/*.js',['webpack']);
