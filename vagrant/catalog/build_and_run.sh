@@ -49,6 +49,10 @@ echo "Setting up SQLAlchemy objects"
 python src/backend/python/config/sql_alchemy_setup.py
 echo "Popularing database."
 python src/backend/python/config/populate_db.py
+echo "Installing virtual envirionment"
+sudo -H pip install virtualenv
+echo "Creating a virtual envirionment for the project's dependencies."
+virtualenv venv --always-copy; source venv/bin/activate
 echo "Installing PyBuilder"
 sudo -H pip install pybuilder
 echo "Installing mockito"
@@ -75,8 +79,10 @@ echo "Installing itsdangerous"
 pip install itsdangerous
 echo "Installing flask-httpauth"
 pip install flask-httpauth
+pip install pybuilder
+pyb install_dependencies
 echo "Executing PyBuilder"
-pyb install_dependencies publish
+pyb
 cd target/dist/*/
 ls -l
 python ./server.py
