@@ -11,14 +11,14 @@ del os.link
 """
 
 use_plugin("python.core")
+use_plugin("python.install_dependencies")
 use_plugin("python.unittest")
 use_plugin("python.coverage")
-use_plugin("python.install_dependencies")
 use_plugin("python.flake8")
 use_plugin("python.distutils")
-
+use_plugin("source_distribution")
 name = "Catalog App"
-default_task = "publish"
+default_task = ['publish']
 
 @init
 def set_properties(project):
@@ -32,6 +32,23 @@ def set_properties(project):
         '\n'.join(setup_template_array)
     )
     project.build_depends_on("mockito")
+    project.build_depends_on("flake8")
+    project.build_depends_on("xmlrunner")
+    project.build_depends_on("coverage")
+    project.depends_on("bleach")
+    project.depends_on("oauth2client")
+    project.depends_on("requests")
+    project.depends_on("httplib2")
+    project.depends_on("redis")
+    project.depends_on("passlib")
+    project.depends_on("itsdangerous")
+    project.depends_on("flask-httpauth")
+    project.depends_on("flask")
+    project.depends_on("SQLAlchemy")
+    project.depends_on("werkzeug")
+    project.set_property("dir_dist", "target/dist/")
+    project.set_property("source_dist_ignore_patterns", ["*.pyc", "*.js"])
+    project.set_property('flake8_verbose_output', True)
     project.set_property("dir_source_main_python", "src/backend/python/")
     project.set_property("dir_source_unittest_python", "src/unittest/python/")
     project.set_property("dir_source_main_scripts", "src/backend/scripts/")
