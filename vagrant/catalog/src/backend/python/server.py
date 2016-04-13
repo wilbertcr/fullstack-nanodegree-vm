@@ -8,7 +8,6 @@ import random
 import string
 import sys
 import time
-from pprint import pprint
 
 import httplib2
 import requests
@@ -30,7 +29,7 @@ sys.path.insert(0, '../')
 
 app = Flask(__name__)
 APPLICATION_NAME = "Catalog App"
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 engine = create_engine('postgresql://vagrant:vagrantvm@localhost:5432/catalog')
 Base.metadata.bind = engine
@@ -59,7 +58,6 @@ def gconnect():
     and getting basic profile information from google about the
     user.
     """
-    i = 0
     # Validate that the state token we sent and the one we received are the same.
     if request.args.get('state') != login_session['state']:
         response = make_response(
@@ -134,11 +132,10 @@ def gconnect():
     credentials = AccessTokenCredentials(login_session['access_token'], 'user-agent-value')
     login_session['gplus_id'] = gplus_id
 
-    #Get user info
+    # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
     params = {'access_token': credentials.access_token, 'alt': 'json'}
-    answer = requests.get(userinfo_url, params=params)
-    answer_json = answer.json()
+    answer_json = requests.get(userinfo_url, params=params).json()
 
     login_session['username'] = answer_json['name']
     login_session['picture'] = answer_json['picture']
@@ -147,7 +144,7 @@ def gconnect():
     # see if user exists, otherwise create a new one.
     user_id = get_user_id(answer_json['email'])
     if not user_id:
-        user_id = create_user(login_session)
+        user_id = create_user()
     login_session['user_id'] = user_id
 
     # Our response will include a new nonce.
@@ -307,7 +304,7 @@ def delete_category(category_id):
 def edit_category(category_id):
     if request.args.get('state') != login_session['state']:
         response = make_response(
-            json.dumps({'error':'Invalid state parameter.'}), 401
+            json.dumps({'error': 'Invalid state parameter.'}), 401
         )
         response.headers['Content-Type'] = 'application/json'
         return response
@@ -328,7 +325,7 @@ def edit_category(category_id):
                 session.add(category)
                 session.commit()
                 response = make_response(
-                    json.dumps({'Success': '','nonce': login_session['state']}), 200
+                    json.dumps({'Success': '', 'nonce': login_session['state']}), 200
                 )
                 response.headers['Content-Type'] = 'application/json'
                 return response
