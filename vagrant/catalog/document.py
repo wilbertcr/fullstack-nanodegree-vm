@@ -3,6 +3,7 @@
 import glob
 import os
 from subprocess import call
+
 path = "./src/backend/python/"
 
 for filename in glob.glob(os.path.join(path,'*.py')):
