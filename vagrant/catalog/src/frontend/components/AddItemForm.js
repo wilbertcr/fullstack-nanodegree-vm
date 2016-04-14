@@ -117,6 +117,7 @@ export default class EditItemForm extends Component {
             var item = {
                 categoryId: this.state.categoryId,
                 id:this.state.id,
+                //this.isValidated==true means a file has been mounted, so it is safe to use its name here.
                 picture: "/static/images/"+this.state.file.name,
                 name: this.state.name,
                 price: this.state.price,
@@ -238,6 +239,7 @@ export default class EditItemForm extends Component {
                 <div className="ui container segment">
                     <a className="ui inverted red ribbon label">Drag and drop <i className="photo icon"></i></a>
                     <div className="item">
+                        <i className="right floated big remove circle icon" onClick={this.switchModalVisibility}></i>
                         <div className="ui small image"
                              onDragOver={this.stopEvent}
                              onDrop={this.handleDrop}>
