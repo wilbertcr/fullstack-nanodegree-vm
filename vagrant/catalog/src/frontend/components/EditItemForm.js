@@ -54,10 +54,6 @@ export default class EditItemForm extends Component {
     }
 
     hasChanged(){
-        console.log("Props price");
-        console.log(this.props.item.price);
-        console.log("State price");
-        console.log(this.state.price);
         return  this.props.item.price !== this.state.price ||
                 this.props.item.name !== this.state.name ||
                 this.props.item.description !== this.state.description ||
@@ -65,13 +61,14 @@ export default class EditItemForm extends Component {
     }
 
     updateName(e){
-        console.log(e);
         let newName = this.inputName.value;
         this.setState({
             ...this.state,
-            name:newName,
-            validated: this.isValidated() && newName!=="",
-            isNameValid: newName!==""
+            name: newName,
+            isNameValid: newName!=="",
+            validated:  newName!=="" &&
+                        this.state.isDescriptionValid &&
+                        this.state.isPriceValid
         });
     }
 
@@ -80,19 +77,22 @@ export default class EditItemForm extends Component {
         this.setState({
             ...this.state,
             price: newPrice,
-            validated: this.isValidated() && newPrice!=="",
-            isPriceValid: newPrice!==""
+            isPriceValid: newPrice!=="",
+            validated:  this.state.isNameValid &&
+                        this.state.isDescriptionValid &&
+                        newPrice!==""
         });
     }
 
     updateDescription(e){
-        console.log(e);
         let newDescription = this.inputDescription.value;
         this.setState({
             ...this.state,
             description: newDescription,
-            validated: this.isValidated() && newDescription!=="",
-            isDescriptionValid: newDescription!==""
+            isDescriptionValid: newDescription!=="",
+            validated: newDescription!=="" &&
+            this.state.isNameValid &&
+            this.state.isPriceValid
         });
     }
 
