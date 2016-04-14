@@ -119,7 +119,7 @@ export default class EditItemForm extends Component {
             var item = {
                 categoryId: this.state.categoryId,
                 id:this.state.id,
-                picture: "/static/images/"+this.state.file.name,
+                picture: this.state.newPictureMounted? "/static/images/"+this.state.file.name : this.state.picture,
                 name: this.state.name,
                 price: this.state.price,
                 description: this.state.description,
@@ -223,7 +223,7 @@ export default class EditItemForm extends Component {
                     <i className="chevron circle left icon"></i>Back
                 </div>
                 <div className="ui basic green button"
-                     onClick={this.addItem}>
+                     onClick={this.editItem}>
                     Send<i className="chevron circle right icon"></i>
                 </div>
                 <div className="ui basic blue button"
@@ -238,7 +238,8 @@ export default class EditItemForm extends Component {
                 <div className="ui container segment">
                     <a className="ui inverted red ribbon label">Drag and drop <i className="photo icon"></i></a>
                     <div className="item">
-                        <div className="image content"
+                        <i className="right floated big remove circle icon" onClick={this.switchModalVisibility}></i>
+                        <div className="image padded content"
                              onDragOver={this.stopEvent}
                              onDrop={this.handleDrop}>
                             <img className="ui small image"
