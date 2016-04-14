@@ -459,8 +459,51 @@ export default class CatalogApp extends Component {
 
 
     deleteItem(id){
-        console.log("deleteItem");
-        console.log(id);
+        var catIndex;
+        var itemIndex;
+        for(let i=0;i<this.state.categories.length;i++){
+            if(this.state.categoryId===this.state.categories[i].id){
+                catIndex=i;
+                for(let j=0;j<this.state.categories[catIndex].items.length;j++){
+                    if(id===this.state.categories[catIndex].items[j].id){
+                        itemIndex = j;
+                        break;
+                   }
+                }
+                break;
+            }
+        }
+        //Let's store the current state and create a
+        //the next one.
+        var prevCategories = this.state.categories;
+        var prevItems =  [...prevCategories[catIndex].items];
+        var nextCategories = [...this.state.categories];
+        var nextItems =  [...prevItems];
+        nextItems.splice(itemIndex,1);
+        nextCategories[catIndex].items = nextItems;
+        var nextState = {...this.state,
+            categories: nextCategories,
+            items: nextCategories[catIndex].items
+        };
+        //Let's set the new state optimistically.
+        this.setState(nextState);
+        var endpoint = "/items/delete/"+id+"?state=";
+        apiCall({
+            url: endpoint+this.state.nonce,
+            dataType:'json',
+            type: 'POST',
+            data: [],
+            cache: false,
+            error: function(xhr, status, err){
+                prevCategories[catIndex].items = prevItems;
+                this.setState({
+                    ...this.state,
+                    categories: prevCategories,
+                    items: prevItems
+                });
+                console.error(xhr, status, err.toString());
+            }.bind(this)
+        },this);
     }
 
 
