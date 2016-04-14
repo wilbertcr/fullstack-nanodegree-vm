@@ -351,11 +351,17 @@ def add_item():
     try:
         if request.method == 'POST':
             item = Item()
+            # First we populate the new item.
+            item.category_id = request.form['categoryId']
             item.picture = request.form['picture']
             item.name = request.form['name']
             item.price = request.form['price']
             item.description = request.form['description']
             item.user_id = login_session['user_id']
+            # Now let's pull its category.
+            category = session.query(Category).filter_by(id=item.category_id).one()
+            # And make sure they're properly linked.
+            item.category = category
             session.add(item)
             session.commit()
             response = make_response(
