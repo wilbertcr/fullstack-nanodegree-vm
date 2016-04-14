@@ -14,10 +14,9 @@ export default class EditItemForm extends Component {
         super(props);
 
         this.state = {
-                categoryId: this.props.categoryId,
-                isNameValid: true,
-                isPriceValid:true,
-                isDescriptionValid: true,
+                isNameValid: false,
+                isPriceValid: false,
+                isDescriptionValid: false,
                 newPictureMounted:false,
                 id: 0,
                 picture: "/static/images/image.png",
@@ -27,7 +26,7 @@ export default class EditItemForm extends Component {
                 stage: 0,
                 file: null,
                 validated: true
-            }
+        }
     }
 
     /**
@@ -63,13 +62,15 @@ export default class EditItemForm extends Component {
     }
 
     updateName(e){
-        console.log(e);
         let newName = this.inputName.value;
+        console.log(newName);
         this.setState({
             ...this.state,
-            name:newName,
-            validated: this.isValidated() && newName!=="",
-            isNameValid: newName!==""
+            name: newName,
+            isNameValid: newName!=="",
+            validated:  newName!=="" &&
+            this.state.isDescriptionValid &&
+            this.state.isPriceValid
         });
     }
 
@@ -78,19 +79,22 @@ export default class EditItemForm extends Component {
         this.setState({
             ...this.state,
             price: newPrice,
-            validated: this.isValidated() && newPrice!=="",
-            isPriceValid: newPrice!==""
+            isPriceValid: newPrice!=="",
+            validated:  this.state.isNameValid &&
+            this.state.isDescriptionValid &&
+            newPrice!==""
         });
     }
 
     updateDescription(e){
-        console.log(e);
         let newDescription = this.inputDescription.value;
         this.setState({
             ...this.state,
             description: newDescription,
-            validated: this.isValidated() && newDescription!=="",
-            isDescriptionValid: newDescription!==""
+            isDescriptionValid: newDescription!=="",
+            validated: newDescription!=="" &&
+            this.state.isNameValid &&
+            this.state.isPriceValid
         });
     }
 
@@ -102,7 +106,23 @@ export default class EditItemForm extends Component {
         /**
          * Reset form's stage back to initial one.
          * */
-        this.setState({stage: 0});
+        /***
+         * Resetting things for next usage.
+         */
+        this.setState({
+            isNameValid: false,
+            isPriceValid: false,
+            isDescriptionValid: false,
+            newPictureMounted:false,
+            id: 0,
+            picture: "/static/images/image.png",
+            name: "",
+            price: "",
+            description: "",
+            stage: 0,
+            file: null,
+            validated: true
+        });
         this.props.switchModalVisibility();
     }
 
@@ -115,7 +135,7 @@ export default class EditItemForm extends Component {
          * */
         if(this.isValidated()){
             var item = {
-                categoryId: this.state.categoryId,
+                categoryId: this.props.categoryId,
                 id:this.state.id,
                 //this.isValidated==true means a file has been mounted, so it is safe to use its name here.
                 picture: "/static/images/"+this.state.file.name,
@@ -134,6 +154,7 @@ export default class EditItemForm extends Component {
             } else {
                 console.log("It thinks nothing changed");
             }
+
             /**
              * Now we start the process of
              * hiding this menu and its modal.
