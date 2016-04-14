@@ -491,7 +491,7 @@ export default class CatalogApp extends Component {
         apiCall({
             url: endpoint+this.state.nonce,
             dataType:'json',
-            type: 'POST',
+            type: 'DELETE',
             data: [],
             cache: false,
             error: function(xhr, status, err){
