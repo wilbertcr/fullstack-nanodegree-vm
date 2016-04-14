@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
+var bleach = require('bleach');
 
 /**
  *
@@ -14,7 +15,7 @@ export default class AddCategoryForm extends Component {
     constructor(props) {
         super(props);
         this.state = {
-                validated: true,
+                validated: false,
                 name: "",
                 stage: 0
             }
@@ -25,7 +26,11 @@ export default class AddCategoryForm extends Component {
      * @param {String} name - The name of the category we wish to add.
      * */
     updateName(name){
-        this.setState({...this.state,name: this.inputName.value});
+        var name = bleach.sanitize(this.textInput.value);
+        this.setState({...this.state,
+            name: name,
+            validated: !(name==="")
+        });
     }
 
     /**
@@ -75,6 +80,10 @@ export default class AddCategoryForm extends Component {
     switchModalVisibility(){
         this.resetFields();
         this.props.switchModalVisibility();
+    }
+
+    componentDidMount(){
+        
     }
 
     render() {
@@ -151,7 +160,14 @@ export default class AddCategoryForm extends Component {
                             <div className="required field">
                                 <label>Name</label>
                                 <input type="text"
-                                       ref={(ref) => this.inputName=ref}
+                                       ref={
+                                        (ref) => {
+                                            this.textInput=ref;
+                                            if(this.textInput!==null){
+                                                this.textInput.focus();
+                                            }
+                                        }
+                                       }
                                        value={this.state.name}
                                        onChange={this.updateName}/>
                             </div>
