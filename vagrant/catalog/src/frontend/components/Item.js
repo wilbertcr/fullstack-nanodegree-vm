@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
 import EditItemForm from './EditItemForm';
+import DeleteItemForm from './DeleteItemForm'
 import ModalPageGeneric from './ModalPageGeneric'
 /**
  * Represents an item in a category.
@@ -26,12 +27,24 @@ export default class Item extends Component {
             LoggedOut : {value: false, name: "LoggedOut"}
         };
         this.state = {
-            isModalVisible: false
+            isEditModalVisible: false,
+            isDeleteModalVisible: false,
         }
+        this.EditReactElement = <element></element>;
+        this.DeleteReactElement = <element></element>;
     }
 
-    switchModalVisibility(){
-        this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
+    /**
+     *
+     * */
+    switchEditModalVisibility(){
+        console.log("Modal is now:"+this.state.isEditModalVisible ? 'visible': 'hidden');
+        this.setState({...this.state,isEditModalVisible: !this.state.isEditModalVisible});
+    }
+
+    switchDeleteModalVisibility(){
+        console.log("Modal is now:"+this.state.isDeleteModalVisible ? 'visible': 'hidden');
+        this.setState({...this.state,isDeleteModalVisible: !this.state.isDeleteModalVisible});
     }
 
     componentWillMount(){
@@ -43,9 +56,13 @@ export default class Item extends Component {
     render() {
 
 
-        this.reactElement = <EditItemForm
+        this.EditReactElement = <EditItemForm
             {...this.props}
-            switchModalVisibility={this.switchModalVisibility}
+            switchModalVisibility={this.switchEditModalVisibility}
+        />;
+        this.DeleteReactElement = <DeleteItemForm
+            {...this.props}
+            switchModalVisibility={this.switchDeleteModalVisibility}
         />;
         return (
             <div className="item">
@@ -67,19 +84,24 @@ export default class Item extends Component {
                         <div className="ui two butons">
                             <div className="ui basic blue icon button"
                                  tabIndex="0"
-                                 onClick={this.switchModalVisibility}>
+                                 onClick={this.switchEditModalVisibility}>
                                 <i className="edit icon"></i>
                             </div>
                             <div className="ui basic red icon button"
-                                 tabIndex="1">
+                                 tabIndex="1"
+                                 onClick={this.switchDeleteModalVisibility}>
                                 <i className="trash icon"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-                <ModalPageGeneric isVisible={this.state.isModalVisible}
-                                  switchModalVisibility={this.switchModalVisibility}
-                                  reactComponent={this.reactElement}
+                <ModalPageGeneric isVisible={this.state.isEditModalVisible}
+                                  switchModalVisibility={this.switchEditModalVisibility}
+                                  reactComponent={this.EditReactElement}
+                />
+                <ModalPageGeneric isVisible={this.state.isDeleteModalVisible}
+                                  switchModalVisibility={this.switchDeleteModalVisibility}
+                                  reactComponent={this.DeleteReactElement}
                 />
             </div>
         );
