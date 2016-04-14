@@ -156,8 +156,15 @@ export default class EditCategoryForm extends Component {
                             <div className="required field">
                                 <label>Category</label>
                                 <input type="text"
-                                       ref={(ref) => this.textInput = ref}
                                        value={this.state.name}
+                                       ref={
+                                        (ref) => {
+                                            this.textInput=ref;
+                                            if(this.textInput!==null){
+                                                this.textInput.focus();
+                                            }
+                                        }
+                                       }
                                        onChange={this.updateName}/>
                             </div>
                             <div className="ui error message">
