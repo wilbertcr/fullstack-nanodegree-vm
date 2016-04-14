@@ -12,6 +12,7 @@ import apiCall from './apiCall'
  * @class CatalogApp
  * */
 export default class CatalogApp extends Component {
+
     /**
      * @constructs CatalogApp
      * @param {Object} props - Object passed down to us from our parent..
@@ -45,9 +46,11 @@ export default class CatalogApp extends Component {
         };
     }
 
+
     updateNonce(nonce){
         this.setState({...this.state, nonce: nonce});
     }
+
 
     /**
      * Listener triggered by GoogleAuth2 when a change in login state occurs.
@@ -59,6 +62,7 @@ export default class CatalogApp extends Component {
         this.setState({...this.state,
             loginStatus: state.value ? this.STATUS.LoggedIn : this.STATUS.LoggedOut});
     }
+
 
     /**
      * Sets state such that the objects in the category passed in are displayed.
@@ -79,6 +83,7 @@ export default class CatalogApp extends Component {
         var items = category.items;
         this.setState({...this.state, items: items,categoryId: id});
     }
+
 
     /**
      * Appends the category to the list of categories.
@@ -134,6 +139,7 @@ export default class CatalogApp extends Component {
         },this);
 
     }
+
 
     /**
      * Updates category to match the one passed in.
@@ -254,33 +260,83 @@ export default class CatalogApp extends Component {
     }
 
 
-
-
-    /**
-     * Loads categories from server.
-     * */
-    loadCategories(){
-        apiCall({
-            url: '/categories/json?state='+this.state.nonce,
-            dataType:'json',
-            cache: false,
-            success: function(data){
-                this.setState({categories: data.categories});
-            }.bind(this),
-            error: function(xhr, status, err){
-                console.error(this.state.restaurantListURL, status, err.toString());
-            }.bind(this)
-        },this);
-    }
-
-    componentDidMount(){
-        this.loadCategories();
-    }
-
-    addItem(Item){
+    addItem(item){
         console.log("AddItem");
-        console.log(Item);
+        console.log(item);
+        //Let's figure out the index of this item's category.
+        var catIndex;
+        for(let i=0;i<this.state.categories.length;i++){
+            if(item.categoryId===this.state.categories[i].id){
+                catIndex=i;
+                break;
+            }
+        }
+
+        //Let's store the current state and create a
+        //new one.
+        var prevCategories = this.state.categories;
+        var nextCategories = [...this.state.categories];
+        var prevItems =  prevCategories[catIndex].items;
+        var nextItems = [...prevCategories[catIndex].items,item];
+        console.log(nextItems);
+
+        let file = item.file;
+        console.log(file);
+        var fd = new FormData();
+        fd.append("picture_file", file);
+        var filePath = "/static/images/"+file.name;
+
+        var url1 = filePath+"?state=";
+        apiCall({
+            url: url1+this.state.nonce,
+            type: 'POST',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(data){
+                console.log(data);
+            }.bind(this),
+            error: function (xhr, status, err) {
+                //And communicate the error.
+                //Something production ready would do
+                //something to the UI to make the user aware of this.
+                console.error("Error uploading picture.");
+                console.error(xhr, status, err.toString());
+            }.bind(this)
+        },this).then(function(){
+            //File is in the server now, so we can update the picture.
+            //The form in the backend gets confused if there's a
+            // file so let's clear it.
+            nextItems[nextItems.length-1].file = "";
+            //Items are inside categories, so I need to update them
+            //also if I want them to be up to date.
+            nextCategories[catIndex].items = nextItems;
+
+            this.setState({
+                categories: nextCategories,
+                items: nextCategories[catIndex].items}
+            );
+            var url2 = "/items/add?state=";
+            apiCall({
+                url: url2+this.state.nonce,
+                dataType: 'json',
+                type: 'POST',
+                data: nextItems[nextItems.length-1],
+                error: function(xhr,status,err){
+                    //If things go bad, we go back to
+                    //the previous state.
+                    console.log("going back to previous state.");
+                    console.log(prevItems);
+                    prevCategories[catIndex].items = prevItems;
+                    this.setState({...this.state,
+                        categories: prevCategories,
+                        items: prevItems}
+                    );
+                }.bind(this)
+            },this);
+        }.bind(this));
     }
+
 
     editItem(item){
         var catIndex;
@@ -321,12 +377,6 @@ export default class CatalogApp extends Component {
             fd.append("picture_file", file);
             var filePath = "/static/images/"+file.name;
             var url1 = filePath+"?state=";
-            //File is in the server now, so we can update the picture.
-            nextCategories[catIndex].items[itemIndex] = nextItem;
-            this.setState({
-                categories: nextCategories,
-                items: nextCategories[catIndex].items}
-            );
             apiCall({
                 url: url1+this.state.nonce,
                 type: 'POST',
@@ -350,6 +400,7 @@ export default class CatalogApp extends Component {
                     console.error(xhr, status, err.toString());
                 }.bind(this)
             },this).then(function(){
+                //File is in the server now, so we can update the picture.
                 nextItem.file = "";
                 nextCategories[catIndex].items[itemIndex] = nextItem;
                 this.setState({
@@ -385,7 +436,7 @@ export default class CatalogApp extends Component {
                 categories: nextCategories,
                 items: nextCategories[catIndex].items}
             );
-            var url1 = "/items/edit/"+item.id+"?state=";
+            var url2 = "/items/edit/"+item.id+"?state=";
             apiCall({
                 url: url2+this.state.nonce,
                 dataType: 'json',
@@ -406,9 +457,33 @@ export default class CatalogApp extends Component {
         }
     }
 
+
     deleteItem(id){
         console.log("deleteItem");
         console.log(id);
+    }
+
+
+    /**
+     * Loads categories from server.
+     * */
+    loadCategories(){
+        apiCall({
+            url: '/categories/json?state='+this.state.nonce,
+            dataType:'json',
+            cache: false,
+            success: function(data){
+                this.setState({categories: data.categories});
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.error(this.state.restaurantListURL, status, err.toString());
+            }.bind(this)
+        },this);
+    }
+
+
+    componentDidMount(){
+        this.loadCategories();
     }
 
     render(){
