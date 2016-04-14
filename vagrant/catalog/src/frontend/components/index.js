@@ -311,7 +311,6 @@ export default class CatalogApp extends Component {
             //Items are inside categories, so I need to update them
             //also if I want them to be up to date.
             nextCategories[catIndex].items = nextItems;
-
             this.setState({
                 categories: nextCategories,
                 items: nextCategories[catIndex].items}
@@ -322,6 +321,15 @@ export default class CatalogApp extends Component {
                 dataType: 'json',
                 type: 'POST',
                 data: nextItems[nextItems.length-1],
+                success: function(data){
+                    nextItems[nextItems.length-1].id = data.id
+                    nextCategories[catIndex].items = nextItems;
+                    this.setState({
+                        categories: nextCategories,
+                        items: nextCategories[catIndex].items}
+                    );
+                    console.log(data);
+                }.bind(this),
                 error: function(xhr,status,err){
                     //If things go bad, we go back to
                     //the previous state.
