@@ -132,7 +132,7 @@ export default class EditCategoryForm extends Component {
                     <i className="chevron circle left icon"></i>Back
                 </div>
                 <div className="ui basic green button"
-                     onClick={this.addItem}>
+                     onClick={this.editCategory}>
                     Send<i className="chevron circle right icon"></i>
                 </div>
                 <div className="ui basic blue button"
@@ -144,6 +144,7 @@ export default class EditCategoryForm extends Component {
 
         return (
             <div className="ui item">
+                <i className="right floated big remove circle icon" onClick={this.switchModalVisibility}></i>
                 <div className="header">
                     Edit Category
                 </div>
