@@ -83,7 +83,7 @@ export default class AddCategoryForm extends Component {
     }
 
     componentDidMount(){
-        
+
     }
 
     render() {
