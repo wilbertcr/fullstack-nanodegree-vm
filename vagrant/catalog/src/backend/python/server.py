@@ -363,9 +363,11 @@ def add_item():
             # And make sure they're properly linked.
             item.category = category
             session.add(item)
+            session.flush()
+            id = item.id
             session.commit()
             response = make_response(
-                json.dumps({'Success': '', 'nonce': login_session['state']}), 200
+                json.dumps({'Success': '', 'nonce': login_session['state'], 'id': id}), 200
             )
             response.headers['Content-Type'] = 'application/json'
             return response
