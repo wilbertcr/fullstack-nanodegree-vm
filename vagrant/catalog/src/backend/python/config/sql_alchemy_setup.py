@@ -1,7 +1,9 @@
+import datetime
 from sqlalchemy import \
-    Column, ForeignKey, Integer, String, Boolean, create_engine
+    Column, ForeignKey, Integer, String, Boolean, DateTime, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+
 
 Base = declarative_base()
 
@@ -53,6 +55,8 @@ class Item(Base):
     description = Column(String, nullable=False)
     price = Column(String, nullable=False)
     picture = Column(String)
+    created = Column('created', DateTime, default=datetime.datetime.now)
+    last_updated = Column('last_updated', DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
     category_id = Column(Integer, ForeignKey('category.id', ondelete="CASCADE"))
     category = relationship(Category, back_populates="items")
 
@@ -65,7 +69,9 @@ class Item(Base):
             'description': self.description,
             'price': self.price,
             'picture': self.picture,
-            'category_id': self.category_id
+            'category_id': self.category_id,
+            'created': self.created,
+            'last_updated': self.last_updated
         }
 
 Category.items = relationship(Item, order_by=Item.id, back_populates="category")

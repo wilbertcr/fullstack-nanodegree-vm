@@ -8,7 +8,6 @@ import random
 import string
 import sys
 import time
-
 import httplib2
 import requests
 from flask import Flask, render_template, jsonify, make_response
@@ -22,6 +21,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from werkzeug.utils import secure_filename
+from urlparse import urljoin
+from werkzeug.contrib.atom import AtomFeed
+
 from config.sql_alchemy_setup import Base, User, Category, Item
 
 # Pybuilder needs to know where the root of all packages is so we need to set path to it here.
@@ -262,7 +264,7 @@ def categories_json():
         print(inst)
 
 
-@app.route('/category/<int: category_id>/json')
+@app.route('/category/<int:category_id>/json')
 @auto.doc()
 def category_json(category_id):
     """
@@ -280,7 +282,7 @@ def category_json(category_id):
         print(inst)
 
 
-@app.route('/item/<int: item_id>/json')
+@app.route('/item/<int:item_id>/json')
 @auto.doc()
 def item_json(item_id):
     """
@@ -296,6 +298,30 @@ def item_json(item_id):
         print(type(inst))
         print(inst.args)
         print(inst)
+
+
+def make_external(url):
+    return urljoin(request.url_root, url)
+
+
+@app.route('/recent.atom')
+def recent_feed():
+    feed = AtomFeed('Recent Items',
+                    feed_url=request.url, url=request.url_root)
+    items = session.query(Item).order_by(Item.last_updated.desc(), Item.created.desc()).limit(15).all()
+    for item in items:
+        app.logger.warning("Last updated: ")
+        app.logger.warning(item.last_updated)
+        feed.add(id=item.id,
+                 title=item.name,
+                 price=item.price,
+                 description=item.description,
+                 content_type='json',
+                 author='Wilbert Sequeira',
+                 url=make_external('/item/'+str(item.id)+'/json'),
+                 updated=item.last_updated,
+                 published=item.created)
+    return feed.get_response()
 
 
 @app.route('/categories/new', methods=['POST'])
