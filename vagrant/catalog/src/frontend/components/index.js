@@ -273,7 +273,18 @@ export default class CatalogApp extends Component {
 
     }
 
-
+    /**
+     * Adds item to the currently displayed category.
+     * @param {Object} item - The item that will be added.
+     * @property {number} item.categoryId - Category id
+     * @property {number} item.id - Item id
+     * @property {string} state.picture - The path to the item's picture
+     * @property {string} state.name - The item's name.
+     * @property {string} state.price - The item's price.
+     * @property {boolean} state.isDescriptionValid
+     * @property {Object} state.file - A File object
+     * @property {boolean} state.newPictureMounted
+     * */
     addItem(item){
         console.log("AddItem");
         console.log(item);
@@ -360,6 +371,18 @@ export default class CatalogApp extends Component {
     }
 
 
+    /**
+     * Edits item
+     * @param {Object} item - The item that will be added.
+     * @property {number} item.categoryId - Category id
+     * @property {number} item.id - Item id
+     * @property {string} state.picture - The path to the item's picture
+     * @property {string} state.name - The item's name.
+     * @property {string} state.price - The item's price.
+     * @property {boolean} state.isDescriptionValid
+     * @property {Object} state.file - A File object
+     * @property {boolean} state.newPictureMounted
+     * */
     editItem(item){
         var catIndex;
         var itemIndex;
@@ -479,7 +502,10 @@ export default class CatalogApp extends Component {
         }
     }
 
-
+    /**
+     * Deletes an item
+     * @param {number} id - The id of the item to be deleted.
+     * */
     deleteItem(id){
         var catIndex;
         var itemIndex;
