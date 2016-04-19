@@ -52,7 +52,7 @@ export default class AddCategoryForm extends Component {
         this.setState({
             ...this.state,
             stage: this.state.stage-1,
-            isInputEnabled: false
+            isInputEnabled: true
         });
     }
 
