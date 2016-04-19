@@ -9,9 +9,9 @@ import apiCall from './apiCall'
 
 /**
  * Main container. This is the root of the application and where most of the state is kept and changed.
- * @class CatalogApp
+ * @class Root
  * */
-export default class CatalogApp extends Component {
+export default class Root extends Component {
 
     /**
      * @constructs CatalogApp
@@ -611,7 +611,7 @@ export default class CatalogApp extends Component {
 
 $( document ).ready(function() {
     ReactDOM.render(
-        <CatalogApp/>,
+        <Root/>,
         document.getElementById("root")
     );
 });

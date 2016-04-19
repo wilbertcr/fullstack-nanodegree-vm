@@ -172,10 +172,6 @@ export default class EditCategoryForm extends Component {
                      onClick={this.editCategory}>
                     Send<i className="chevron circle right icon"></i>
                 </div>
-                <div className="ui basic blue button"
-                     onClick={this.switchModalVisibility}>
-                    <i className="remove circle icon"></i>Cancel
-                </div>
             </div>;
         }
 

@@ -278,10 +278,6 @@ export default class EditItemForm extends Component {
                      onClick={this.editItem}>
                     Send<i className="chevron circle right icon"></i>
                 </div>
-                <div className="ui basic blue button"
-                     onClick={this.switchModalVisibility}>
-                    <i className="remove circle icon"></i>Cancel
-                </div>
             </div>;
         }
 
