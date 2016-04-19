@@ -248,7 +248,7 @@ def gdisconnect():
 @auto.doc()
 def categories_json():
     '''
-    ***********JSON ENDPOING******************
+    *json endpoint*
     It returns a json object, containing all the categories in the database, as well as their respective items.
     Returns:
         json: categories[]
