@@ -14,6 +14,12 @@ export default class ModalGeneric extends Component {
      * */
     constructor(props) {
         super(props);
+        /**
+         *Represents the current state.
+         * @type {Object}
+         * @property {Object[]} state.node - A reference to the modal container here.
+         * @property {{styles: {top: number, left: number}}} - Used to center the container modal.
+         * */
         this.state = {
             node: null,
             styles: {
@@ -33,13 +39,13 @@ export default class ModalGeneric extends Component {
     }
 
     componentDidMount(){
-        this.state.node = ReactDOM.findDOMNode(this.modalRef);
+        this.state.node = this.modalRef;
     }
 
     render() {
         var top = (window.innerHeight-$(this.state.node).height())/2;
-        //modalClasses determine if the modal is visible of hidden.
         var modalClasses = (this.props.isVisible)? 'ui small modal transition visible active': 'ui modal transition hidden';
+        //modalClasses determine which classes to use depending on the visibility state.
         return (
             <div className={modalClasses}
                  onClick={this.handleClick}

@@ -1,18 +1,37 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Component from './Component';
+var bleach = require('bleach');
 
 /**
- * Form allows edition of items.
- * There are two stages. It begins with the form
- * containing the current values of the item.
- * Pr
- * @class EditItemForm
+ *
+ * @class AddItemForm
  * */
-export default class EditItemForm extends Component {
+export default class AddItemForm extends Component {
+    /**
+     * @constructs EditItemForm
+     * @param {Object} props - Object passed down to us from our parent..
+     * @param {Object} props.addItem - See {@link CatalogApp#addItem}
+     * @param {number} props.categoryId - See {@link CatalogApp#state}
+     * @param {Object} props.switchModalVisibility - See {@link ItemsContainer#switchModalVisibility}
+     * */
     constructor(props) {
         super(props);
-
+        /**
+         * @member {Object} A state object composed of the state variables.
+         * @property {boolean} state.isNameValid
+         * @property {boolean} state.isPriceValid
+         * @property {boolean} state.isDescriptionValid
+         * @property {boolean} state.newPictureMounted
+         * @property {number} state.id - The item's id.
+         * @property {string} state.picture - The path to the item's picture
+         * @property {string} state.name - The item's name.
+         * @property {string} state.price - The item's price.
+         * @property {string} state.description - The item's description.
+         * @property {number} state.stage - The stage of the form(0 or 1).
+         * @property {Object} state.file - A File object
+         * @property {boolean} state.validated - If true, the form's fields are all valid.
+         * */
         this.state = {
                 isNameValid: false,
                 isPriceValid: false,
@@ -51,19 +70,18 @@ export default class EditItemForm extends Component {
             "" !== this.state.name &&
             "" !== this.state.description &&
             "" !== this.state.picture &&
-                this.state.newPictureMounted;
+            this.state.newPictureMounted;
     }
 
     hasChanged(){
         return  "" !== this.state.price ||
-                "" !== this.state.name ||
-                "" !== this.state.description ||
-                "" !== this.state.picture;
+            "" !== this.state.name ||
+            "" !== this.state.description ||
+            "" !== this.state.picture;
     }
 
     updateName(e){
-        let newName = this.inputName.value;
-        console.log(newName);
+        let newName = bleach.sanitize(this.inputName.value);
         this.setState({
             ...this.state,
             name: newName,
@@ -75,7 +93,8 @@ export default class EditItemForm extends Component {
     }
 
     updatePrice(e){
-        let newPrice = this.inputPrice.value;
+
+        let newPrice = bleach.sanitize(this.inputPrice.value);
         this.setState({
             ...this.state,
             price: newPrice,
@@ -87,7 +106,7 @@ export default class EditItemForm extends Component {
     }
 
     updateDescription(e){
-        let newDescription = this.inputDescription.value;
+        let newDescription = bleach.sanitize(this.inputDescription.value);
         this.setState({
             ...this.state,
             description: newDescription,
@@ -96,34 +115,6 @@ export default class EditItemForm extends Component {
             this.state.isNameValid &&
             this.state.isPriceValid
         });
-    }
-
-    /**
-     * Effectively hiding the modal without
-     * successfully saving its contents.
-     * */
-    switchModalVisibility(){
-        /**
-         * Reset form's stage back to initial one.
-         * */
-        /***
-         * Resetting things for next usage.
-         */
-        this.setState({
-            isNameValid: false,
-            isPriceValid: false,
-            isDescriptionValid: false,
-            newPictureMounted:false,
-            id: 0,
-            picture: "/static/images/image.png",
-            name: "",
-            price: "",
-            description: "",
-            stage: 0,
-            file: null,
-            validated: true
-        });
-        this.props.switchModalVisibility();
     }
 
     /**
@@ -161,6 +152,34 @@ export default class EditItemForm extends Component {
              * */
             this.switchModalVisibility();
         }
+    }
+
+    /**
+     * Effectively hiding the modal without
+     * successfully saving its contents.
+     * */
+    switchModalVisibility(){
+        /**
+         * Reset form's stage back to initial one.
+         * */
+        /***
+         * Resetting things for next usage.
+         */
+        this.setState({
+            isNameValid: false,
+            isPriceValid: false,
+            isDescriptionValid: false,
+            newPictureMounted:false,
+            id: 0,
+            picture: "/static/images/image.png",
+            name: "",
+            price: "",
+            description: "",
+            stage: 0,
+            file: null,
+            validated: true
+        });
+        this.props.switchModalVisibility();
     }
 
     /**
@@ -293,8 +312,8 @@ export default class EditItemForm extends Component {
                                            onChange={this.updateDescription}/>
                                 </div>
                                 <div className="ui error message">
-                                    <div className="header">Empty name</div>
-                                    <p>Something is missing...</p>
+                                    <div className="header"></div>
+                                    <p>Please fill out all fields. Don't forget the photo!</p>
                                 </div>
                                 <div className="ui success message">
                                     <div className="header">

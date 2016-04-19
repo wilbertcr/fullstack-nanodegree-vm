@@ -18,14 +18,13 @@ export default class ModalPageGeneric extends Component {
     }
 
     /**
-     * Pretty obvious.
+     * Prevents default behavior and prevents
+     * event e from propagating up the node tree.
      * */
     stopEvent(e){
-        console.log('test.');
         e.preventDefault();
         e.stopPropagation();
     }
-
 
     render() {
         var modal_classes = (this.props.isVisible) ? 'ui dimmer modals page transition visible active' : 'ui dimmer modals page transition hidden';

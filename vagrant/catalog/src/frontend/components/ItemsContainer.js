@@ -6,34 +6,41 @@ import AddItemForm from './AddItemForm'
 import ModalPageGeneric from './ModalPageGeneric'
 
 /**
- * Main container.
+ * Items container
  * @class ItemsContainer
  * */
 export default class ItemsContainer extends Component {
     /**
      * @constructs ItemsContainer
      * @param {Object} props - Object passed down to us from our parent..
+     * @param {STATUS} props.loginStatus - See {@link CatalogApp#STATUS}
+     * @param {number} props.categoryId - See {@link CatalogApp#state}
+     * @param {Object[]} props.items - See {@link CatalogApp#state}
      * */
     constructor(props) {
         super(props);
+        /**
+         * @member {Object} A state object composed of the state variables.
+         * @property {boolean} state.isModalVisible - If true, modal is visible.
+         * */
         this.state = {
-            isModalVisible: false,
+            isModalVisible: false
         };
+        /** @member {Object} The React element we will display inside the "addItem" modal. Also see {@link ItemsContainer#render}*/
         this.reactComponent = <element></element>;
     }
 
+    /**
+     * Switches the visibility of addItemForm's modal.
+     * */
     switchModalVisibility(){
         this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
 
-    componentDidMount(){
-
-    }
-
     render() {
-
         var addItemButton = function(){
             if(this.props.categoryId !== 0) {
+                //If a category has been selected.
                 this.reactElement = <AddItemForm
                     addItem={this.props.addItem}
                     categoryId={this.props.categoryId}
@@ -58,6 +65,7 @@ export default class ItemsContainer extends Component {
                         />
                     </div>);
             } else {
+                //If no category has been selected
                 return <div></div>;
             }
         }.bind(this);

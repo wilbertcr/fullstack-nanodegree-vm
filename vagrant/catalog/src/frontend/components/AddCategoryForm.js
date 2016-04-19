@@ -11,22 +11,58 @@ export default class AddCategoryForm extends Component {
     /**
      * @constructs AddCategoryForm
      * @param {Object} props - Object passed down to us from our parent..
+     * @param {Object} props.addCategory - See {@link CatalogApp#addCategory}
+     * @param {Object} props.switchModalVisibility - See {@link CatalogApp#addCategory}
+     * @param {Object} props.switchModalVisibility - See {@link Sidebar@switchModalVisibility}
+     *
      * */
     constructor(props) {
         super(props);
+        /** @member {Object} A State object composed of the state variables
+         * @property {boolean} state.validated - True if the form is validated, false otherwise.
+         * @property {string} state.name - The name of the category
+         * @property {number} state.stage - 0(Editing) 1(Confirming)
+         * @property {boolean} state.isInputEnabled - If true, inputs are enabled. If false, inputs are disabled.
+         * */
         this.state = {
                 validated: false,
                 name: "",
-                stage: 0
+                stage: 0,
+                isInputEnabled: true
             }
     }
 
     /**
-     * Updates the state based on the current value in the input field.
-     * @param {String} name - The name of the category we wish to add.
+     * Moves form from editing(0) stage to confirmation(1) stage.
+     * Input is disabled at the same time.
      * */
-    updateName(name){
+    advanceStage(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage+1,
+            isInputEnabled: false
+        });
+    }
+
+    /**
+     * Moves form from confirmation(1) stage to editing(0) stage.
+     * Input is (re)enabled
+     * */
+    goBack(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage-1,
+            isInputEnabled: false
+        });
+    }
+
+    /**
+     * Callback for onChange event in the "Name" field.
+     * */
+    updateName(){
+        //First we sanitize the input.
         var name = bleach.sanitize(this.textInput.value);
+        //Then we update the state.
         this.setState({...this.state,
             name: name,
             validated: !(name==="")
@@ -34,31 +70,20 @@ export default class AddCategoryForm extends Component {
     }
 
     /**
-     * Moves state to confirmation stage.
-     * */
-    advanceStage(){
-        this.setState({...this.state,stage: this.state.stage+1});
-    }
-
-    goBack(){
-        this.setState({
-            ...this.state,
-            stage: this.state.stage-1
-        });
-    }
-
-    /**
-     *Requests this.props.addCategory to add the new category
-     *after making sure the content is validated.
+     * Requests this.props.addCategory to add the new category
+     * after making sure the content is validated.
      * It also switches the modal off and resets the fields.
      * */
     addCategory(){
         if(this.state.validated){
+            //If the content is valid.
+            //Then ship to the function that will ship it down the wire.
             this.props.addCategory(this.state.name);
             this.props.switchModalVisibility();
             this.resetFields();
         } else {
-            console.error("AddCategoryForm.js - Line 44: This shouldn't be called when data is invalid.");
+            //This shouldn't happen so we warn the programmer.
+            console.error("AddCategoryForm.js - Line 76: This shouldn't be called when data is invalid.");
         }
     }
 
@@ -82,10 +107,6 @@ export default class AddCategoryForm extends Component {
         this.props.switchModalVisibility();
     }
 
-    componentDidMount(){
-
-    }
-
     render() {
         var formClasses;
         var buttons;
@@ -93,9 +114,9 @@ export default class AddCategoryForm extends Component {
             /**
              * If we're editing and content is validated
              * */
-                //Then we want a regular form.
+             //Then we want a regular form.
             formClasses = 'ui form';
-            //And functioning buttons
+            //And we display the "Back" and "Next" Buttons.
             buttons = <div className="ui buttons">
                 <div className="ui basic blue button"
                      onClick={this.switchModalVisibility}>
@@ -103,13 +124,13 @@ export default class AddCategoryForm extends Component {
                 </div>
                 <div className="ui basic green button"
                      onClick={this.advanceStage}>
-                    Submit<i className="chevron circle right icon"></i>
+                    Next<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
         if(this.state.stage===0 && !this.state.validated){
             //If we're editing and content is not validated.
-            //We want to show an error in the form and to disable the button.
+            //We want to show an error in the form
             formClasses = 'ui small form error';
             //And we want buttons to be disabled.
             buttons = <div className="ui buttons">
@@ -119,7 +140,7 @@ export default class AddCategoryForm extends Component {
                 </div>
                 <div className="ui disabled basic green button"
                      onClick={this.advanceStage}>
-                    Submit<i className="chevron circle right icon"></i>
+                    Next<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
@@ -168,6 +189,7 @@ export default class AddCategoryForm extends Component {
                                             }
                                         }
                                        }
+                                       disabled={!this.state.isInputEnabled}
                                        value={this.state.name}
                                        onChange={this.updateName}/>
                             </div>

@@ -13,6 +13,7 @@ export default class Item extends Component {
      * @constructs Item
      * @param {Object} props - Object passed down to us from our parent.
      * @param {{name: string, price: string, description: string, picture: string }} props.item
+     * @param {STATUS} props.loginStatus - See {@link CatalogApp#STATUS}
      * */
     constructor(props) {
         super(props);
@@ -26,32 +27,36 @@ export default class Item extends Component {
             LoggedIn : {value: true, name: "LoggedIn"},
             LoggedOut : {value: false, name: "LoggedOut"}
         };
+        /** @member {Object} A State object composed of the state variables
+         * @property {boolean} state.isEditModalVisible - If true, the "Edit" modal is visible, if false the "Edit" modal is hidden.
+         * @property {boolean} state.isDeleteModalVisible - If true, the "Delete" modal is visible, if false the "Delete" modal is hidden.
+         * */
         this.state = {
             isEditModalVisible: false,
             isDeleteModalVisible: false,
-        }
+        };
+
+        /** @member {Object} The React element we will display inside the "Edit" modal.*/
         this.EditReactElement = <element></element>;
+        /** @member {Object} The React element we will display inside the "Delete" modal.*/
         this.DeleteReactElement = <element></element>;
     }
 
     /**
-     *
+     * Changes visibility of "Edit" modal
      * */
     switchEditModalVisibility(){
         console.log("Modal is now:"+this.state.isEditModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isEditModalVisible: !this.state.isEditModalVisible});
     }
 
+    /**
+     * Changes visibility of "Delete" modal
+     * */
     switchDeleteModalVisibility(){
         console.log("Modal is now:"+this.state.isDeleteModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isDeleteModalVisible: !this.state.isDeleteModalVisible});
     }
-
-    componentWillMount(){
-
-    }
-
-
 
     render() {
 

@@ -14,22 +14,33 @@ export default class Sidebar extends Component {
     /**
      * @constructs Sidebar
      * @param {Object} props - Object passed down to us from our parent..
+     * @param {Object[]} props.categories - See {@link CatalogApp#state}
+     * @param {STATUS} props.loginStatus - See {@link CatalogApp#STATUS}
      * */
     constructor(props){
         super(props);
+        /** @member {Object} A State object composed of the state variables
+         * @property {boolean} state.isModalVisible - If true, the modal is visible, if false, the modal is hidden.
+         * @property {number} state.activeCategory - The id of the active category.
+         * */
         this.state = {
             isModalVisible: false,
-            //
-            name: " ",
             activeCategory: 0
         }
     }
 
     switchModalVisibility(){
+        /**
+         * Changes the visibility of the modal.
+         * */
         this.setState({...this.state,isModalVisible: !this.state.isModalVisible});
     }
 
     setActiveCategory(id){
+        /**
+         * This function is passed to all categories. When clicked, a category will pass its
+         * id to this function and that way we'll know which category is being displayed at all times.
+         * */
         this.setState({activeCategory: id})
     }
 
@@ -40,6 +51,7 @@ export default class Sidebar extends Component {
             switchModalVisibility={this.switchModalVisibility}
             addCategory={this.props.addCategory}
         />;
+
         return(
             <div className="ui small left vertical menu">
                 {this.props.categories.map(

@@ -9,78 +9,114 @@ var bleach = require('bleach');
  * */
 export default class EditCategoryForm extends Component {
 
+    /**
+     * @constructs EditCategoryForm
+     * @param {Object} props - Object passed down to us from our parent..
+     * @param {Object} props.category - See {@link Category#constructor}
+     * @param {Object} props.editCategory - See {@link CatalogApp#editCategory}
+     * @param {Object} props.switchModalVisibility - See {@link Category#switchModalVisibility}
+     * */
     constructor(props) {
         super(props);
+        /** @member {Object} A State object composed of the state variables
+         * @property {Object} state.category - The category being edited.
+         * @property {string} state.name - The name of the category
+         * @property {boolean} state.validated - True if the form is validated, false otherwise.
+         * @property {number} state.stage - 0(Editing) 1(Confirming)
+         * @property {boolean} state.isInputEnabled - If true, inputs are enabled. If false, inputs are disabled.
+         * */
         this.state = {
             category: this.props.category,
             name: this.props.category.name,
             validated: true,
-            stage: 0
+            stage: 0,
+            isInputEnabled: true
         }
     }
 
     /**
-     * Fired by the onChange event in the input field.
-     * @param {Object} e - The event's object.
+     * Moves form from editing(0) stage to confirmation(1) stage.
+     * Input is disabled at the same time.
      * */
-    updateName(e){
-        /**
-         * We keep track of the state of validation. We don't want empty names.
-         * */
+    advanceStage(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage+1,
+            isInputEnabled: false
+        });
+    }
+
+    /**
+     * Moves form from confirmation(1) stage to editing(0) stage.
+     * Input is (re)enabled
+     * */
+    goBack(){
+        this.setState({
+            ...this.state,
+            stage: this.state.stage-1,
+            isInputEnabled: true
+        });
+    }
+
+    /**
+     * Returns true if at least one field has changed
+     * or a new picture has been dropped.
+     * */
+    hasChanged(){
+        return  this.props.category.name !== this.state.name;
+    }
+
+    /**
+     * Fired by the onChange event in the "Name" input field.
+     * */
+    updateName(){
+        //First we sanitize the input.
         var name = bleach.sanitize(this.textInput.value);
+        //Then we update the state.
         this.setState({...this.state,
+            //Update the value of the field.
             name: name,
+            //The form is validated if the name field is not empty.
             validated: !(name==="")
         });
     }
 
-    advanceStage(){
-        this.setState({
-            ...this.state,
-            stage: this.state.stage+1
-        });
-    }
-
-    goBack(){
-        this.setState({
-            ...this.state,
-            stage: this.state.stage-1
-        });
-    }
-
     /**
-     * Clicking Submit button saves the data if it is validated.
+     * Ships category for editing.
      * */
     editCategory(){
         if(this.state.validated){
-            //We are editing, so we change the name in the category.
-            this.state.category.name = this.state.name;
-            //Then we ship it to the right function.
-            this.props.editCategory(this.state.category);
-            //We also need to close the modal, since we're done here.
+            //If the category is validated.
+            if(this.hasChanged()){
+                //And the content has changed.
+
+                //We change the name
+                this.setState({
+                    stage: 0,
+                    category: {...category,name: this.state.name}
+                });
+                //Then ship to the function that will ship it down the wire.
+                this.props.editCategory(this.state.category);
+            } else {
+                console.log("Form hasn't changed.")
+            }
+            //I'll close the modal either way.
             this.props.switchModalVisibility();
-            //Finally, let's make sure the modal starts where it is supposed to next time
-            //it loads.
-            this.setState({stage: 0});
         } else {
-            console.error("EditCagetoryForm.js - Line 51: This shouldn't be called when data is invalid.");
+            console.error("EditCagetoryForm.js - Line 96: This shouldn't be called when data is invalid.");
         }
     }
 
     /**
-     * The category is going to change, so we want to store it in a state
-     * variable.
+     * Resets form and calls {@link Category#switchEditModalVisibility}
      * */
-    componentDidMount() {
-        this.setState({category: this.props.category});
-    }
-
     switchModalVisibility(){
         this.setState({
             stage: 0,
             category: this.props.category,
             name: this.props.category.name
         });
+        //Somewhere up the chain, someone is in charged of closing it. The form doesn't know the details of that.
         this.props.switchModalVisibility();
     }
 
@@ -90,10 +126,10 @@ export default class EditCategoryForm extends Component {
         if(this.state.stage===0 && this.state.validated){
             /**
              * If we're editing and content is validated
-             * */
-                //Then we want a regular form.
+             * Then we want a regular form.
+             */
             formClasses = 'ui form';
-            //And functioning buttons
+            //And we display the "Back" and "Next" Buttons.
             buttons = <div className="ui buttons">
                 <div className="ui basic blue button"
                      onClick={this.switchModalVisibility}>
@@ -101,15 +137,16 @@ export default class EditCategoryForm extends Component {
                 </div>
                 <div className="ui basic green button"
                      onClick={this.advanceStage}>
-                    Submit<i className="chevron circle right icon"></i>
+                    Next<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
         if(this.state.stage===0 && !this.state.validated){
-            //If we're editing and content is not validated.
-            //We want to show an error in the form and to disable the button.
+            //If we're editing and some or all of the content isn't valid.
+            //then show an error and disable the button.
             formClasses = 'ui small form error';
-            //And we want buttons to be disabled.
+            //And we disable the buttons, so the user cannot move forward.
+            //(user can always close the form or click on the modal to get out of here).
             buttons = <div className="ui buttons">
                 <div className="ui disabled basic blue button"
                      onClick={this.switchModalVisibility}>
@@ -117,7 +154,7 @@ export default class EditCategoryForm extends Component {
                 </div>
                 <div className="ui disabled basic green button"
                      onClick={this.advanceStage}>
-                    Submit<i className="chevron circle right icon"></i>
+                    Next<i className="chevron circle right icon"></i>
                 </div>
             </div>;
         }
@@ -125,7 +162,7 @@ export default class EditCategoryForm extends Component {
             //If we are done editing.
             //We want to show a success message.
             formClasses = 'ui small form success';
-            //We want to ask the user to confirm via a "success" message.
+            //We want to ask the user to confirm via a semantic-ui "success" message.
             buttons = <div className="ui buttons">
                 <div className="ui basic blue button"
                      onClick={this.goBack}>

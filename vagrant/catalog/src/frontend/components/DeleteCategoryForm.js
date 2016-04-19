@@ -5,27 +5,28 @@ var bleach = require('bleach');
 
 /**
  * Wrapper around Semantic-ui's "ui form". May be I should just call it Form.
- * @class EditCategoryForm
+ * @class DeleteCategoryForm
  * */
 export default class DeleteCategoryForm extends Component {
 
+    /**
+     * @constructs DeleteCategoryForm
+     * @param {Object} props - Object passed down to us from our parent..
+     * @param {Object} props.category - See {@link Category#constructor}
+     * @param {Object} props.deleteCategory - See {@link CatalogApp#deleteCategory}
+     * @param {Object} props.switchModalVisibility - See {@link Category#switchDeleteModalVisibility}
+     * */
     constructor(props) {
         super(props);
     }
 
-
-    /**
-     * Clicking Submit button saves the data if it is validated.
-     * */
     deleteCategory(){
-        //Then we ship it to the right function.
+        /**
+         * Triggered by "Yes" Button.
+         * */
+        //We ship to the function that will ship it down the wire.
         this.props.deleteCategory(this.props.category.id);
         //We also need to close the modal, since we're done here.
-        this.props.switchModalVisibility();
-    }
-
-
-    switchModalVisibility(){
         this.props.switchModalVisibility();
     }
 
@@ -39,7 +40,7 @@ export default class DeleteCategoryForm extends Component {
                 Yes
             </div>
             <div className="ui basic red button"
-                 onClick={this.switchModalVisibility}>
+                 onClick={this.props.switchModalVisibility}>
                 No
             </div>
         </div>;

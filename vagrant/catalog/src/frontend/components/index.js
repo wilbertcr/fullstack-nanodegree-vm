@@ -8,7 +8,7 @@ import apiCall from './apiCall'
 
 
 /**
- * Main container.
+ * Main container. This is the root of the application and where most of the state is kept and changed.
  * @class CatalogApp
  * */
 export default class CatalogApp extends Component {
@@ -32,10 +32,10 @@ export default class CatalogApp extends Component {
         /**
          *Represents the current state.
          * @type {Object}
-         * @property {categories[]} state.categories - The categories available.
-         * @property {items[]} state.items - The items currently in display..
+         * @property {Object[]} state.categories - The categories available.
+         * @property {Object[]} state.items - The items currently in display..
          * @property {STATUS} state.login_status - The current login status.
-         * @property {integer} state.categoryId - The categoryId for which items are in display.
+         * @property {number} state.categoryId - The categoryId for which items are in display.
          * */
         this.state = {
             categories: [],
@@ -59,10 +59,10 @@ export default class CatalogApp extends Component {
     onSessionChange(state){
         console.log("Update in login status received.");
         console.log(state);
+        //Let's set the state accordingly.
         this.setState({...this.state,
             loginStatus: state.value ? this.STATUS.LoggedIn : this.STATUS.LoggedOut});
     }
-
 
     /**
      * Sets state such that the objects in the category passed in are displayed.
@@ -79,9 +79,16 @@ export default class CatalogApp extends Component {
                 break;
             }
         }
+        //Get the category.
         var category = this.state.categories[index];
+        //Get the items in it.
         var items = category.items;
-        this.setState({...this.state, items: items,categoryId: id});
+        //Set the state accordingly.
+        this.setState({
+            ...this.state,
+            items: items,
+            categoryId: id
+        });
     }
 
 
@@ -98,11 +105,15 @@ export default class CatalogApp extends Component {
             picture: "",
             items: []
         };
+        //Get the current categories array.
         var categories = this.state.categories;
+        //Create a new one that includes the new category.
         var newCategories = [...categories,newCategory];
         var index = newCategories.length-1;
         var prevState = {...this.state};
         var nextState = {...this.state,categories: newCategories};
+        //We're changing the state optimistically, without even having
+        //sent the request to the server.
         this.setState(nextState);
         /**
          *We're sending the new category to the backend for processing.
@@ -115,29 +126,33 @@ export default class CatalogApp extends Component {
             data: newCategory,
             success: function(data) {
                 /**
-                 * This is the state we wish to move to, but we need confirmation that
-                 * it is consistent with the DB before we can set this in stone.
+                 * The backend is going to send us the updated category
+                 * object, with the assigned id.
                  * */
+                //We need to extract the id.
                 newCategory.id = data.category.id;
+                //And update the state so sync up with the server.
+                //This is also important because if we didn't do it,
+                //the user couldn't add more categories until reload
+                //since we would end up with multiple categories that
+                //have id zero, which is an issue for react.
                 var nextState = {
                     ...this.state,
                     categories : [
-                        ...this.state.categories.slice(0,index),
+                        ...categories,
                         newCategory
                     ]
                 };
-                /**
-                 * We're going to be optimistic, and change the state before contating the
-                 * backend.
-                 * */
                 this.setState(nextState);
             }.bind(this),
             error: function(xhr,status,err){
+                //If we get an error, then we rollback the changes by
+                //returning to the previous state.
                 this.setState(prevState);
+                //And let the developer know.
                 console.error(endpoint,status,err.toString());
             }.bind(this)
         },this);
-
     }
 
 
@@ -146,7 +161,6 @@ export default class CatalogApp extends Component {
      * @param {Object} newCategory - category we wish to edit.
      * */
     editCategory(newCategory){
-        console.log("Editing.");
         var index;
         /**
          * We need the category's index in the categories array.

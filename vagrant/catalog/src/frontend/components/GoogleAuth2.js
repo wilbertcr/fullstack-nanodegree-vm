@@ -10,6 +10,9 @@ export default class GoogleAuth2 extends Component {
     /**
      * @constructs GoogleAuth2
      * @param {Object} props - Object passed down to us from our parent.
+     * @param {Object} props.onSessionChange - See {@link CatalogApp#onSessionChange}
+     * @param {string} props.nonce - See {@link CatalogApp#state}
+     * @param {Object} props.updateNonce - See {@link CatalogApp#updateNonce}
      * */
     constructor(props) {
         super(props);
@@ -100,6 +103,7 @@ export default class GoogleAuth2 extends Component {
             this.props.onSessionChange(this.state.loginStatus);
         }
     }
+
     /**This function is required by google, but I don't need it since I'm already
      * listening to the changes in the session status. Hence it is empty.
      * */
@@ -109,7 +113,6 @@ export default class GoogleAuth2 extends Component {
 
     /**
      * Not much to do if things go wrong with google. I'm not implementing a back up login system.
-     *
      * */
     signInFailure(reason){
         console.log("Error: failed to sign in with google.");
