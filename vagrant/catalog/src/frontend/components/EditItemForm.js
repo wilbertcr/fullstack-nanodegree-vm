@@ -185,7 +185,10 @@ export default class EditItemForm extends Component {
          * successfully saving its contents.
          * Form goes back to stage 0 before hiding.
          * */
-        this.setState({stage: 0});
+        this.setState({
+            stage: 0,
+            isInputEnabled: true
+        });
         //Somewhere up the chain, someone is in charged of closing it. The form doesn't know the details of that.
         this.props.switchModalVisibility();
     }
@@ -300,7 +303,7 @@ export default class EditItemForm extends Component {
                                     <label>Name</label>
                                     <input type="text"
                                            ref={(ref) => this.inputName=ref}
-                                           disabled={!this.state.inputEnabled}
+                                           disabled={!this.state.isInputEnabled}
                                            value={this.state.name}
                                            onChange={this.updateName}/>
                                 </div>
@@ -308,7 +311,7 @@ export default class EditItemForm extends Component {
                                     <label>Price</label>
                                     <input type="text"
                                            ref={(ref) => this.inputPrice=ref}
-                                           disabled={!this.state.inputEnabled}
+                                           disabled={!this.state.isInputEnabled}
                                            value={this.state.price}
                                            onChange={this.updatePrice}/>
                                 </div>
@@ -316,7 +319,7 @@ export default class EditItemForm extends Component {
                                     <label>Description</label>
                                     <textarea type="text"
                                            ref={(ref) => this.inputDescription=ref}
-                                           disabled={!this.state.inputEnabled}
+                                           disabled={!this.state.isInputEnabled}
                                            value={this.state.description}
                                            onChange={this.updateDescription}/>
                                 </div>

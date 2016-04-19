@@ -95,7 +95,8 @@ export default class AddCategoryForm extends Component {
             ...this.state,
             name: "",
             validated: true,
-            stage: 0
+            stage: 0,
+            isInputEnabled: true
         });
     }
 

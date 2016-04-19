@@ -108,14 +108,23 @@ export default class EditCategoryForm extends Component {
     }
 
     /**
+     * Reset the fields in the form to their original state.
+     * */
+    resetFields(){
+        this.setState({
+            ...this.state,
+            stage: 0,
+            category: this.props.category,
+            name: this.props.category.name,
+            isInputEnabled: true
+        });
+    }
+
+    /**
      * Resets form and calls {@link Category#switchEditModalVisibility}
      * */
     switchModalVisibility(){
-        this.setState({
-            stage: 0,
-            category: this.props.category,
-            name: this.props.category.name
-        });
+        this.resetFields();
         //Somewhere up the chain, someone is in charged of closing it. The form doesn't know the details of that.
         this.props.switchModalVisibility();
     }
@@ -198,6 +207,7 @@ export default class EditCategoryForm extends Component {
                                             }
                                         }
                                        }
+                                       disabled={!this.state.isInputEnabled}
                                        onChange={this.updateName}/>
                             </div>
                             <div className="ui error message">

@@ -44,7 +44,8 @@ export default class AddItemForm extends Component {
                 description: "",
                 stage: 0,
                 file: null,
-                validated: true
+                validated: true,
+                isInputEnabled: true
         }
     }
 
@@ -54,14 +55,16 @@ export default class AddItemForm extends Component {
     advanceStage(){
         this.setState({
             ...this.state,
-            stage: this.state.stage+1
+            stage: this.state.stage+1,
+            isInputEnabled: false
         });
     }
 
     goBack(){
         this.setState({
             ...this.state,
-            stage: this.state.stage-1
+            stage: this.state.stage-1,
+            isInputEnabled: true
         });
     }
 
@@ -155,16 +158,9 @@ export default class AddItemForm extends Component {
     }
 
     /**
-     * Effectively hiding the modal without
-     * successfully saving its contents.
+     * Reset the fields in the form to their original state.
      * */
-    switchModalVisibility(){
-        /**
-         * Reset form's stage back to initial one.
-         * */
-        /***
-         * Resetting things for next usage.
-         */
+    resetFields(){
         this.setState({
             isNameValid: false,
             isPriceValid: false,
@@ -177,8 +173,20 @@ export default class AddItemForm extends Component {
             description: "",
             stage: 0,
             file: null,
-            validated: true
+            validated: true,
+            isInputEnabled: true
         });
+    }
+
+    /**
+     * Effectively hiding the modal without
+     * successfully saving its contents.
+     * */
+    switchModalVisibility(){
+        /**
+         * Reset and hide form.
+         * */
+        this.resetFields();
         this.props.switchModalVisibility();
     }
 
@@ -191,10 +199,11 @@ export default class AddItemForm extends Component {
         e.stopPropagation();
     }
 
+    /**
+     * Captures the images dropped by users.
+     * */
     handleDrop(e){
-        e.preventDefault();
-        e.stopPropagation();
-        console.log('test');
+        this.stopEvent(e)
         const droppedFiles = e.dataTransfer ? e.dataTransfer.files : e.target.files;
         var file = droppedFiles[0];
         file.preview = window.URL.createObjectURL(file);
@@ -206,6 +215,7 @@ export default class AddItemForm extends Component {
                 newPictureMounted: true
             });
         }
+        console.log("Files dropped:");
         console.log(droppedFiles);
     }
 
@@ -290,6 +300,7 @@ export default class AddItemForm extends Component {
                                     <label>Name</label>
                                     <input type="text"
                                            ref={(ref) => this.inputName=ref}
+                                           disabled={!this.state.isInputEnabled}
                                            value={this.state.name}
                                            onChange={this.updateName}/>
                                 </div>
@@ -297,6 +308,7 @@ export default class AddItemForm extends Component {
                                     <label>Price</label>
                                     <input type="text"
                                            ref={(ref) => this.inputPrice=ref}
+                                           disabled={!this.state.isInputEnabled}
                                            value={this.state.price}
                                            onChange={this.updatePrice}/>
                                 </div>
@@ -304,6 +316,7 @@ export default class AddItemForm extends Component {
                                     <label>Description</label>
                                     <textarea type="text"
                                            ref={(ref) => this.inputDescription=ref}
+                                              disabled={!this.state.isInputEnabled}
                                            value={this.state.description}
                                            onChange={this.updateDescription}/>
                                 </div>
