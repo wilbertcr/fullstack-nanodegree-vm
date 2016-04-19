@@ -48,11 +48,11 @@ CLIENT_ID = json.loads(
 @app.route('/index')
 @auto.doc()
 def main_page():
-    '''
+    """
 
     Returns: Code 200 and index.html
 
-    '''
+    """
     state = get_new_state()
     login_session['state'] = state
     # "Current sessions state {0}".format(login_session['state'])
@@ -62,7 +62,7 @@ def main_page():
 @app.route('/gconnect', methods=['POST'])
 @auto.doc()
 def gconnect():
-    '''
+    """
     See GoogleAuth2.onSessionChange in the front end code.
     The user logs in to google in the front end. Then we ask permission to have "offline" access,
     which means the server will be able to access some of this user's information in google, even when it is not
@@ -72,7 +72,7 @@ def gconnect():
     If all goes well, we'll return 200 and 'success' in the returned object.
     Returns:
         json: Code 200 and {'success': string, 'nonce': string} if all goes well {'error': string} if an error occurs.
-    '''
+    """
     # Validate that the state token we sent and the one we received are the same.
     if request.args.get('state') != login_session['state']:
         response = make_response(
@@ -175,14 +175,14 @@ def gconnect():
 @app.route('/gdisconnect')
 @auto.doc()
 def gdisconnect():
-    '''
+    """
     Disconnects the user and revokes the app's privilege to access the user's data.
     Normally that wouldn't be the case, but we don't want to leave privileges active since
     this is an academic project.
     Returns:
         json: {...,'error': string} If something  isn't right.
         json: Code 200 and {...,'success': string, 'nonce': string} If the user is disconnected successfully
-    '''
+    """
     # Verify that the nonce received is valid.
     if request.args.get('state') != login_session['state']:
         response = make_response(
@@ -247,12 +247,12 @@ def gdisconnect():
 @app.route('/categories/json')
 @auto.doc()
 def categories_json():
-    '''
+    """
     *json endpoint*
     It returns a json object, containing all the categories in the database, as well as their respective items.
     Returns:
         json: categories[]
-    '''
+    """
     try:
         app.logger.warning("State sent back: "+login_session['state'])
         categories = session.query(Category).all()
@@ -266,10 +266,10 @@ def categories_json():
 @app.route('/categories/new', methods=['POST'])
 @auto.doc()
 def add_category():
-    '''
+    """
     If nonce matches and user is logged in it adds a new category to the database.
     Returns: Code 200 and {'category': category, 'nonce': string} if no errors occur. {'error': string} if errors occur.
-    '''
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -307,12 +307,13 @@ def add_category():
 @app.route('/categories/delete/<int:category_id>', methods=['DELETE'])
 @auto.doc()
 def delete_category(category_id):
-    '''
+    """
     If nonce matches and user is logged in, it deletes the category with id=='category_id'
     Args:
         category_id (): The id of the category we wish to delete
-    Returns: Code 200 and {'success': '', 'nonce': string} if the category was successfully deleted. {'error': string} if an error occurs.
-    '''
+    Returns: Code 200 and {'success': '', 'nonce': string} if the category was successfully deleted.
+    {'error': string} if an error occurs.
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -346,12 +347,12 @@ def delete_category(category_id):
 @app.route('/categories/edit/<int:category_id>', methods=['POST'])
 @auto.doc()
 def edit_category(category_id):
-    '''
+    """
     If nonce matches and user is logged in. It edits the category with id 'category_id'.
     Args:
         category_id (): The id of the category we wish to edit.
     Returns: Code 200 and {'success': '','nonce': string} if no errors occur. Otherwise it returns {'error': msg}
-    '''
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -390,10 +391,10 @@ def edit_category(category_id):
 @app.route('/items/add', methods=['POST'])
 @auto.doc()
 def add_item():
-    '''
+    """
     If nonce matches and user is logged in. It adds an item to the database
     Returns: Code 200 and {'success': '','nonce': string} if no errors occur. Otherwise it returns {'error': msg}
-    '''
+    """
     if 'username' not in login_session:
         response = make_response(
             json.dumps({'error': 'User is logged out. This should not happen'}), 401
@@ -432,13 +433,13 @@ def add_item():
 @app.route('/items/edit/<int:item_id>', methods=['POST'])
 @auto.doc()
 def edit_item(item_id):
-    '''
+    """
     If nonce matches and user is logged in. it edits the item with the id provided.
     Args:
         item_id (): The id of the item we wish to edit.
     Returns: Code 200 and {'success': string, 'nonce': string} if no errors occur otherwise {'error': string}
 
-    '''
+    """
     if 'username' not in login_session:
         response = make_response(
             json.dumps({'error': 'User is logged out. This should not happen'}), 401
@@ -469,12 +470,12 @@ def edit_item(item_id):
 @app.route('/items/delete/<int:item_id>', methods=['DELETE'])
 @auto.doc()
 def delete_item(item_id):
-    '''
+    """
     If nonce matches and user is logged in. It deletes the item with the provided id.
     Args:
         item_id (): The id of the item we wish to delete.
     Returns: Code 200 and {'success': string, 'nonce': string}
-    '''
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -508,14 +509,14 @@ def delete_item(item_id):
 @app.route('/static/images/<string:image_name>', methods=['POST'])
 @auto.doc()
 def store_image(image_name):
-    '''
+    """
     If nonce matches and user is logged in, it stores image file received in /static/images/<image_name>
     Args:
         image_name (): The name of the image.
 
-    Returns: Code 200 and {'path': string, 'success': string, 'nonce': string} if no errors occur. Otherwise it returns {'error': string}
-
-    '''
+    Returns: Code 200 and {'path': string, 'success': string, 'nonce': string} if no errors occur.
+    Otherwise it returns {'error': string}
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(
             json.dumps({'error': 'Invalid state parameter.'}), 401
@@ -552,25 +553,26 @@ def store_image(image_name):
         app.logger.error(inst.args)
         app.logger.error(inst)
 
+
 @app.route('/documentation')
 def documentation():
-    '''
+    """
     Displays the API documentation.
     Returns:
         HTML: A web page with the API documentation.
 
-    '''
+    """
     return auto.html()
 
 
 def get_user_id(email):
-    '''
+    """
     Given an email address, it returns the user_id associated with it.
     Args:
         email (str): An email address
     Returns:
         int: If successful, it returns the user_id related to the email address received. Otherwise it returns -1
-    '''
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
