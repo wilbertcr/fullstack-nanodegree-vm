@@ -249,14 +249,49 @@ def gdisconnect():
 def categories_json():
     """
     *json endpoint*
-    It returns a json object, containing all the categories in the database, as well as their respective items.
+    It returns a json representation of all the categories in the database, including their respective items array.
     Returns:
         json: categories[]
     """
     try:
-        app.logger.warning("State sent back: "+login_session['state'])
         categories = session.query(Category).all()
         return jsonify(categories=[category.serialize for category in categories])
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/category/<int: category_id>/json')
+@auto.doc()
+def category_json(category_id):
+    """
+    *json endpoint*
+    It returns a json representation of the category who's id was provided.
+    Returns:
+        json: {category: {id: integer, name: string, picture: string, items: json[]}}
+    """
+    try:
+        category = session.query(Category).filter_by(id=category_id).one()
+        return jsonify(category=category.serialize)
+    except Exception as inst:
+        print(type(inst))
+        print(inst.args)
+        print(inst)
+
+
+@app.route('/item/<int: item_id>/json')
+@auto.doc()
+def item_json(item_id):
+    """
+    *json endpoint*
+    It returns a json representation of the item who's id was provided.
+    Returns:
+        json: {category: {id: integer, name: string, picture: string, items: json[]}}
+    """
+    try:
+        item = session.query(Item).filter_by(id=item_id).one()
+        return jsonify(item=item.serialize)
     except Exception as inst:
         print(type(inst))
         print(inst.args)
