@@ -40,6 +40,8 @@ echo "Installing psycopg2"
 pip install psycopg2
 echo "Installing flask-httpauth"
 pip install flask-httpauth
+echo "Installing flask-autodoc"
+pip install flask-autodoc
 echo "Install PyBuilder"
 pip install pybuilder
 echo "Installing SQLAlchemy"

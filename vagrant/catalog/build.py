@@ -43,6 +43,7 @@ def set_properties(project):
     project.depends_on("passlib")
     project.depends_on("itsdangerous")
     project.depends_on("flask-httpauth")
+    project.depends_on("flask-autodoc")
     project.depends_on("flask")
     project.depends_on("SQLAlchemy")
     project.depends_on("werkzeug")
