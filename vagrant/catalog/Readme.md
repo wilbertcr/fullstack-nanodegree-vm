@@ -6,17 +6,43 @@ User can add,edit and delete categories and add,edit and delete their respective
 
 Backend in flask and front end using React.js
 
-#Important:
-
-Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.  If you don't have vagrant, please get install it and come back here.
-
 #Installation
 
-*In order to make sure we start at the same point. Please run:
+Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.  
+If you don't have it, you have two options: 
+ 
+ 1) Install vagrant at https://www.vagrantup.com/downloads.html and then get the vagrant machine here https://github.com/udacity/fullstack-nanodegree-vm.
+ 
+ 2) Get a fresh linux VM and install the following:
+ 
+```
+$ sudo apt-get -qqy update
+$ sudo apt-get -qqy install postgresql python-psycopg2
+$ sudo apt-get -qqy install python-flask python-sqlalchemy
+$ sudo apt-get -qqy install python-pip
+pip install bleach
+pip install oauth2client
+pip install requests
+pip install httplib2
+pip install redis
+pip install passlib
+pip install itsdangerous
+pip install flask-httpauth
+su postgres -c 'createuser -dRS vagrant'
+su vagrant -c 'createdb'
+su vagrant -c 'createdb forum'
+su vagrant -c 'psql forum -f /vagrant/forum/forum.sql'
 
-`$vagrant destroy`
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+make install
+```
 
-`$vagrant up`
+*If you already had a vagrant machine, and in order to make sure we start at the same point. Please run the following on it:
+
+`$vagrant destroy && vagrant up && vagrant reload`
 
 *Then setup your SSH and login to the box. Once you get:
 
@@ -52,7 +78,7 @@ To access your shared files: cd /vagrant
 
 `$./build_and_run.sh`
 
-**Important:** That script will be a while, I recommend you go get a coffe or do something else for a while. It will build both the front end and back end, setting up and populating the database, creating documentation along the way.
+**Important:** That script will be a while, I recommend you go get a coffee or do something else for a while. It will build both the front end and back end, setting up and populating the database, creating documentation along the way.
 
 When you see this:
 ```
@@ -63,21 +89,21 @@ When you see this:
 
 ```
 
-Then you can just go to:
+Then, on your browser, go to:
 
  `http://localhost:5000`
 
 To kill the app: CTRL-C
 
-#Running the app
+# Running the app after building.
 
-Once the app has been installed, you can restart it like this:
+Once the app has been built, you can restart it like this:
 
 `$./run_app.sh`
 
 # Documentation
 
-Once the app has been built, you will be able to see the documentation for the front end here:
+Once the app has been built, you will be able to see the documentation for the frontend here:
 
 ```
 ├── catalog
@@ -86,8 +112,8 @@ Once the app has been built, you will be able to see the documentation for the f
             ├── docs
                 ├── *index.html
 ```
-*Created with gulp-esdoc.
+*Created with esdoc
 
-Regarding the backend's documentation(created using flask-autodoc), can be accessed by navigating to: 
+The backend's documentation(created using flask-autodoc), can be accessed by navigating to: 
 
 *http://0.0.0.0:5000/documentation
