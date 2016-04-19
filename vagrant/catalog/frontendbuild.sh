@@ -1,7 +1,7 @@
 #!/bin/bash -x
 
 echo "Installing Node.js"
-sudo apt-get --assume-yes install node
+sudo apt-get --assume-yes install nodejs
 echo "Installing npm package manager"
 sudo apt-get --assume-yes install npm
 echo "Installing NodeJS dependencies and build tools for JS."
@@ -13,6 +13,12 @@ ls -l
 # create any symbolic links, as npm
 # breaks in vagrant when they're used.
 npm install --save-dev --no-bin-links
+# This is needed for semantic, it doesn't
+# like that nodejs is not named node
+# installing it fixes that.
+installnodejslegacy="sudo apt-get --assume-yes install nodejs-legacy"
+eval $installnodejslegacy
+
 echo "Installing gulp globally so that
 command becomes available."
 sudo -H npm install -g gulp
@@ -27,11 +33,6 @@ node ../node_modules/gulp/bin/gulp
 cd ../../
 ls -l
 cd backend/python/static/
-# This is needed for semantic, it doesn't
-# like that nodejs is not named node
-# installing it fixes that.
-installnodejslegacy="sudo apt-get --assume-yes install nodejs-legacy"
-eval $installnodejslegacy
 ls -l
 npm install --save semantic-ui --no-bin-links
 # Newer gulp-autoprefixer breaks building of css.
