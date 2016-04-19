@@ -61,11 +61,11 @@ When you see this:
  * Running on http://0.0.0.0:5000/
  * Restarting with reloader
 
- ````
+```
 
 Then you can just go to:
 
- `http://localhost:5000/restaurants`
+ `http://localhost:5000`
 
 To kill the app: CTRL-C
 
@@ -74,3 +74,20 @@ To kill the app: CTRL-C
 Once the app has been installed, you can restart it like this:
 
 `$./run_app.sh`
+
+# Documentation
+
+Once the app has been built, you will be able to see the documentation for the front end here:
+
+```
+├── catalog
+    ├── src
+        ├── frontend
+            ├── docs
+                ├── *index.html
+```
+*Created with gulp-esdoc.
+
+Regarding the backend's documentation(created using flask-autodoc), can be accessed by navigating to: 
+
+*http://0.0.0.0:5000/documentation
