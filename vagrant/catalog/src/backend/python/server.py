@@ -316,6 +316,7 @@ def recent_feed():
                  title=item.name,
                  price=item.price,
                  description=item.description,
+                 picture=item.picture,
                  content_type='json',
                  author='Wilbert Sequeira',
                  url=make_external('/item/'+str(item.id)+'/json'),
