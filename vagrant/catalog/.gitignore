@@ -8,6 +8,8 @@
 #Here's where the client's secret is. We don't want that up on github do we?
 client_secrets.json
 fb_client_secrets.json
+semantic
+semantic.json
 
 *.iml
 
