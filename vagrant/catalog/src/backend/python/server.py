@@ -304,8 +304,13 @@ def make_external(url):
     return urljoin(request.url_root, url)
 
 
-@app.route('/recent.atom')
-def recent_feed():
+@app.route('/items_feed')
+def items_feed():
+    """
+
+    Returns: Atom feed of items. content is actually the price of the item.
+
+    """
     feed = AtomFeed('Recent Items',
                     feed_url=request.url, url=request.url_root)
     items = session.query(Item).order_by(Item.last_updated.desc(), Item.created.desc()).limit(15).all()
@@ -314,10 +319,9 @@ def recent_feed():
         app.logger.warning(item.last_updated)
         feed.add(id=item.id,
                  title=item.name,
-                 price=item.price,
-                 description=item.description,
-                 picture=item.picture,
-                 content_type='json',
+                 summary=item.description,
+                 content=item.price,
+                 content_type='text',
                  author='Wilbert Sequeira',
                  url=make_external('/item/'+str(item.id)+'/json'),
                  updated=item.last_updated,
