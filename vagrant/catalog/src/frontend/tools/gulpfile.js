@@ -15,7 +15,9 @@ gulp.task('transpile',function() {
             }))
             .on('error', function(err) {
                 error = err;
+                console.log(error);
                 this.emit('end');
+
             })
             .pipe(gulp.dest('../compiled-components/'));
     }
