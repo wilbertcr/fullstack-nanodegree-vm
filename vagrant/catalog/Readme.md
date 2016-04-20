@@ -5,7 +5,8 @@
 User can add,edit and delete categories and add,edit and delete their respective items.
 * Backend is a flask application
 * Front is React.js and JQuery for transmission of data.
-* The backend of this application is strongly based on the restaurant menu app project in this nano-degree. 
+* The backend of this application is strongly based on the restaurant menu app project in this nano-degree.
+* The application implements an attempt at dealing with CSRF and OAuth 2.0 via google.
 
 #Installation
 
