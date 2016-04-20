@@ -168,8 +168,6 @@ export default class EditItemForm extends Component {
                 //And something changed.
                 //Then ship to the function that will ship it down the wire.
                 this.props.editItem(item);
-            } else {
-                console.log("It thinks nothing changed");
             }
             /**
              * Now we start the process of
@@ -223,8 +221,6 @@ export default class EditItemForm extends Component {
                 newPictureMounted: true
             });
         }
-        console.log("Files dropped: ");
-        console.log(droppedFiles);
     }
 
     render() {

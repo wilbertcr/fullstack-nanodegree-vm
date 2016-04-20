@@ -145,8 +145,6 @@ export default class AddItemForm extends Component {
              * */
             if(this.hasChanged()){
                 this.props.addItem(item);
-            } else {
-                console.log("It thinks nothing changed");
             }
 
             /**
@@ -215,8 +213,6 @@ export default class AddItemForm extends Component {
                 newPictureMounted: true
             });
         }
-        console.log("Files dropped:");
-        console.log(droppedFiles);
     }
 
     componentDidMount(){

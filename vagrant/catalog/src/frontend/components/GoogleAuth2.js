@@ -86,9 +86,6 @@ export default class GoogleAuth2 extends Component {
                                         userId: userProfile.getId(),
                                     });
                                     this.props.onSessionChange(this.state.loginStatus);
-                                } else {
-                                    console.log("Error: received empty object ");
-                                    console.log(result);
                                 }
                             }.bind(this),
                             error: function (xhr, status, err) {
@@ -115,8 +112,8 @@ export default class GoogleAuth2 extends Component {
      * Not much to do if things go wrong with google. I'm not implementing a back up login system.
      * */
     signInFailure(reason){
-        console.log("Error: failed to sign in with google.");
-        console.log(reason);
+        console.error("Failed to sign in with google.");
+        console.error(reason);
     }
 
     /**

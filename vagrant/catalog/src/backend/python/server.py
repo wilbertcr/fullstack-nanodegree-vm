@@ -195,7 +195,6 @@ def gdisconnect():
     # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
-        app.logger.warning("User was not connected.")
         response = make_response(
             json.dumps({'error': 'Current user not connected.'}), 404
         )
@@ -315,8 +314,6 @@ def items_feed():
                     feed_url=request.url, url=request.url_root)
     items = session.query(Item).order_by(Item.last_updated.desc(), Item.created.desc()).limit(15).all()
     for item in items:
-        app.logger.warning("Last updated: ")
-        app.logger.warning(item.last_updated)
         feed.add(id=item.id,
                  title=item.name,
                  summary=item.description,
@@ -615,9 +612,9 @@ def store_image(image_name):
                 response.headers['Content-Type'] = 'application/json'
                 return response
     except Exception as inst:
-        app.logger.error(type(inst))
-        app.logger.error(inst.args)
-        app.logger.error(inst)
+        print(type(inst))
+        print(inst.args)
+        print(inst)
 
 
 @app.route('/documentation')
@@ -643,10 +640,8 @@ def get_user_id(email):
         user = session.query(User).filter_by(email=email).one()
         return user.id
     except NoResultFound:
-        app.logger.warning("Search by email returned no results.")
         return -1
     except MultipleResultsFound:
-        app.logger.error("Search by email returned multiple results.")
         return -1
 
 
@@ -704,7 +699,6 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
-    app.debug = True
+    app.secret_key = CLIENT_ID
     app.config['UPLOAD_FOLDER'] = './static/images/'
     app.run(host='0.0.0.0', port=5000)

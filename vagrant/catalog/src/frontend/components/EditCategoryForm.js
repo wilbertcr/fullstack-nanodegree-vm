@@ -97,8 +97,6 @@ export default class EditCategoryForm extends Component {
                 });
                 //Then ship to the function that will ship it down the wire.
                 this.props.editCategory(this.state.category);
-            } else {
-                console.log("Form hasn't changed.")
             }
             //I'll close the modal either way.
             this.props.switchModalVisibility();

@@ -17,13 +17,11 @@ export default function(options,context){
             //The nonce may be in the props or in the state.
             if(context.props && context.props.nonce){
                 //If it is in the props.
-                console.log("Nonce in is in props: "+context.props.nonce);
                 nonce = context.props.nonce;
                 updateNonce = context.props.updateNonce;
             }
             if(context.state && context.state.nonce){
                 //If it is in the state
-                console.log("Nonce in is in state: "+context.state.nonce);
                 nonce = context.state.nonce;
                 updateNonce = context.updateNonce;
             }
@@ -36,10 +34,7 @@ export default function(options,context){
                         if(re && re.nonce){
                             //If we received a new nonce,
                             //then we update the state.
-                            console.log("Nonce out:  ");
-                            console.log(re.nonce);
                             updateNonce(re.nonce);
-                            console.log("resolving.");
                             resolve(re);
                         }
                     });

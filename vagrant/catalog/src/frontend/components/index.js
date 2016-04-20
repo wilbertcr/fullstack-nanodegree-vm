@@ -57,8 +57,6 @@ export default class Root extends Component {
      * @param {STATUS} state - The current login status.
      * */
     onSessionChange(state){
-        console.log("Update in login status received.");
-        console.log(state);
         //Let's set the state accordingly.
         this.setState({...this.state,
             loginStatus: state.value ? this.STATUS.LoggedIn : this.STATUS.LoggedOut});
@@ -97,8 +95,6 @@ export default class Root extends Component {
      * @param {string} name - name of the category we wish to append.
      * */
     addCategory(name){
-        console.log("Add category: ");
-        console.log(name);
         var newCategory = {
             id: 0,
             name: name,
@@ -286,8 +282,6 @@ export default class Root extends Component {
      * @property {boolean} state.newPictureMounted
      * */
     addItem(item){
-        console.log("AddItem");
-        console.log(item);
         //Let's figure out the index of this item's category.
         var catIndex;
         for(let i=0;i<this.state.categories.length;i++){
@@ -303,10 +297,8 @@ export default class Root extends Component {
         var nextCategories = [...this.state.categories];
         var prevItems =  prevCategories[catIndex].items;
         var nextItems = [...prevCategories[catIndex].items,item];
-        console.log(nextItems);
 
         let file = item.file;
-        console.log(file);
         var fd = new FormData();
         fd.append("picture_file", file);
         var filePath = "/static/images/"+file.name;
@@ -318,9 +310,6 @@ export default class Root extends Component {
             data: fd,
             contentType: false,
             processData: false,
-            success: function(data){
-                console.log(data);
-            }.bind(this),
             error: function (xhr, status, err) {
                 //And communicate the error.
                 //Something production ready would do
@@ -353,13 +342,10 @@ export default class Root extends Component {
                         categories: nextCategories,
                         items: nextCategories[catIndex].items}
                     );
-                    console.log(data);
                 }.bind(this),
                 error: function(xhr,status,err){
                     //If things go bad, we go back to
                     //the previous state.
-                    console.log("going back to previous state.");
-                    console.log(prevItems);
                     prevCategories[catIndex].items = prevItems;
                     this.setState({...this.state,
                         categories: prevCategories,
@@ -417,7 +403,6 @@ export default class Root extends Component {
              * */
             //We're gong to extract the file.
             let file = nextItem.file;
-            console.log(file);
             var fd = new FormData();
             fd.append("picture_file", file);
             var filePath = "/static/images/"+file.name;
@@ -428,9 +413,6 @@ export default class Root extends Component {
                 data: fd,
                 contentType: false,
                 processData: false,
-                success: function(data){
-                    console.log(data);
-                }.bind(this),
                 error: function (xhr, status, err) {
                     //If something goes wrong.
                     // Let's go back to the previous state.
@@ -453,8 +435,6 @@ export default class Root extends Component {
                     items: nextCategories[catIndex].items}
                 );
                 var url2 = "/items/edit/"+item.id+"?state=";
-                console.log(url2);
-                console.log(nextItem);
                 apiCall({
                     url: url2+this.state.nonce,
                     dataType: 'json',
@@ -463,8 +443,6 @@ export default class Root extends Component {
                     error: function(xhr,status,err){
                         //If things go bad, we go back to
                         //the previous state.
-                        console.log("going back to previous state.");
-                        console.log(prevItem);
                         prevCategories[catIndex].items[itemIndex] = prevItem;
                         this.setState({...this.state,
                             categories: prevCategories,
@@ -490,8 +468,6 @@ export default class Root extends Component {
                 error: function(xhr,status,err){
                     //If things go bad, we go back to
                     //the previous state.
-                    console.log("going back to previous state.");
-                    console.log(prevItem);
                     prevCategories[catIndex].items[itemIndex] = prevItem;
                     this.setState({...this.state,
                         categories: prevCategories,

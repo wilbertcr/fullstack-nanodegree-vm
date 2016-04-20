@@ -50,7 +50,6 @@ export default class Category extends Component{
         /**
          * Changes the visibility of the "Edit" Modal.
          * */
-        console.log("Modal is now:"+this.state.isEditModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isEditModalVisible: !this.state.isEditModalVisible});
     }
 
@@ -58,7 +57,6 @@ export default class Category extends Component{
         /**
          * Changes the visibility of the "Delete" Modal.
          * */
-        console.log("Modal is now:"+this.state.isDeleteModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isDeleteModalVisible: !this.state.isDeleteModalVisible});
     }
 

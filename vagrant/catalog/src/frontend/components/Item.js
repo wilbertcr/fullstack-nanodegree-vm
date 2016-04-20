@@ -46,7 +46,6 @@ export default class Item extends Component {
      * Changes visibility of "Edit" modal
      * */
     switchEditModalVisibility(){
-        console.log("Modal is now:"+this.state.isEditModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isEditModalVisible: !this.state.isEditModalVisible});
     }
 
@@ -54,12 +53,10 @@ export default class Item extends Component {
      * Changes visibility of "Delete" modal
      * */
     switchDeleteModalVisibility(){
-        console.log("Modal is now:"+this.state.isDeleteModalVisible ? 'visible': 'hidden');
         this.setState({...this.state,isDeleteModalVisible: !this.state.isDeleteModalVisible});
     }
 
     render() {
-
 
         this.EditReactElement = <EditItemForm
             {...this.props}
