@@ -1,7 +1,7 @@
 
 #Catalog App
 
-A one page basic web application displaying a navigation bar representing categories and the items of the currently selected category.
+A one page web application displaying categories and the items of the currently selected category. 
 User can add,edit and delete categories and add,edit and delete their respective items.
 
 Backend in flask and front end using React.js
