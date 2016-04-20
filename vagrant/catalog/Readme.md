@@ -1,14 +1,15 @@
 
-#Catalog App
+## Catalog App
 
-A one page web application displaying categories and the items of the currently selected category. 
+* A one page web application displaying categories and the items of the currently selected category. 
 User can add,edit and delete categories and add,edit and delete their respective items.
-
-Backend in flask and front end using React.js
+* Backend is a flask application
+* Front is React.js and JQuery for transmission of data.
+* The backend of this application is strongly based on the restaurant menu app project in this nano-degree. 
 
 #Installation
 
-Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.  
+Instructions are meant to be used by a user running the vagrant machine provided in the full-stack web developer nanodegree of Udacity.
 If you don't have it, you have two options: 
  
  1) Install vagrant at https://www.vagrantup.com/downloads.html and then get the vagrant machine here https://github.com/udacity/fullstack-nanodegree-vm.
@@ -20,24 +21,23 @@ $ sudo apt-get -qqy update
 $ sudo apt-get -qqy install postgresql python-psycopg2
 $ sudo apt-get -qqy install python-flask python-sqlalchemy
 $ sudo apt-get -qqy install python-pip
-pip install bleach
-pip install oauth2client
-pip install requests
-pip install httplib2
-pip install redis
-pip install passlib
-pip install itsdangerous
-pip install flask-httpauth
-su postgres -c 'createuser -dRS vagrant'
-su vagrant -c 'createdb'
-su vagrant -c 'createdb forum'
-su vagrant -c 'psql forum -f /vagrant/forum/forum.sql'
-
-wget http://download.redis.io/redis-stable.tar.gz
-tar xvzf redis-stable.tar.gz
-cd redis-stable
-make
-make install
+$ pip install bleach
+$ pip install oauth2client
+$ pip install requests
+$ pip install httplib2
+$ pip install redis
+$ pip install passlib
+$ pip install itsdangerous
+$ pip install flask-httpauth
+$ su postgres -c 'createuser -dRS vagrant'
+$ su vagrant -c 'createdb'
+$ su vagrant -c 'createdb forum'
+$ su vagrant -c 'psql forum -f /vagrant/forum/forum.sql'
+$ wget http://download.redis.io/redis-stable.tar.gz
+$ tar xvzf redis-stable.tar.gz
+$ cd redis-stable
+$ make
+$ make install
 ```
 
 *If you already had a vagrant machine, and in order to make sure we start at the same point. Please run the following on it:
@@ -89,9 +89,27 @@ When you see this:
 
 ```
 
-Then, on your browser, go to:
+At this point, the application is running. You can:
+
+* Go to the web application:
 
  `http://localhost:5000`
+
+* Access the atom feed:
+
+`http://localhost:5000/items_feed`
+
+* Get a json representation of all the categories and their respective items:
+ `http://localhost:5000/categories/json`
+ 
+* Get a json representation of a category by providing its id:
+ `http://localhost:5000/category/<int:category_id>/json`
+
+* Get a json representation of an item:
+
+ `http://localhost:5000/item/<int:item_id>/json`
+
+All of the above are accessible without logging in to the application.
 
 To kill the app: CTRL-C
 
